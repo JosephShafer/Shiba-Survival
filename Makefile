@@ -1,13 +1,14 @@
-CFLAGS = -I ./include
-##LIB    = ./libggfonts.so
-LFLAGS = -lrt -lX11 -lGLU -lGL -pthread -lm #-lXrandr
+COMPILER = g++
+CFLAGS   = -I ./include
+FILES    = asteroids.cpp log.cpp timers.cpp amberZ.cpp josephS.cpp
+FONTS    = libggfonts.a
+LFLAGS   = -lrt -lX11 -lGLU -lGL -pthread -lm
 
 all: asteroids
 
-asteroids: asteroids.cpp log.cpp timers.cpp josephS.cpp
-	g++ $(CFLAGS) asteroids.cpp log.cpp timers.cpp josephS.cpp libggfonts.a -Wall -Wextra $(LFLAGS) -oasteroids
+asteroids: $(FILES)
+	$(COMPILER) $(CFLAGS) $(FILES) $(FONTS) -Wall -Wextra $(LFLAGS) -oasteroids
 
 clean:
 	rm -f asteroids
 	rm -f *.o
-

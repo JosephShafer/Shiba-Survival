@@ -14,13 +14,7 @@
 #include "log.h"
 #include "fonts.h"
 
-void displayName(int x, int y, Rect r)
-{
-    unsigned int c = 0x00ffffff;
-    ggprint8b(&r, 16, c, "Amber Zaragoza");
-}
-
-void displayPicture(int x, int y, GLuint textid)
+void amberZ(int x, int y, GLuint textid)
 {
     glColor3ub(255, 255, 255);
     static float angle = 0.0f;

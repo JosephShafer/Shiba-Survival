@@ -79,12 +79,14 @@ class Image {
 public:
 	int width, height;
 	unsigned char *data;
+	const char *file;
 	~Image() { delete [] data; }
 	Image(const char *fname) {
+		file = fname;
 		if (fname[0] == '\0')
 			return;
 		//printf("fname **%s**\n", fname);
-		int ppmFlag = 0;
+		int ppmFlag = 0; 
 		char name[40];
 		strcpy(name, fname);
 		int slen = strlen(name);
@@ -136,6 +138,9 @@ Image img[5] = {
 "./images/mabelleC.png",
 "./images/thomasB.png" };
 */
+Image img[2] = {
+"./images/amberZ.png",
+"./images/josephS.png" };
 
 class Ship {
 public:
@@ -435,8 +440,19 @@ void init_opengl(void)
 
 	//create opengl texture elements
 	glGenTextures(1, &gl.amberZTexture);
+	glBindTexture(GL_TEXTURE_2D, gl.amberZTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[0].height, 0, GL_RGB, GL_UNSIGNED_BYTE, img[0].data);
+
 	glGenTextures(1, &gl.danLTexture);
+
 	glGenTextures(1, &gl.josephSTexture);
+	glBindTexture(GL_TEXTURE_2D, gl.josephSTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[1].width, img[1].height, 0, GL_RGB, GL_UNSIGNED_BYTE, img[1].data);
+	
 	glGenTextures(1, &gl.mabelleCTexture);
 	glGenTextures(1, &gl.thomasBTexture);
 }
@@ -958,13 +974,15 @@ void render()
 	}
 	
 	if (gl.showCredits) {
+		extern void amberZ(int, int, GLuint);
+		extern void josephS(int, int, GLuint);
 		glClear(GL_COLOR_BUFFER_BIT);
 		Rect rcred;
 		rcred.bot = gl.yres - 30;
 		rcred.left = 0;
 		rcred.center = 0;
-    	ggprint16(&rcred, 16, 0x00ffff00, "Credits");
-		extern void josephS(int, int, GLuint);
+		ggprint16(&rcred, 16, 0x00ffff00, "Credits");
+		amberZ(100, gl.yres - 100, gl.amberZTexture);
 		josephS(200, 200, gl.josephSTexture);
 	}
 }

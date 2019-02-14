@@ -945,13 +945,8 @@ void render()
 		glEnd();
 	}
 	
-	
-	//
 	if (g.showCredits) {
-    	unsigned int c = 0x00ffffff;
+		glClear(GL_COLOR_BUFFER_BIT);
     	ggprint8b(&r, 16, 0x00ffff00, "Credits");
 	}
 }
-
-
-

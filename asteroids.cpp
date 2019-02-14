@@ -130,14 +130,7 @@ public:
 			unlink(ppmname);
 	}
 };
-/*
-Image img[5] = {
-"./images/amberZ.png",
-"./images/danL.png",
-"./images/josephS.png",
-"./images/mabelleC.png",
-"./images/thomasB.png" };
-*/
+
 Image img[2] = {
 "./images/amberZ.png",
 "./images/josephS.png" };
@@ -983,6 +976,6 @@ void render()
 		rcred.center = 0;
 		ggprint16(&rcred, 16, 0x00ffff00, "Credits");
 		amberZ(100, gl.yres - 100, gl.amberZTexture);
-		josephS(200, 200, gl.josephSTexture);
+		josephS(500, 500, gl.josephSTexture);
 	}
 }

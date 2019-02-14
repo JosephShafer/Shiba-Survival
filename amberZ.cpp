@@ -14,10 +14,10 @@
 #include "log.h"
 #include "fonts.h"
 
-void displayName(int x, int y)
+void displayName(int x, int y, Rect r)
 {
     unsigned int c = 0x00ffffff;
-    ggprint8b(&r[i], 16, c, "Requirements");
+    ggprint8b(&r, 16, c, "Amber Zaragoza");
 }
 
 void displayPicture(int x, int y, GLuint textid)

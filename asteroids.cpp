@@ -121,11 +121,14 @@ public:
 			unlink(ppmname);
 	}
 };
-Image img[4] = {
-"./images/bigfoot.png",
-"./images/forest.png",
-"./images/forestTrans.png",
-"./images/umbrella.png" };
+/*
+Image img[5] = {
+"./images/amberZ.png",
+"./images/danL.png",
+"./images/josephS.png",
+"./images/mabelleC.png",
+"./images/thomasB.png" };
+*/
 
 class Ship {
 public:
@@ -185,6 +188,7 @@ public:
 	struct timespec bulletTimer;
 	struct timespec mouseThrustTimer;
 	bool mouseThrustOn;
+	bool showCredits;
 public:
 	Game() {
 		ahead = NULL;
@@ -192,6 +196,7 @@ public:
 		nasteroids = 0;
 		nbullets = 0;
 		mouseThrustOn = false;
+		showCredits = false;
 		//build 10 asteroids...
 		for (int j=0; j<10; j++) {
 			Asteroid *a = new Asteroid;
@@ -558,6 +563,8 @@ int check_keys(XEvent *e)
 	}
 	if (shift){}
 	switch (key) {
+		case XK_c:
+			g.showCredits ^= 1;
 		case XK_Escape:
 			return 1;
 		case XK_f:
@@ -935,6 +942,13 @@ void render()
 		glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
 		glVertex2f(b->pos[0]+1.0f, b->pos[1]+1.0f);
 		glEnd();
+	}
+	
+	
+	//
+	if (g.showCredits) {
+    	unsigned int c = 0x00ffffff;
+    	ggprint8b(&r, 16, 0x00ffff00, "Credits");
 	}
 }
 

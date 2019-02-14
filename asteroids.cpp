@@ -437,6 +437,7 @@ void init_opengl(void)
 	glGenTextures(1, &gl.thomasBTexture);
 
 
+	//Added to make jShafer Texture work. Still needs to be fixed but at least it shows an image
 
 	int w = img[0].width;
 	int h = img[0].height;
@@ -978,6 +979,6 @@ void render()
 		rcred.center = 0;
     	ggprint16(&rcred, 16, 0x00ffff00, "Credits");
 		extern void josephS(int, int, GLuint);
-		josephS(200, 200, gl.josephSTexture);
+		josephS(500, 500, gl.josephSTexture);
 	}
 }

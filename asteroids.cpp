@@ -60,10 +60,17 @@ class Global {
 public:
 	int xres, yres;
 	char keys[65536];
+	bool showCredits;
+	GLuint amberZTexture;
+	GLuint danLTexture;
+	GLuint josephSTexture;
+	GLuint mabelleCTexture;
+	GLuint thomasBTexture;
 	Global() {
 		xres = 1250;
 		yres = 900;
 		memset(keys, 0, 65536);
+		showCredits = false;
 	}
 } gl;
 
@@ -188,7 +195,6 @@ public:
 	struct timespec bulletTimer;
 	struct timespec mouseThrustTimer;
 	bool mouseThrustOn;
-	bool showCredits;
 public:
 	Game() {
 		ahead = NULL;
@@ -196,7 +202,6 @@ public:
 		nasteroids = 0;
 		nbullets = 0;
 		mouseThrustOn = false;
-		showCredits = false;
 		//build 10 asteroids...
 		for (int j=0; j<10; j++) {
 			Asteroid *a = new Asteroid;
@@ -427,6 +432,13 @@ void init_opengl(void)
 	//Do this to allow fonts
 	glEnable(GL_TEXTURE_2D);
 	initialize_fonts();
+
+	//create opengl texture elements
+	glGenTextures(1, &gl.amberZTexture);
+	glGenTextures(1, &gl.danLTexture);
+	glGenTextures(1, &gl.josephSTexture);
+	glGenTextures(1, &gl.mabelleCTexture);
+	glGenTextures(1, &gl.thomasBTexture);
 }
 
 void normalize2d(Vec v)
@@ -564,7 +576,7 @@ int check_keys(XEvent *e)
 	if (shift){}
 	switch (key) {
 		case XK_c:
-			g.showCredits ^= 1;
+			gl.showCredits ^= 1;
 			break;
 		case XK_Escape:
 			return 1;
@@ -945,8 +957,14 @@ void render()
 		glEnd();
 	}
 	
-	if (g.showCredits) {
+	if (gl.showCredits) {
 		glClear(GL_COLOR_BUFFER_BIT);
-    	ggprint8b(&r, 16, 0x00ffff00, "Credits");
+		Rect rcred;
+		rcred.bot = gl.yres - 30;
+		rcred.left = 0;
+		rcred.center = 0;
+    	ggprint16(&rcred, 16, 0x00ffff00, "Credits");
+		extern void josephS(int, int, GLuint);
+		josephS(200, 200, gl.josephSTexture);
 	}
 }

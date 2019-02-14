@@ -565,6 +565,7 @@ int check_keys(XEvent *e)
 	switch (key) {
 		case XK_c:
 			g.showCredits ^= 1;
+			break;
 		case XK_Escape:
 			return 1;
 		case XK_f:

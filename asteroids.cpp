@@ -128,14 +128,10 @@ public:
 			unlink(ppmname);
 	}
 };
-/*
-Image img[5] = {
-"./images/amberZ.png",
-"./images/danL.png",
+
+Image img[1] = {
 "./images/josephS.png",
-"./images/mabelleC.png",
-"./images/thomasB.png" };
-*/
+};
 
 class Ship {
 public:
@@ -439,6 +435,23 @@ void init_opengl(void)
 	glGenTextures(1, &gl.josephSTexture);
 	glGenTextures(1, &gl.mabelleCTexture);
 	glGenTextures(1, &gl.thomasBTexture);
+
+
+
+	int w = img[0].width;
+	int h = img[0].height;
+	//
+	glBindTexture(GL_TEXTURE_2D, gl.josephSTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
+		GL_RGB, GL_UNSIGNED_BYTE, img[0].data);
+
+
+
+
+
 }
 
 void normalize2d(Vec v)

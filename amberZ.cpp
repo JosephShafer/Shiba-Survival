@@ -34,5 +34,5 @@ void amberZ(int x, int y, GLuint textid)
     r.bot = y;
     r.left = x + 90;
     r.center = 0;
-    ggprint8b(&r, 16, 0x00ffff00, "Amber Zaragoza");
+    ggprint16(&r, 16, 0x00ffff00, "Amber Zaragoza");
 }

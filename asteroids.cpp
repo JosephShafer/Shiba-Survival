@@ -971,11 +971,11 @@ void render()
 		extern void josephS(int, int, GLuint);
 		glClear(GL_COLOR_BUFFER_BIT);
 		Rect rcred;
-		rcred.bot = gl.yres - 30;
-		rcred.left = 0;
+		rcred.bot = gl.yres- 50;
+		rcred.left = gl.xres/2;
 		rcred.center = 0;
 		ggprint16(&rcred, 16, 0x00ffff00, "Credits");
 		amberZ(100, gl.yres - 100, gl.amberZTexture);
-		josephS(500, 500, gl.josephSTexture);
+		josephS((gl.xres/2 - 300), gl.yres - 800, gl.josephSTexture);
 	}
 }

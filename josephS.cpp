@@ -15,7 +15,12 @@
 
 void josephS(int x, int y, GLuint textid)
 {
-    
+    Rect name;
+    name.left = x + 200;
+    name.bot = y;
+    name.center = 0;
+    ggprint16(&name, 16, 0x00ffff00, "Joseph Shafer");
+       
     glColor3ub(225,225,225);
     static float angle = 0.0f;
     static int wid = 30;

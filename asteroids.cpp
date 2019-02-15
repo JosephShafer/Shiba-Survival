@@ -1,11 +1,9 @@
-//
-//program: asteroids.cpp
-//author:  Gordon Griesel
-//date:    2014 - 2018
-//mod spring 2015: added constructors
+//Program: asteroids.cpp
+//Author:  Gordon Griesel
+//Date:    2014 - 2018
+//Mod Spring 2015: Added constructors
 //This program is a game starting point for a 3350 project.
-//
-//
+
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -436,7 +434,8 @@ void init_opengl(void)
 	glBindTexture(GL_TEXTURE_2D, gl.amberZTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[0].height, 0, GL_RGB, GL_UNSIGNED_BYTE, img[0].data);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[0].height, 0, GL_RGB,
+		GL_UNSIGNED_BYTE, img[0].data);
 
 	glGenTextures(1, &gl.danLTexture);
 
@@ -444,7 +443,8 @@ void init_opengl(void)
 	glBindTexture(GL_TEXTURE_2D, gl.josephSTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[1].width, img[1].height, 0, GL_RGB, GL_UNSIGNED_BYTE, img[1].data);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[1].width, img[1].height, 0, GL_RGB,
+		GL_UNSIGNED_BYTE, img[1].data);
 	
 	glGenTextures(1, &gl.mabelleCTexture);
 	glGenTextures(1, &gl.thomasBTexture);

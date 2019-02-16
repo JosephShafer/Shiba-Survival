@@ -287,10 +287,10 @@ public:
 			winops |= CWOverrideRedirect;
 			swa.override_redirect = True;
 		}
-		win = XCreateWindow(dpy, root, 0, 0, gl.xres, gl.yres, 0,
-			vi->depth, InputOutput, vi->visual, winops, &swa);
 		//win = XCreateWindow(dpy, root, 0, 0, gl.xres, gl.yres, 0,
-		//vi->depth, InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
+		//	vi->depth, InputOutput, vi->visual, winops, &swa);
+		win = XCreateWindow(dpy, root, 0, 0, gl.xres, gl.yres, 0,
+			vi->depth, InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
 		set_title();
 		glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
 		glXMakeCurrent(dpy, win, glc);

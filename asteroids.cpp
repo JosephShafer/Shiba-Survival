@@ -130,10 +130,11 @@ public:
 	}
 };
 
-Image img[3] = {
+Image img[4] = {
 "./images/amberZ.png",
 "./images/josephS.png",
-"./images/danL.png" };
+"./images/danL.png",
+"./images/mabelleC.png" };
 
 class Ship {
 public:
@@ -454,6 +455,13 @@ void init_opengl(void)
 		GL_UNSIGNED_BYTE, img[1].data);
 	
 	glGenTextures(1, &gl.mabelleCTexture);
+	glBindTexture(GL_TEXTURE_2D, gl.mabelleCTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[0].height, 0, GL_RGB,
+		GL_UNSIGNED_BYTE, img[3].data);
+	
+	
 	glGenTextures(1, &gl.thomasBTexture);
 }
 
@@ -976,7 +984,8 @@ void render()
 	if (gl.showCredits) {
 		extern void amberZ(int, int, GLuint);
 		extern void josephS(int, int, GLuint);
-        extern void danL(int, int, GLuint);
+        	extern void danL(int, int, GLuint);
+        	extern void mabelleC(int, int, GLuint);
 		glClear(GL_COLOR_BUFFER_BIT);
 		Rect rcred;
 		rcred.bot = gl.yres - 50;
@@ -984,7 +993,8 @@ void render()
 		rcred.center = 0;
 		ggprint16(&rcred, 16, 0x00ffff00, "Credits");
 		amberZ((gl.xres/2 - 300), gl.yres - 120, gl.amberZTexture);
-		josephS((gl.xres/2 - 300), gl.yres - 800, gl.josephSTexture);
+		josephS((gl.xres/2 - 300), gl.yres - 540, gl.josephSTexture);
 		danL((gl.xres/2 - 300), gl.yres - 260, gl.danLTexture);
+		mabelleC((gl.xres/2 - 300), gl.yres - 400, gl.mabelleCTexture);
 	}
 }

@@ -1,20 +1,13 @@
-#include <iostream>
-#include <cstdlib>
-#include <cstring>
-#include <unistd.h>
-#include <ctime>
-#include <cmath>
-#include <X11/Xlib.h>
-//#include <X11/Xutil.h>
-//#include <GL/gl.h>
-//#include <GL/glu.h>
-#include <X11/keysym.h>
+//Program: josephS.cpp
+//Author:  Joseph Shafer
+//Date:    2/15/2019
+
 #include <GL/glx.h>
-#include "log.h"
 #include "fonts.h"
 
-void josephS(int x, int y, GLuint textid)
+void josephS(float x, float y, GLuint textid)
 {
+    //show name
     Rect name;
     name.left = x + 90;
     name.bot = y;
@@ -22,17 +15,18 @@ void josephS(int x, int y, GLuint textid)
     ggprint16(&name, 16, 0x00ffff00, "Joseph Shafer");
        
     glColor3ub(225,225,225);
-    //static float angle = 0.0f;
     float wid = 60.0f;
+    //Old code that was used to rotate picture, may use later
+    //static float angle = 0.0f;
     //wid += sin(angle) * 10;
-    float fx = (float)x;
-    float fy = (float)y;
+    //float fx = (float)x;
+    //float fy = (float)y;
     //float a = 0;
     //a += sin(angle);
     //fx += a;
     //angle += 0.2f;
     glPushMatrix();
-    glTranslatef(fx, fy, 0);
+    glTranslatef(x, y, 0);
     //glRotatef(a, 0, 0, 1.0);
     glBindTexture(GL_TEXTURE_2D, textid);
     glBegin(GL_QUADS);

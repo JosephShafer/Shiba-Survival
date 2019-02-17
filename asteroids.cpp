@@ -989,7 +989,7 @@ void render()
 	
 	if (gl.showCredits) {
 		extern void amberZ(int, int, GLuint);
-		extern void josephS(int, int, GLuint);
+		extern void josephS(float, float, GLuint);
         extern void danL(int, int, GLuint);
         extern void mabelleC(int, int, GLuint);
 		extern void thomasB(int, int, GLuint);
@@ -1000,14 +1000,14 @@ void render()
 		rcred.center = 0;
 		ggprint16(&rcred, 16, 0x00ffff00, "Credits");
 
-		float offset = 0.18f;
-		
 		// moves pictures so they scale to monitors resolution
+		float offset = 0.18f;
 		amberZ((gl.xres/2 - 300), gl.yres * (1 - offset), gl.amberZTexture);
 		josephS((gl.xres/2 - 300), gl.yres * (1 - offset*2), gl.josephSTexture);
 		danL((gl.xres/2 - 300), gl.yres * (1 - offset*3), gl.danLTexture);
 		mabelleC((gl.xres/2 - 300), gl.yres * (1 - offset*4), gl.mabelleCTexture);
 		thomasB((gl.xres/2 - 300), gl.yres * (1 - offset*5), gl.thomasBTexture);
+
 		// old transformations of pictures
 		//amberZ((gl.xres/2 - 300), gl.yres - 120, gl.amberZTexture);
 		//josephS((gl.xres/2 - 300), gl.yres - 540, gl.josephSTexture);

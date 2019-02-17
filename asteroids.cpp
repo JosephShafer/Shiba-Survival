@@ -995,14 +995,24 @@ void render()
 		extern void thomasB(int, int, GLuint);
 		glClear(GL_COLOR_BUFFER_BIT);
 		Rect rcred;
-		rcred.bot = gl.yres - 50;
+		rcred.bot = gl.yres * 0.95f;
 		rcred.left = gl.xres/2;
 		rcred.center = 0;
 		ggprint16(&rcred, 16, 0x00ffff00, "Credits");
-		amberZ((gl.xres/2 - 300), gl.yres - 120, gl.amberZTexture);
-		josephS((gl.xres/2 - 300), gl.yres - 540, gl.josephSTexture);
-		danL((gl.xres/2 - 300), gl.yres - 260, gl.danLTexture);
-		mabelleC((gl.xres/2 - 300), gl.yres - 400, gl.mabelleCTexture);
-		thomasB((gl.xres/2 - 300), gl.yres -680, gl.thomasBTexture);
+
+		float offset = 0.18f;
+		
+		// moves pictures so they scale to monitors resolution
+		amberZ((gl.xres/2 - 300), gl.yres * (1 - offset), gl.amberZTexture);
+		josephS((gl.xres/2 - 300), gl.yres * (1 - offset*2), gl.josephSTexture);
+		danL((gl.xres/2 - 300), gl.yres * (1 - offset*3), gl.danLTexture);
+		mabelleC((gl.xres/2 - 300), gl.yres * (1 - offset*4), gl.mabelleCTexture);
+		thomasB((gl.xres/2 - 300), gl.yres * (1 - offset*5), gl.thomasBTexture);
+		// old transformations of pictures
+		//amberZ((gl.xres/2 - 300), gl.yres - 120, gl.amberZTexture);
+		//josephS((gl.xres/2 - 300), gl.yres - 540, gl.josephSTexture);
+		//danL((gl.xres/2 - 300), gl.yres - 260, gl.danLTexture);
+		//mabelleC((gl.xres/2 - 300), gl.yres - 400, gl.mabelleCTexture);
+		//thomasB((gl.xres/2 - 300), gl.yres -680, gl.thomasBTexture);
 	}
 }

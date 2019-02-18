@@ -1,7 +1,6 @@
 // Program: mabelleC.cpp
 // Author: Mabelle Cruz
-// CS3350: Spring 2019
-// Project: Shiba-Survival
+// Function included for main file
 
 #include <GL/glx.h>
 #include "fonts.h"

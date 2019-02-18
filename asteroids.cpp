@@ -13,7 +13,7 @@
 #include <cmath>
 #include <X11/Xlib.h>
 //#include <X11/Xutil.h>
-//#include <GL/gl.h>
+//#include <GL/gl->h>
 //#include <GL/glu.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
@@ -65,13 +65,22 @@ public:
 	GLuint josephSTexture;
 	GLuint mabelleCTexture;
 	GLuint thomasBTexture;
+	static Global *instance;
+	static Global *getInstance() {
+		if (!instance) {
+			instance = new Global;
+		}
+		return instance;
+	}
 	Global() {
 		xres = 1250;
 		yres = 900;
 		memset(keys, 0, 65536);
 		showCredits = false;
 	}
-} gl;
+};
+Global *Global::instance = 0;
+Global *gl = gl->getInstance();
 
 //Added image class from rainforest.cpp
 class Image {
@@ -147,8 +156,8 @@ public:
 public:
 	Ship() {
 		VecZero(dir);
-		pos[0] = (Flt)(gl.xres/2);
-		pos[1] = (Flt)(gl.yres/2);
+		pos[0] = (Flt)(gl->xres/2);
+		pos[1] = (Flt)(gl->yres/2);
 		pos[2] = 0.0f;
 		VecZero(vel);
 		angle = 0.0;
@@ -215,8 +224,8 @@ public:
 				a->vert[i][1] = cos(angle) * (r2 + rnd() * a->radius);
 				angle += inc;
 			}
-			a->pos[0] = (Flt)(rand() % gl.xres);
-			a->pos[1] = (Flt)(rand() % gl.yres);
+			a->pos[0] = (Flt)(rand() % gl->xres);
+			a->pos[1] = (Flt)(rand() % gl->yres);
 			a->pos[2] = 0.0f;
 			a->angle = 0.0;
 			a->rotate = rnd() * 4.0 - 2.0;
@@ -252,7 +261,7 @@ public:
 		GLint att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
 		//GLint att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, None };
 		XSetWindowAttributes swa;
-		setup_screen_res(gl.xres, gl.yres);
+		setup_screen_res(gl->xres, gl->yres);
 		dpy = XOpenDisplay(NULL);
 		if (dpy == NULL) {
 			std::cout << "\n\tcannot connect to X server" << std::endl;
@@ -262,12 +271,12 @@ public:
 		XWindowAttributes getWinAttr;
 		XGetWindowAttributes(dpy, root, &getWinAttr);
 		int fullscreen=0;
-		gl.xres = w;
-		gl.yres = h;
+		gl->xres = w;
+		gl->yres = h;
 		if (!w && !h) {
 			//Go to fullscreen.
-			gl.xres = getWinAttr.width;
-			gl.yres = getWinAttr.height;
+			gl->xres = getWinAttr.width;
+			gl->yres = getWinAttr.height;
 			//When window is fullscreen, there is no client window
 			//so keystrokes are linked to the root window.
 			XGrabKeyboard(dpy, root, False,
@@ -289,9 +298,9 @@ public:
 			winops |= CWOverrideRedirect;
 			swa.override_redirect = True;
 		}
-		//win = XCreateWindow(dpy, root, 0, 0, gl.xres, gl.yres, 0,
+		//win = XCreateWindow(dpy, root, 0, 0, gl->xres, gl->yres, 0,
 		//	vi->depth, InputOutput, vi->visual, winops, &swa);
-		win = XCreateWindow(dpy, root, 0, 0, gl.xres, gl.yres, 0,
+		win = XCreateWindow(dpy, root, 0, 0, gl->xres, gl->yres, 0,
 			vi->depth, InputOutput, vi->visual, CWColormap | CWEventMask, &swa);
 		set_title();
 		glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
@@ -313,7 +322,7 @@ public:
 		if (e->type != ConfigureNotify)
 			return;
 		XConfigureEvent xce = e->xconfigure;
-		if (xce.width != gl.xres || xce.height != gl.yres) {
+		if (xce.width != gl->xres || xce.height != gl->yres) {
 			//Window size did change.
 			reshape_window(xce.width, xce.height);
 		}
@@ -324,12 +333,12 @@ public:
 		glViewport(0, 0, (GLint)width, (GLint)height);
 		glMatrixMode(GL_PROJECTION); glLoadIdentity();
 		glMatrixMode(GL_MODELVIEW); glLoadIdentity();
-		glOrtho(0, gl.xres, 0, gl.yres, -1, 1);
+		glOrtho(0, gl->xres, 0, gl->yres, -1, 1);
 		set_title();
 	}
 	void setup_screen_res(const int w, const int h) {
-		gl.xres = w;
-		gl.yres = h;
+		gl->xres = w;
+		gl->yres = h;
 	}
 	void swapBuffers() {
 		glXSwapBuffers(dpy, win);
@@ -415,12 +424,12 @@ int main()
 void init_opengl(void)
 {
 	//OpenGL initialization
-	glViewport(0, 0, gl.xres, gl.yres);
+	glViewport(0, 0, gl->xres, gl->yres);
 	//Initialize matrices
 	glMatrixMode(GL_PROJECTION); glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW); glLoadIdentity();
 	//This sets 2D mode (no perspective)
-	glOrtho(0, gl.xres, 0, gl.yres, -1, 1);
+	glOrtho(0, gl->xres, 0, gl->yres, -1, 1);
 	//
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
@@ -434,37 +443,37 @@ void init_opengl(void)
 	initialize_fonts();
 
 	//create opengl texture elements
-	glGenTextures(1, &gl.amberZTexture);
-	glBindTexture(GL_TEXTURE_2D, gl.amberZTexture);
+	glGenTextures(1, &gl->amberZTexture);
+	glBindTexture(GL_TEXTURE_2D, gl->amberZTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[0].height, 0, GL_RGB,
 		GL_UNSIGNED_BYTE, img[0].data);
 
-	glGenTextures(1, &gl.danLTexture);
-	glBindTexture(GL_TEXTURE_2D, gl.danLTexture);
+	glGenTextures(1, &gl->danLTexture);
+	glBindTexture(GL_TEXTURE_2D, gl->danLTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[0].height, 0, GL_RGB,
 		GL_UNSIGNED_BYTE, img[2].data);
 
-	glGenTextures(1, &gl.josephSTexture);
-	glBindTexture(GL_TEXTURE_2D, gl.josephSTexture);
+	glGenTextures(1, &gl->josephSTexture);
+	glBindTexture(GL_TEXTURE_2D, gl->josephSTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[1].width, img[1].height, 0, GL_RGB,
 		GL_UNSIGNED_BYTE, img[1].data);
 	
-	glGenTextures(1, &gl.mabelleCTexture);
-	glBindTexture(GL_TEXTURE_2D, gl.mabelleCTexture);
+	glGenTextures(1, &gl->mabelleCTexture);
+	glBindTexture(GL_TEXTURE_2D, gl->mabelleCTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[0].height, 0, GL_RGB,
 		GL_UNSIGNED_BYTE, img[3].data);
 	
 	
-	glGenTextures(1, &gl.thomasBTexture);
-	glBindTexture(GL_TEXTURE_2D, gl.thomasBTexture);
+	glGenTextures(1, &gl->thomasBTexture);
+	glBindTexture(GL_TEXTURE_2D, gl->thomasBTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[0].height, 0, GL_RGB,
@@ -588,14 +597,14 @@ int check_keys(XEvent *e)
 	int key = (XLookupKeysym(&e->xkey, 0) & 0x0000ffff);
 	//Log("key: %i\n", key);
 	if (e->type == KeyRelease) {
-		gl.keys[key]=0;
+		gl->keys[key]=0;
 		if (key == XK_Shift_L || key == XK_Shift_R)
 			shift=0;
 		return 0;
 	}
 	if (e->type == KeyPress) {
 		//std::cout << "press" << std::endl;
-		gl.keys[key]=1;
+		gl->keys[key]=1;
 		if (key == XK_Shift_L || key == XK_Shift_R) {
 			shift=1;
 			return 0;
@@ -606,7 +615,7 @@ int check_keys(XEvent *e)
 	if (shift){}
 	switch (key) {
 		case XK_c:
-			gl.showCredits ^= 1;
+			gl->showCredits ^= 1;
 			break;
 		case XK_Escape:
 			return 1;
@@ -685,16 +694,16 @@ void physics()
 	g.ship.pos[1] += g.ship.vel[1];
 	//Check for collision with window edges
 	if (g.ship.pos[0] < 0.0) {
-		g.ship.pos[0] += (float)gl.xres;
+		g.ship.pos[0] += (float)gl->xres;
 	}
-	else if (g.ship.pos[0] > (float)gl.xres) {
-		g.ship.pos[0] -= (float)gl.xres;
+	else if (g.ship.pos[0] > (float)gl->xres) {
+		g.ship.pos[0] -= (float)gl->xres;
 	}
 	else if (g.ship.pos[1] < 0.0) {
-		g.ship.pos[1] += (float)gl.yres;
+		g.ship.pos[1] += (float)gl->yres;
 	}
-	else if (g.ship.pos[1] > (float)gl.yres) {
-		g.ship.pos[1] -= (float)gl.yres;
+	else if (g.ship.pos[1] > (float)gl->yres) {
+		g.ship.pos[1] -= (float)gl->yres;
 	}
 	//
 	//
@@ -719,16 +728,16 @@ void physics()
 		b->pos[1] += b->vel[1];
 		//Check for collision with window edges
 		if (b->pos[0] < 0.0) {
-			b->pos[0] += (float)gl.xres;
+			b->pos[0] += (float)gl->xres;
 		}
-		else if (b->pos[0] > (float)gl.xres) {
-			b->pos[0] -= (float)gl.xres;
+		else if (b->pos[0] > (float)gl->xres) {
+			b->pos[0] -= (float)gl->xres;
 		}
 		else if (b->pos[1] < 0.0) {
-			b->pos[1] += (float)gl.yres;
+			b->pos[1] += (float)gl->yres;
 		}
-		else if (b->pos[1] > (float)gl.yres) {
-			b->pos[1] -= (float)gl.yres;
+		else if (b->pos[1] > (float)gl->yres) {
+			b->pos[1] -= (float)gl->yres;
 		}
 		i++;
 	}
@@ -740,16 +749,16 @@ void physics()
 		a->pos[1] += a->vel[1];
 		//Check for collision with window edges
 		if (a->pos[0] < -100.0) {
-			a->pos[0] += (float)gl.xres+200;
+			a->pos[0] += (float)gl->xres+200;
 		}
-		else if (a->pos[0] > (float)gl.xres+100) {
-			a->pos[0] -= (float)gl.xres+200;
+		else if (a->pos[0] > (float)gl->xres+100) {
+			a->pos[0] -= (float)gl->xres+200;
 		}
 		else if (a->pos[1] < -100.0) {
-			a->pos[1] += (float)gl.yres+200;
+			a->pos[1] += (float)gl->yres+200;
 		}
-		else if (a->pos[1] > (float)gl.yres+100) {
-			a->pos[1] -= (float)gl.yres+200;
+		else if (a->pos[1] > (float)gl->yres+100) {
+			a->pos[1] -= (float)gl->yres+200;
 		}
 		a->angle += a->rotate;
 		a = a->next;
@@ -813,7 +822,7 @@ void physics()
 	}
 	//---------------------------------------------------
 	//check keys pressed now
-	if (gl.keys[XK_Left]) {
+	if (gl->keys[XK_Left]) {
 		/*
 		g.ship.angle += 4.0;
 		if (g.ship.angle >= 360.0f)
@@ -822,7 +831,7 @@ void physics()
 		g.ship.angle = 90;
 		g.ship.pos[0]--;
 	}
-	if (gl.keys[XK_Right]) {
+	if (gl->keys[XK_Right]) {
 		/*
 		g.ship.angle -= 4.0;
 		if (g.ship.angle < 0.0f)
@@ -831,7 +840,7 @@ void physics()
 		g.ship.angle = 270;
 		g.ship.pos[0]++;
 	}
-	if (gl.keys[XK_Up]) {
+	if (gl->keys[XK_Up]) {
 		/*
 		//apply thrust
 		//convert ship angle to radians
@@ -853,11 +862,11 @@ void physics()
 		g.ship.angle = 360;
 		g.ship.pos[1]++;
 	}
-	if (gl.keys[XK_Down]) {
+	if (gl->keys[XK_Down]) {
 		g.ship.pos[1]--;
 		g.ship.angle = 180;
 	}
-	if (gl.keys[XK_space]) {
+	if (gl->keys[XK_space]) {
 		//a little time between each bullet
 		struct timespec bt;
 		clock_gettime(CLOCK_REALTIME, &bt);
@@ -905,7 +914,7 @@ void render()
 	Rect r;
 	glClear(GL_COLOR_BUFFER_BIT);
 	//
-	r.bot = gl.yres - 20;
+	r.bot = gl->yres - 20;
 	r.left = 10;
 	r.center = 0;
 	ggprint8b(&r, 16, 0x00ff0000, "3350 - Asteroids");
@@ -934,7 +943,7 @@ void render()
 	glVertex2f(0.0f, 0.0f);
 	glEnd();
 	glPopMatrix();
-	if (gl.keys[XK_Up] || gl.keys[XK_Down] || gl.keys[XK_Right] || gl.keys[XK_Left] || g.mouseThrustOn) {
+	if (gl->keys[XK_Up] || gl->keys[XK_Down] || gl->keys[XK_Right] || gl->keys[XK_Left] || g.mouseThrustOn) {
 		int i;
 		//draw thrust
 		Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
@@ -1003,7 +1012,7 @@ void render()
 		glEnd();
 	}
 	
-	if (gl.showCredits) {
+	if (gl->showCredits) {
 		extern void amberZ(int, int, GLuint);
 		extern void josephS(float, float, GLuint);
         extern void danL(int, int, GLuint);
@@ -1011,24 +1020,24 @@ void render()
 		extern void thomasB(int, int, GLuint);
 		glClear(GL_COLOR_BUFFER_BIT);
 		Rect rcred;
-		rcred.bot = gl.yres * 0.95f;
-		rcred.left = gl.xres/2;
+		rcred.bot = gl->yres * 0.95f;
+		rcred.left = gl->xres/2;
 		rcred.center = 0;
 		ggprint16(&rcred, 16, 0x00ffff00, "Credits");
 
 		// moves pictures so they scale to monitors resolution
 		float offset = 0.18f;
-		amberZ((gl.xres/2 - 300), gl.yres * (1 - offset), gl.amberZTexture);
-		josephS((gl.xres/2 - 300), gl.yres * (1 - offset*2), gl.josephSTexture);
-		danL((gl.xres/2 - 300), gl.yres * (1 - offset*3), gl.danLTexture);
-		mabelleC((gl.xres/2 - 300), gl.yres * (1 - offset*4), gl.mabelleCTexture);
-		thomasB((gl.xres/2 - 300), gl.yres * (1 - offset*5), gl.thomasBTexture);
+		amberZ((gl->xres/2 - 300), gl->yres * (1 - offset), gl->amberZTexture);
+		josephS((gl->xres/2 - 300), gl->yres * (1 - offset*2), gl->josephSTexture);
+		danL((gl->xres/2 - 300), gl->yres * (1 - offset*3), gl->danLTexture);
+		mabelleC((gl->xres/2 - 300), gl->yres * (1 - offset*4), gl->mabelleCTexture);
+		thomasB((gl->xres/2 - 300), gl->yres * (1 - offset*5), gl->thomasBTexture);
 
 		// old transformations of pictures
-		//amberZ((gl.xres/2 - 300), gl.yres - 120, gl.amberZTexture);
-		//josephS((gl.xres/2 - 300), gl.yres - 540, gl.josephSTexture);
-		//danL((gl.xres/2 - 300), gl.yres - 260, gl.danLTexture);
-		//mabelleC((gl.xres/2 - 300), gl.yres - 400, gl.mabelleCTexture);
-		//thomasB((gl.xres/2 - 300), gl.yres -680, gl.thomasBTexture);
+		//amberZ((gl->xres/2 - 300), gl->yres - 120, gl->amberZTexture);
+		//josephS((gl->xres/2 - 300), gl->yres - 540, gl->josephSTexture);
+		//danL((gl->xres/2 - 300), gl->yres - 260, gl->danLTexture);
+		//mabelleC((gl->xres/2 - 300), gl->yres - 400, gl->mabelleCTexture);
+		//thomasB((gl->xres/2 - 300), gl->yres -680, gl->thomasBTexture);
 	}
 }

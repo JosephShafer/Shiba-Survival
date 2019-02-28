@@ -454,7 +454,7 @@ void init_opengl(void)
 	glBindTexture(GL_TEXTURE_2D, gl->danLTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[0].height, 0, GL_RGB,
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[2].height, 0, GL_RGB,
 		GL_UNSIGNED_BYTE, img[2].data);
 
 	glGenTextures(1, &gl->josephSTexture);
@@ -468,7 +468,7 @@ void init_opengl(void)
 	glBindTexture(GL_TEXTURE_2D, gl->mabelleCTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[0].height, 0, GL_RGB,
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[3].height, 0, GL_RGB,
 		GL_UNSIGNED_BYTE, img[3].data);
 	
 	
@@ -476,7 +476,7 @@ void init_opengl(void)
 	glBindTexture(GL_TEXTURE_2D, gl->thomasBTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[0].height, 0, GL_RGB,
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[4].height, 0, GL_RGB,
 		GL_UNSIGNED_BYTE, img[4].data);
 }
 

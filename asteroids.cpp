@@ -60,6 +60,7 @@ public:
 	int xres, yres;
 	char keys[65536];
 	bool showCredits;
+	// TODO This could be an array or vector
 	GLuint amberZTexture;
 	GLuint danLTexture;
 	GLuint josephSTexture;
@@ -83,6 +84,8 @@ Global *Global::instance = 0;
 Global *gl = gl->getInstance();
 
 //Added image class from rainforest.cpp
+//TODO We could probably name this something like Texture and put
+// it in another file
 class Image {
 public:
 	int width, height;
@@ -94,6 +97,7 @@ public:
 		if (fname[0] == '\0')
 			return;
 		//printf("fname **%s**\n", fname);
+		// TODO this logic converts images to ppm format, probably can be removed
 		int ppmFlag = 0; 
 		char name[40];
 		strcpy(name, fname);
@@ -146,12 +150,15 @@ Image img[5] = {
 "./images/mabelleC.png",
 "./images/thomasB.png"};
 
+// TODO rename to dog?
 class Ship {
 public:
 	Vec dir;
 	Vec pos;
 	Vec vel;
+	// TODO How we 'display' angle will depend on how the sprites look
 	float angle;
+	// TODO won't need color if we're doing sprites..
 	float color[3];
 public:
 	Ship() {
@@ -165,6 +172,7 @@ public:
 	}
 };
 
+// TODO Do we want to have bullets at all?
 class Bullet {
 public:
 	Vec pos;
@@ -175,6 +183,7 @@ public:
 	Bullet() { }
 };
 
+// TODO Maybe rename this to Enemy? 
 class Asteroid {
 public:
 	Vec pos;
@@ -443,6 +452,7 @@ void init_opengl(void)
 	initialize_fonts();
 
 	//create opengl texture elements
+	// TODO gotta be a way to make this simpler
 	glGenTextures(1, &gl->amberZTexture);
 	glBindTexture(GL_TEXTURE_2D, gl->amberZTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -493,6 +503,7 @@ void normalize2d(Vec v)
 	v[1] *= len;
 }
 
+// TODO Do we want mouse support?
 void check_mouse(XEvent *e)
 {
 	//Did the mouse move?
@@ -769,6 +780,8 @@ void physics()
 	//     1. delete the bullet
 	//     2. break the asteroid into pieces
 	//        if asteroid small, delete it
+	// TODO 'Deal with enemies' logic. Can be rewritten to suit our needs or
+	// put in someone's file
 	a = g.ahead;
 	while (a) {
 		//is there a bullet within its radius?

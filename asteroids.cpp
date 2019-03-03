@@ -60,11 +60,14 @@ public:
 	int xres, yres;
 	char keys[65536];
 	bool showCredits;
+	GLuint textures[5];
+	/*
 	GLuint amberZTexture;
 	GLuint danLTexture;
 	GLuint josephSTexture;
 	GLuint mabelleCTexture;
 	GLuint thomasBTexture;
+	*/
 	static Global *instance;
 	static Global *getInstance() {
 		if (!instance) {
@@ -146,6 +149,7 @@ Image img[5] = {
 "./images/mabelleC.png",
 "./images/thomasB.png"};
 
+//dog
 class Ship {
 public:
 	Vec dir;
@@ -165,6 +169,7 @@ public:
 	}
 };
 
+//keep?
 class Bullet {
 public:
 	Vec pos;
@@ -175,6 +180,13 @@ public:
 	Bullet() { }
 };
 
+/*
+	Different enemies:
+	- Cats
+	- Mailmen
+	Powerups
+*/
+/*
 class Asteroid {
 public:
 	Vec pos;
@@ -193,55 +205,68 @@ public:
 		next = NULL;
 	}
 };
+*/
 
+class Enemy {
+public:
+	Vec pos;
+	Vec vel;
+	Flt radius;
+	Vec vert[8];
+	float angle;
+	float rotate;
+public:
+};
+
+//sets up game state
 class Game {
 public:
 	Ship ship;
-	Asteroid *ahead;
+	//Asteroid *ahead;
 	Bullet *barr;
-	int nasteroids;
+	//int nasteroids;
 	int nbullets;
 	struct timespec bulletTimer;
 	struct timespec mouseThrustTimer;
 	bool mouseThrustOn;
 public:
 	Game() {
-		ahead = NULL;
+		//ahead = NULL;
 		barr = new Bullet[MAX_BULLETS];
-		nasteroids = 0;
+		//nasteroids = 0;
 		nbullets = 0;
 		mouseThrustOn = false;
 		//build 10 asteroids...
-		for (int j=0; j<10; j++) {
-			Asteroid *a = new Asteroid;
-			a->nverts = 8;
-			a->radius = rnd()*80.0 + 40.0;
-			Flt r2 = a->radius / 2.0;
-			Flt angle = 0.0f;
-			Flt inc = (PI * 2.0) / (Flt)a->nverts;
-			for (int i=0; i<a->nverts; i++) {
-				a->vert[i][0] = sin(angle) * (r2 + rnd() * a->radius);
-				a->vert[i][1] = cos(angle) * (r2 + rnd() * a->radius);
-				angle += inc;
-			}
-			a->pos[0] = (Flt)(rand() % gl->xres);
-			a->pos[1] = (Flt)(rand() % gl->yres);
-			a->pos[2] = 0.0f;
-			a->angle = 0.0;
-			a->rotate = rnd() * 4.0 - 2.0;
-			a->color[0] = 0.8;
-			a->color[1] = 0.8;
-			a->color[2] = 0.7;
-			a->vel[0] = (Flt)(rnd()*2.0-1.0);
-			a->vel[1] = (Flt)(rnd()*2.0-1.0);
-			//std::cout << "asteroid" << std::endl;
-			//add to front of linked list
-			a->next = ahead;
-			if (ahead != NULL)
-				ahead->prev = a;
-			ahead = a;
-			++nasteroids;
-		}
+		// for (int j=0; j<10; j++) {
+		// 	Asteroid *a = new Asteroid;
+		// 	a->nverts = 8;
+		// 	a->radius = rnd()*80.0 + 40.0;
+		// 	Flt r2 = a->radius / 2.0;
+		// 	Flt angle = 0.0f;
+		// 	Flt inc = (PI * 2.0) / (Flt)a->nverts;
+		// 	for (int i=0; i<a->nverts; i++) {
+		// 		a->vert[i][0] = sin(angle) * (r2 + rnd() * a->radius);
+		// 		a->vert[i][1] = cos(angle) * (r2 + rnd() * a->radius);
+		// 		angle += inc;
+		// 	}
+		// 	a->pos[0] = (Flt)(rand() % gl->xres);
+		// 	a->pos[1] = (Flt)(rand() % gl->yres);
+		// 	a->pos[2] = 0.0f;
+		// 	a->angle = 0.0;
+		// 	a->rotate = rnd() * 4.0 - 2.0;
+		// 	a->color[0] = 0.8;
+		// 	a->color[1] = 0.8;
+		// 	a->color[2] = 0.7;
+		// 	a->vel[0] = (Flt)(rnd()*2.0-1.0);
+		// 	a->vel[1] = (Flt)(rnd()*2.0-1.0);
+		// 	//std::cout << "asteroid" << std::endl;
+		// 	//add to front of linked list
+		// 	a->next = ahead;
+		// 	if (ahead != NULL)
+		// 		ahead->prev = a;
+		// 	ahead = a;
+		// 	++nasteroids;
+		// }
 		clock_gettime(CLOCK_REALTIME, &bulletTimer);
 	}
 	~Game() {
@@ -351,6 +376,7 @@ public:
 		XNextEvent(dpy, &e);
 		return e;
 	}
+	//bullet stuff?
 	void set_mouse_position(int x, int y) {
 		XWarpPointer(dpy, None, win, 0, 0, 0, 0, x, y);
 	}
@@ -381,7 +407,7 @@ public:
 
 //function prototypes
 void init_opengl(void);
-void check_mouse(XEvent *e);
+//void check_mouse(XEvent *e);
 int check_keys(XEvent *e);
 void physics();
 void render();
@@ -402,7 +428,7 @@ int main()
 		while (x11.getXPending()) {
 			XEvent e = x11.getXNextEvent();
 			x11.check_resize(&e);
-			check_mouse(&e);
+			//check_mouse(&e);
 			done = check_keys(&e);
 		}
 		clock_gettime(CLOCK_REALTIME, &timeCurrent);
@@ -442,6 +468,16 @@ void init_opengl(void)
 	glEnable(GL_TEXTURE_2D);
 	initialize_fonts();
 
+	for (int i = 0; i < 5; i++) {
+		glGenTextures(1, &gl->textures[i]);
+		glBindTexture(GL_TEXTURE_2D, gl->textures[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, img[i].width, img[i].height, 0, GL_RGB,
+			GL_UNSIGNED_BYTE, img[i].data);
+	}
+
+	/*
 	//create opengl texture elements
 	glGenTextures(1, &gl->amberZTexture);
 	glBindTexture(GL_TEXTURE_2D, gl->amberZTexture);
@@ -478,6 +514,7 @@ void init_opengl(void)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, img[0].width, img[4].height, 0, GL_RGB,
 		GL_UNSIGNED_BYTE, img[4].data);
+	*/
 }
 
 void normalize2d(Vec v)
@@ -493,6 +530,7 @@ void normalize2d(Vec v)
 	v[1] *= len;
 }
 
+/*
 void check_mouse(XEvent *e)
 {
 	//Did the mouse move?
@@ -589,6 +627,7 @@ void check_mouse(XEvent *e)
 		savey=100;
 	}
 }
+*/
 
 int check_keys(XEvent *e)
 {
@@ -598,17 +637,21 @@ int check_keys(XEvent *e)
 	//Log("key: %i\n", key);
 	if (e->type == KeyRelease) {
 		gl->keys[key]=0;
+		/*
 		if (key == XK_Shift_L || key == XK_Shift_R)
 			shift=0;
 		return 0;
+		*/
 	}
 	if (e->type == KeyPress) {
 		//std::cout << "press" << std::endl;
 		gl->keys[key]=1;
+		/*
 		if (key == XK_Shift_L || key == XK_Shift_R) {
 			shift=1;
 			return 0;
 		}
+		*/
 	} else {
 		return 0;
 	}
@@ -619,20 +662,25 @@ int check_keys(XEvent *e)
 			break;
 		case XK_Escape:
 			return 1;
+		/*
 		case XK_f:
 			break;
 		case XK_s:
 			break;
+		*/
 		case XK_Down:
 			break;
+		/*
 		case XK_equal:
 			break;
 		case XK_minus:
 			break;
+		*/
 	}
 	return 0;
 }
 
+/*
 void deleteAsteroid(Game *g, Asteroid *node)
 {
 	//Remove a node from doubly-linked list
@@ -659,7 +707,9 @@ void deleteAsteroid(Game *g, Asteroid *node)
 	delete node;
 	node = NULL;
 }
+*/
 
+/*
 void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 {
 	//build ta from a
@@ -685,10 +735,11 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 	ta->vel[1] = a->vel[1] + (rnd()*2.0-1.0);
 	//std::cout << "frag" << std::endl;
 }
+*/
 
 void physics()
 {
-	Flt d0,d1,dist;
+	//Flt d0,d1,dist;
 	//Update ship position
 	g.ship.pos[0] += g.ship.vel[0];
 	g.ship.pos[1] += g.ship.vel[1];
@@ -743,6 +794,7 @@ void physics()
 	}
 	//
 	//Update asteroid positions
+	/*
 	Asteroid *a = g.ahead;
 	while (a) {
 		a->pos[0] += a->vel[0];
@@ -763,12 +815,14 @@ void physics()
 		a->angle += a->rotate;
 		a = a->next;
 	}
+	*/
 	//
 	//Asteroid collision with bullets?
 	//If collision detected:
 	//     1. delete the bullet
 	//     2. break the asteroid into pieces
 	//        if asteroid small, delete it
+	/*
 	a = g.ahead;
 	while (a) {
 		//is there a bullet within its radius?
@@ -820,6 +874,7 @@ void physics()
 			break;
 		a = a->next;
 	}
+	*/
 	//---------------------------------------------------
 	//check keys pressed now
 	if (gl->keys[XK_Left]) {
@@ -919,7 +974,7 @@ void render()
 	r.center = 0;
 	ggprint8b(&r, 16, 0x00ff0000, "3350 - Asteroids");
 	ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g.nbullets);
-	ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
+	//ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
 	//-------------------------------------------------------------------------
 	//Draw the ship
 	glColor3fv(g.ship.color);
@@ -966,6 +1021,7 @@ void render()
 	}
 	//-------------------------------------------------------------------------
 	//Draw the asteroids
+	/**
 	{
 		Asteroid *a = g.ahead;
 		while (a) {
@@ -992,6 +1048,7 @@ void render()
 			a = a->next;
 		}
 	}
+	**/
 	//-------------------------------------------------------------------------
 	//Draw the bullets
 	for (int i=0; i<g.nbullets; i++) {
@@ -1027,11 +1084,11 @@ void render()
 
 		// moves pictures so they scale to monitors resolution
 		float offset = 0.18f;
-		amberZ((gl->xres/2 - 300), gl->yres * (1 - offset), gl->amberZTexture);
-		josephS((gl->xres/2 - 300), gl->yres * (1 - offset*2), gl->josephSTexture);
-		danL((gl->xres/2 - 300), gl->yres * (1 - offset*3), gl->danLTexture);
-		mabelleC((gl->xres/2 - 300), gl->yres * (1 - offset*4), gl->mabelleCTexture);
-		thomasB((gl->xres/2 - 300), gl->yres * (1 - offset*5), gl->thomasBTexture);
+		amberZ((gl->xres/2 - 300), gl->yres * (1 - offset), gl->textures[0]);
+		josephS((gl->xres/2 - 300), gl->yres * (1 - offset*2), gl->textures[1]);
+		danL((gl->xres/2 - 300), gl->yres * (1 - offset*3), gl->textures[2]);
+		mabelleC((gl->xres/2 - 300), gl->yres * (1 - offset*4), gl->textures[3]);
+		thomasB((gl->xres/2 - 300), gl->yres * (1 - offset*5), gl->textures[4]);
 
 		// old transformations of pictures
 		//amberZ((gl->xres/2 - 300), gl->yres - 120, gl->amberZTexture);

@@ -37,3 +37,5 @@ void josephS(float x, float y, GLuint textid)
     glEnd();
     glPopMatrix();
 }
+
+// Did this work?

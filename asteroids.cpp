@@ -861,7 +861,8 @@ void shipControl()
 	}
 }
 
-void bulletPositionControl(){
+void bulletPositionControl()
+{
 	struct timespec bt;
 	clock_gettime(CLOCK_REALTIME, &bt);
 	int i=0;
@@ -898,7 +899,8 @@ void bulletPositionControl(){
 }
 
 // Don't want to confuse for checkKeys, could we combine those?
-void physicsKeyEvents(){
+void physicsKeyEvents()
+{
 	if (gl->keys[XK_Left]) {
 		/*
 		g.ship.angle += 4.0;
@@ -1069,7 +1071,8 @@ void drawBullet()
 	}
 }
 
-void drawShip(){
+void drawShip()
+{
 	glColor3fv(g.ship.color);
 	glPushMatrix();
 	glTranslatef(g.ship.pos[0], g.ship.pos[1], g.ship.pos[2]);

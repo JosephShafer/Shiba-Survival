@@ -410,7 +410,14 @@ void init_opengl(void);
 //void check_mouse(XEvent *e);
 int check_keys(XEvent *e);
 void physics();
+void physicsKeyEvents();
+void shipControl();
+void bulletPositionControll();
 void render();
+void gameplayScreen();
+void drawBullet();
+void drawShip();
+void drawCredits();
 
 //==========================================================================
 // M A I N
@@ -739,59 +746,12 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 
 void physics()
 {
-	//Flt d0,d1,dist;
-	//Update ship position
-	g.ship.pos[0] += g.ship.vel[0];
-	g.ship.pos[1] += g.ship.vel[1];
-	//Check for collision with window edges
-	if (g.ship.pos[0] < 0.0) {
-		g.ship.pos[0] += (float)gl->xres;
-	}
-	else if (g.ship.pos[0] > (float)gl->xres) {
-		g.ship.pos[0] -= (float)gl->xres;
-	}
-	else if (g.ship.pos[1] < 0.0) {
-		g.ship.pos[1] += (float)gl->yres;
-	}
-	else if (g.ship.pos[1] > (float)gl->yres) {
-		g.ship.pos[1] -= (float)gl->yres;
-	}
 	//
 	//
+	//
+	shipControl();
 	//Update bullet positions
-	struct timespec bt;
-	clock_gettime(CLOCK_REALTIME, &bt);
-	int i=0;
-	while (i < g.nbullets) {
-		Bullet *b = &g.barr[i];
-		//How long has bullet been alive?
-		double ts = timeDiff(&b->time, &bt);
-		if (ts > 2.5) {
-			//time to delete the bullet.
-			memcpy(&g.barr[i], &g.barr[g.nbullets-1],
-				sizeof(Bullet));
-			g.nbullets--;
-			//do not increment i.
-			continue;
-		}
-		//move the bullet
-		b->pos[0] += b->vel[0];
-		b->pos[1] += b->vel[1];
-		//Check for collision with window edges
-		if (b->pos[0] < 0.0) {
-			b->pos[0] += (float)gl->xres;
-		}
-		else if (b->pos[0] > (float)gl->xres) {
-			b->pos[0] -= (float)gl->xres;
-		}
-		else if (b->pos[1] < 0.0) {
-			b->pos[1] += (float)gl->yres;
-		}
-		else if (b->pos[1] > (float)gl->yres) {
-			b->pos[1] -= (float)gl->yres;
-		}
-		i++;
-	}
+	bulletPositionControll();
 	//
 	//Update asteroid positions
 	/*
@@ -877,6 +837,68 @@ void physics()
 	*/
 	//---------------------------------------------------
 	//check keys pressed now
+	physicsKeyEvents();
+}
+
+void shipControl()
+{
+	//Flt d0,d1,dist;
+	//Update ship position
+	g.ship.pos[0] += g.ship.vel[0];
+	g.ship.pos[1] += g.ship.vel[1];
+	//Check for collision with window edges
+	if (g.ship.pos[0] < 0.0) {
+		g.ship.pos[0] += (float)gl->xres;
+	}
+	else if (g.ship.pos[0] > (float)gl->xres) {
+		g.ship.pos[0] -= (float)gl->xres;
+	}
+	else if (g.ship.pos[1] < 0.0) {
+		g.ship.pos[1] += (float)gl->yres;
+	}
+	else if (g.ship.pos[1] > (float)gl->yres) {
+		g.ship.pos[1] -= (float)gl->yres;
+	}
+}
+
+void bulletPositionControll(){
+	struct timespec bt;
+	clock_gettime(CLOCK_REALTIME, &bt);
+	int i=0;
+	while (i < g.nbullets) {
+		Bullet *b = &g.barr[i];
+		//How long has bullet been alive?
+		double ts = timeDiff(&b->time, &bt);
+		if (ts > 2.5) {
+			//time to delete the bullet.
+			memcpy(&g.barr[i], &g.barr[g.nbullets-1],
+				sizeof(Bullet));
+			g.nbullets--;
+			//do not increment i.
+			continue;
+		}
+		//move the bullet
+		b->pos[0] += b->vel[0];
+		b->pos[1] += b->vel[1];
+		//Check for collision with window edges
+		if (b->pos[0] < 0.0) {
+			b->pos[0] += (float)gl->xres;
+		}
+		else if (b->pos[0] > (float)gl->xres) {
+			b->pos[0] -= (float)gl->xres;
+		}
+		else if (b->pos[1] < 0.0) {
+			b->pos[1] += (float)gl->yres;
+		}
+		else if (b->pos[1] > (float)gl->yres) {
+			b->pos[1] -= (float)gl->yres;
+		}
+		i++;
+	}
+}
+
+// Don't want to confuse for checkKeys, could we combine those?
+void physicsKeyEvents(){
 	if (gl->keys[XK_Left]) {
 		/*
 		g.ship.angle += 4.0;
@@ -962,9 +984,20 @@ void physics()
 		if (tdif < -0.3)
 			g.mouseThrustOn = false;
 	}
+
 }
 
 void render()
+{
+	gameplayScreen();
+	
+	if (gl->showCredits) {
+		drawCredits();
+	}
+}
+
+
+void gameplayScreen()
 {
 	Rect r;
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -977,6 +1010,66 @@ void render()
 	//ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
 	//-------------------------------------------------------------------------
 	//Draw the ship
+	drawShip();
+	//-------------------------------------------------------------------------
+	//Draw the asteroids
+	/**
+	{
+		Asteroid *a = g.ahead;
+		while (a) {
+			//Log("draw asteroid...\n");
+			glColor3fv(a->color);
+			glPushMatrix();
+			glTranslatef(a->pos[0], a->pos[1], a->pos[2]);
+			glRotatef(a->angle, 0.0f, 0.0f, 1.0f);
+			glBegin(GL_LINE_LOOP);
+			//Log("%i verts\n",a->nverts);
+			for (int j=0; j<a->nverts; j++) {
+				glVertex2f(a->vert[j][0], a->vert[j][1]);
+			}
+			glEnd();
+			//glBegin(GL_LINES);
+			//	glVertex2f(0,   0);
+			//	glVertex2f(a->radius, 0);
+			//glEnd();
+			glPopMatrix();
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glBegin(GL_POINTS);
+			glVertex2f(a->pos[0], a->pos[1]);
+			glEnd();
+			a = a->next;
+		}
+	}
+	**/
+	//-------------------------------------------------------------------------
+	//Draw the bullets
+	drawBullet();
+
+
+}
+
+void drawBullet()
+{
+	for (int i=0; i<g.nbullets; i++) {
+		Bullet *b = &g.barr[i];
+		//Log("draw bullet...\n");
+		glColor3f(1.0, 1.0, 1.0);
+		glBegin(GL_POINTS);
+		glVertex2f(b->pos[0],      b->pos[1]);
+		glVertex2f(b->pos[0]-1.0f, b->pos[1]);
+		glVertex2f(b->pos[0]+1.0f, b->pos[1]);
+		glVertex2f(b->pos[0],      b->pos[1]-1.0f);
+		glVertex2f(b->pos[0],      b->pos[1]+1.0f);
+		glColor3f(0.8, 0.8, 0.8);
+		glVertex2f(b->pos[0]-1.0f, b->pos[1]-1.0f);
+		glVertex2f(b->pos[0]-1.0f, b->pos[1]+1.0f);
+		glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
+		glVertex2f(b->pos[0]+1.0f, b->pos[1]+1.0f);
+		glEnd();
+	}
+}
+
+void drawShip(){
 	glColor3fv(g.ship.color);
 	glPushMatrix();
 	glTranslatef(g.ship.pos[0], g.ship.pos[1], g.ship.pos[2]);
@@ -1019,57 +1112,12 @@ void render()
 		}
 		glEnd();
 	}
-	//-------------------------------------------------------------------------
-	//Draw the asteroids
-	/**
-	{
-		Asteroid *a = g.ahead;
-		while (a) {
-			//Log("draw asteroid...\n");
-			glColor3fv(a->color);
-			glPushMatrix();
-			glTranslatef(a->pos[0], a->pos[1], a->pos[2]);
-			glRotatef(a->angle, 0.0f, 0.0f, 1.0f);
-			glBegin(GL_LINE_LOOP);
-			//Log("%i verts\n",a->nverts);
-			for (int j=0; j<a->nverts; j++) {
-				glVertex2f(a->vert[j][0], a->vert[j][1]);
-			}
-			glEnd();
-			//glBegin(GL_LINES);
-			//	glVertex2f(0,   0);
-			//	glVertex2f(a->radius, 0);
-			//glEnd();
-			glPopMatrix();
-			glColor3f(1.0f, 0.0f, 0.0f);
-			glBegin(GL_POINTS);
-			glVertex2f(a->pos[0], a->pos[1]);
-			glEnd();
-			a = a->next;
-		}
-	}
-	**/
-	//-------------------------------------------------------------------------
-	//Draw the bullets
-	for (int i=0; i<g.nbullets; i++) {
-		Bullet *b = &g.barr[i];
-		//Log("draw bullet...\n");
-		glColor3f(1.0, 1.0, 1.0);
-		glBegin(GL_POINTS);
-		glVertex2f(b->pos[0],      b->pos[1]);
-		glVertex2f(b->pos[0]-1.0f, b->pos[1]);
-		glVertex2f(b->pos[0]+1.0f, b->pos[1]);
-		glVertex2f(b->pos[0],      b->pos[1]-1.0f);
-		glVertex2f(b->pos[0],      b->pos[1]+1.0f);
-		glColor3f(0.8, 0.8, 0.8);
-		glVertex2f(b->pos[0]-1.0f, b->pos[1]-1.0f);
-		glVertex2f(b->pos[0]-1.0f, b->pos[1]+1.0f);
-		glVertex2f(b->pos[0]+1.0f, b->pos[1]-1.0f);
-		glVertex2f(b->pos[0]+1.0f, b->pos[1]+1.0f);
-		glEnd();
-	}
-	
-	if (gl->showCredits) {
+}
+
+
+
+void drawCredits()
+{
 		extern void amberZ(int, int, GLuint);
 		extern void josephS(float, float, GLuint);
         extern void danL(int, int, GLuint);
@@ -1089,12 +1137,4 @@ void render()
 		danL((gl->xres/2 - 300), gl->yres * (1 - offset*3), gl->textures[2]);
 		mabelleC((gl->xres/2 - 300), gl->yres * (1 - offset*4), gl->textures[3]);
 		thomasB((gl->xres/2 - 300), gl->yres * (1 - offset*5), gl->textures[4]);
-
-		// old transformations of pictures
-		//amberZ((gl->xres/2 - 300), gl->yres - 120, gl->amberZTexture);
-		//josephS((gl->xres/2 - 300), gl->yres - 540, gl->josephSTexture);
-		//danL((gl->xres/2 - 300), gl->yres - 260, gl->danLTexture);
-		//mabelleC((gl->xres/2 - 300), gl->yres - 400, gl->mabelleCTexture);
-		//thomasB((gl->xres/2 - 300), gl->yres -680, gl->thomasBTexture);
-	}
 }

@@ -412,7 +412,7 @@ int check_keys(XEvent *e);
 void physics();
 void physicsKeyEvents();
 void shipControl();
-void bulletPositionControll();
+void bulletPositionControl();
 void render();
 void gameplayScreen();
 void drawBullet();
@@ -751,7 +751,7 @@ void physics()
 	//
 	shipControl();
 	//Update bullet positions
-	bulletPositionControll();
+	bulletPositionControl();
 	//
 	//Update asteroid positions
 	/*
@@ -861,7 +861,7 @@ void shipControl()
 	}
 }
 
-void bulletPositionControll(){
+void bulletPositionControl(){
 	struct timespec bt;
 	clock_gettime(CLOCK_REALTIME, &bt);
 	int i=0;

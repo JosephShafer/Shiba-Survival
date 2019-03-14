@@ -60,6 +60,9 @@ public:
 	int xres, yres;
 	char keys[65536];
 	bool showCredits;
+	//added to work w/ storeScore()
+	char *user;
+	int score;
 	GLuint textures[5];
 	/*
 	GLuint amberZTexture;
@@ -80,6 +83,7 @@ public:
 		yres = 900;
 		memset(keys, 0, 65536);
 		showCredits = false;
+		score = 0;
 	}
 };
 Global *Global::instance = 0;
@@ -423,8 +427,13 @@ void drawCredits();
 //==========================================================================
 // M A I N
 //==========================================================================
-int main()
+int main(int argc, char *argv[])
 {
+	if (argc < 2) {
+		gl->user = (char *) "anonymous";
+	} else {
+		gl->user = argv[1];
+	}
 	logOpen();
 	init_opengl();
 	srand(time(NULL));
@@ -669,7 +678,13 @@ int check_keys(XEvent *e)
 			gl->showCredits ^= 1;
 			break;
 		case XK_Escape:
+		{
+			//should be on game over
+			//left here for now until we add more functionality
+			extern void storeScore(char[], int);
+			storeScore(gl->user, gl->score);
 			return 1;
+		}
 		/*
 		case XK_f:
 			break;

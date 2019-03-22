@@ -4,6 +4,10 @@
 
 #include <GL/glx.h>
 #include "fonts.h"
+#include <stdlib.h>
+#include <vector>
+#include <stdio.h>
+using namespace std;
 
 typedef float Vec[3];
 
@@ -52,18 +56,24 @@ Ideas related to enemies:
 class Enemy{
 public:
     float position[2];
-    Enemy(){
-        position[0] = 300;
-        position[1] = 300;
-    }
+	float velocity[2];
     void drawEnemy();
-    void updatePosition(Vec, Vec);
-
+    void updatePosition(float, float, float, float);
+	void createEnemys();
+	
+	Enemy();
+//	~Enemy();
 };
 
+Enemy::Enemy(){
+	position[0] = 0;
+	position[1] = 0;
+	velocity[0] = 0;
+	velocity[1] = 0;
+};
 
-
-void Enemy::drawEnemy(){
+void Enemy::drawEnemy()
+{
         // square until we add sprites
         
         float sideLength = 10.0f;
@@ -77,11 +87,59 @@ void Enemy::drawEnemy(){
 }
 
 
-void Enemy::updatePosition(Vec, Vec){
+void Enemy::updatePosition(float Xposition, float Yposition, float xWinResolution, float yWinResolution)
+{
+		float speed = .07 * (rand() % 2);
 
-    //position[0] -= 3;
-    //position[1] -= 2;
+    	if(position[0] < Xposition)
+			velocity[0] += speed;
+		if(position[0] > Xposition)
+			velocity[0] -= speed;
+		if(position[1] < Yposition)
+			velocity[1] += speed;
+		if(position[1] > Yposition)
+			velocity[1] -= speed;
+		
 
+		if(position[0] < 0 || position[0] > xWinResolution){
+			velocity[0] *= -1;
+		}
+		if(position[1] < 0 || position[1] > yWinResolution){
+			velocity[1] *= -1;
+		}
+		position[0] = position[0] + velocity[0];
+		position[1] = position[1] + velocity[1];
+
+			   
+		   
+}
+
+void createEnemies(vector<Enemy> &EnemyInstance, int VecSize){
+	for(int i = 0; i < VecSize; i++){
+		EnemyInstance.push_back(Enemy());
+		static int spawnPoint = 0;
+	switch(spawnPoint){
+		case 0:
+		EnemyInstance[i].position[0] = (rand() % 1920);
+		EnemyInstance[i].position[1] = (rand() % 1);
+		break;
+		case 1:
+		EnemyInstance[i].position[0] = (rand() % 1920);
+		EnemyInstance[i].position[1] = (rand() % 1)  + 1080;
+		break;
+		case 2:
+		EnemyInstance[i].position[0] = (rand() % 1);
+		EnemyInstance[i].position[1] = (rand() % 1080);
+		break;
+		case 3:
+		EnemyInstance[i].position[0] = (rand() % 1)  +1920;
+		EnemyInstance[i].position[1] = (rand() % 1080);
+		break;
+	}
+	spawnPoint++;
+	if(spawnPoint == 4)
+		spawnPoint = 0;
+	}
 }
 
 
@@ -243,16 +301,16 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 		a->pos[0] += a->vel[0];
 		a->pos[1] += a->vel[1];
 		//Check for collision with window edges
-		if (a->pos[0] < -100.0) {
+		if (a->pos[0] < -1000.0) {
 			a->pos[0] += (float)gl->xres+200;
 		}
-		else if (a->pos[0] > (float)gl->xres+100) {
+		else if (a->pos[0] > (float)gl->xres+1000) {
 			a->pos[0] -= (float)gl->xres+200;
 		}
-		else if (a->pos[1] < -100.0) {
+		else if (a->pos[1] < -1000.0) {
 			a->pos[1] += (float)gl->yres+200;
 		}z
-		else if (a->pos[1] > (float)gl->yres+100) {
+		else if (a->pos[1] > (float)gl->yres+1000) {
 			a->pos[1] -= (float)gl->yres+200;
 		}
 		a->angle += a->rotate;

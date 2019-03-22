@@ -19,6 +19,10 @@
 #include <GL/glx.h>
 #include "log.h"
 #include "fonts.h"
+#include "josephS.h"
+
+#include<vector>
+
 
 //defined types
 typedef float Flt;
@@ -207,6 +211,7 @@ public:
 };
 */
 
+/*
 class Enemy {
 public:
 	Vec pos;
@@ -217,6 +222,7 @@ public:
 	float rotate;
 public:
 };
+*/
 
 //sets up game state
 class Game {
@@ -420,6 +426,10 @@ void drawBullet();
 void drawShip();
 void drawCredits();
 
+std::vector<Enemy> enemies;
+#define numEnemiesToMake 100
+
+
 //==========================================================================
 // M A I N
 //==========================================================================
@@ -432,6 +442,11 @@ int main()
 	clock_gettime(CLOCK_REALTIME, &timeStart);
 	x11.set_mouse_position(100,100);
 	int done=0;
+
+
+	createEnemies(enemies, numEnemiesToMake);
+	
+
 	while (!done) {
 		while (x11.getXPending()) {
 			XEvent e = x11.getXNextEvent();
@@ -769,7 +784,7 @@ void physics()
 		}
 		else if (a->pos[1] < -100.0) {
 			a->pos[1] += (float)gl->yres+200;
-		}
+		}z
 		else if (a->pos[1] > (float)gl->yres+100) {
 			a->pos[1] -= (float)gl->yres+200;
 		}
@@ -841,6 +856,7 @@ void physics()
 	physicsKeyEvents();
 }
 
+//Also movement stuff in Check Keys
 void shipControl()
 {
 	//Flt d0,d1,dist;
@@ -909,7 +925,7 @@ void physicsKeyEvents()
 			g.ship.angle -= 360.0f;
 		*/
 		g.ship.angle = 90;
-		g.ship.pos[0]--;
+		g.ship.pos[0] -= 5;
 	}
 	if (gl->keys[XK_Right]) {
 		/*
@@ -918,7 +934,7 @@ void physicsKeyEvents()
 			g.ship.angle += 360.0f;
 		*/
 		g.ship.angle = 270;
-		g.ship.pos[0]++;
+		g.ship.pos[0] += 5;
 	}
 	if (gl->keys[XK_Up]) {
 		/*
@@ -940,10 +956,10 @@ void physicsKeyEvents()
 		}
 		*/
 		g.ship.angle = 360;
-		g.ship.pos[1]++;
+		g.ship.pos[1] += 5;
 	}
 	if (gl->keys[XK_Down]) {
-		g.ship.pos[1]--;
+		g.ship.pos[1] -= 5;
 		g.ship.angle = 180;
 	}
 	if (gl->keys[XK_space]) {
@@ -999,6 +1015,22 @@ void shootBullet()
 void render()
 {
 	gameplayScreen();
+	
+
+	for(int i = 0 ; i < numEnemiesToMake; i++){
+	glPushMatrix();
+		glTranslated(enemies[i].position[0], enemies[i].position[1], 0);
+		//printf(" %d: %f %f\n", i, enemies[i].position[0], enemies[i].position[1]);
+		enemies[i].drawEnemy();
+		enemies[i].updatePosition(g.ship.pos[0], g.ship.pos[1], gl->xres, gl->yres);
+	glPopMatrix();
+	}
+	
+	
+	//testing enemy draw
+	
+	
+	
 	
 	if (gl->showCredits) {
 		drawCredits();

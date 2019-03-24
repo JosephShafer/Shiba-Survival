@@ -426,8 +426,8 @@ void drawBullet();
 void drawShip();
 void drawCredits();
 
-std::vector<Enemy> enemies;
-#define numEnemiesToMake 100
+//std::vector<Enemy> enemies;
+//#define numEnemiesToMake 1000
 
 
 //==========================================================================
@@ -444,7 +444,7 @@ int main()
 	int done=0;
 
 
-	createEnemies(enemies, numEnemiesToMake);
+	//createEnemies(enemies, numEnemiesToMake);
 	
 
 	while (!done) {
@@ -680,6 +680,7 @@ int check_keys(XEvent *e)
 	}
 	if (shift){}
 	switch (key) {
+		
 		case XK_c:
 			gl->showCredits ^= 1;
 			break;
@@ -693,12 +694,19 @@ int check_keys(XEvent *e)
 		*/
 		case XK_Down:
 			break;
-		/*
+		
 		case XK_equal:
+			createEnemy();
+			printf("%d\n", enemies.size());
 			break;
+		
 		case XK_minus:
+			//0 for now
+			destroyEnemy(0);
+
 			break;
-		*/
+		
+		
 	}
 	return 0;
 }
@@ -1016,21 +1024,10 @@ void render()
 {
 	gameplayScreen();
 	
-
-	for(int i = 0 ; i < numEnemiesToMake; i++){
-	glPushMatrix();
-		glTranslated(enemies[i].position[0], enemies[i].position[1], 0);
-		//printf(" %d: %f %f\n", i, enemies[i].position[0], enemies[i].position[1]);
-		enemies[i].drawEnemy();
+	renderEnemies();
+	for(int i = 0 ; i < enemies.size(); i++){
 		enemies[i].updatePosition(g.ship.pos[0], g.ship.pos[1], gl->xres, gl->yres);
-	glPopMatrix();
 	}
-	
-	
-	//testing enemy draw
-	
-	
-	
 	
 	if (gl->showCredits) {
 		drawCredits();

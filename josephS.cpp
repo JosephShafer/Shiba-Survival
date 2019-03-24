@@ -58,16 +58,41 @@ public:
     float position[2];
 	float velocity[2];
     void drawEnemy();
+	void setStartingPosition();
     void updatePosition(float, float, float, float);
-	void createEnemys();
+	void createEnemy();
 	
 	Enemy();
-//	~Enemy();
+
 };
 
+vector<Enemy> enemies;
+
 Enemy::Enemy(){
-	position[0] = 0;
-	position[1] = 0;
+	static int spawnPoint = 0;
+	switch(spawnPoint){
+		case 0:
+			position[0] = (rand() % 1920);
+			position[1] = (rand() % 1);
+			break;
+		case 1:
+			position[0] = (rand() % 1920);
+			position[1] = (rand() % 1)  + 1000;
+			break;
+		case 2:
+			position[0] = (rand() % 1);
+			position[1] = (rand() % 1080);
+			break;
+		case 3:
+			position[0] = (rand() % 1)  +1920;
+			position[1] = (rand() % 1080);
+			break;
+	}
+
+	spawnPoint++;
+	if(spawnPoint == 4)
+		spawnPoint = 0;
+	
 	velocity[0] = 0;
 	velocity[1] = 0;
 };
@@ -76,7 +101,7 @@ void Enemy::drawEnemy()
 {
         // square until we add sprites
         
-        float sideLength = 10.0f;
+        float sideLength = 3.0f;
          glColor3f(1.0f, 1.0f, 1.0f);
          glBegin(GL_POLYGON);
             glVertex2f(-sideLength, sideLength);
@@ -108,39 +133,37 @@ void Enemy::updatePosition(float Xposition, float Yposition, float xWinResolutio
 			velocity[1] *= -1;
 		}
 		position[0] = position[0] + velocity[0];
-		position[1] = position[1] + velocity[1];
-
-			   
+		position[1] = position[1] + velocity[1];   
 		   
 }
+ 
+void createEnemy(){
+	enemies.push_back(Enemy());
+}
 
-void createEnemies(vector<Enemy> &EnemyInstance, int VecSize){
-	for(int i = 0; i < VecSize; i++){
-		EnemyInstance.push_back(Enemy());
-		static int spawnPoint = 0;
-	switch(spawnPoint){
-		case 0:
-		EnemyInstance[i].position[0] = (rand() % 1920);
-		EnemyInstance[i].position[1] = (rand() % 1);
-		break;
-		case 1:
-		EnemyInstance[i].position[0] = (rand() % 1920);
-		EnemyInstance[i].position[1] = (rand() % 1)  + 1080;
-		break;
-		case 2:
-		EnemyInstance[i].position[0] = (rand() % 1);
-		EnemyInstance[i].position[1] = (rand() % 1080);
-		break;
-		case 3:
-		EnemyInstance[i].position[0] = (rand() % 1)  +1920;
-		EnemyInstance[i].position[1] = (rand() % 1080);
-		break;
-	}
-	spawnPoint++;
-	if(spawnPoint == 4)
-		spawnPoint = 0;
+void destroyEnemy(int position){
+	if(enemies.size() > 0)
+		enemies.erase(enemies.begin() + position);
+}
+
+void renderEnemies(){
+	for(int i = 0 ; i < enemies.size(); i++){
+	glPushMatrix();
+		glTranslated(enemies[i].position[0], enemies[i].position[1], 0);
+		//printf(" %d: %f %f\n", i, enemies[i].position[0], enemies[i].position[1]);
+		//enemies[i].updatePosition(g.ship.pos[0], g.ship.pos[1], gl->xres, gl->yres);
+		enemies[i].drawEnemy();
+	glPopMatrix();
 	}
 }
+
+
+
+// void createEnemies(vector<Enemy> &EnemyInstance, int VecSize){
+// 	for(int i = 0; i < VecSize; i++){
+// 		EnemyInstance.push_back(Enemy());
+
+// }
 
 
 

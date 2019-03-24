@@ -14,11 +14,19 @@ public:
     float velocity[2];
     
     void drawEnemy();
+    void setStartingPosition();
     void updatePosition(float, float, float, float);
+
+
     Enemy();
+//    ~Enemy();
 };
 
-void createEnemies(std::vector<Enemy> &, int vecSize);
+void createEnemy();
+void destroyEnemy(int);
+extern std::vector<Enemy> enemies;
+
+void renderEnemies();
 
 #endif
 

@@ -52,40 +52,58 @@ Ideas related to enemies:
     3. Unlike asteroids, needs to be continually created. Shouldn't exceed a max number. 
     4. Could make a max number of enemies depending on level?
 */
+float gameXresolution;
+float gameYresolution;
+
+void enemyGetResolution(float Xres, float Yres){
+	gameXresolution = Xres;
+	gameYresolution = Yres;
+}
+
 
 class Enemy{
 public:
     float position[2];
 	float velocity[2];
+	bool contactShiba = false;
+	float sideLength;
+	
     void drawEnemy();
-	void setStartingPosition();
-    void updatePosition(float, float, float, float);
+	void destroyEnemy();
+    void updatePosition(float, float, float, float, int);
 	void createEnemy();
 	
 	Enemy();
 
 };
 
+
 vector<Enemy> enemies;
 
 Enemy::Enemy(){
+	//enemies spawn
 	static int spawnPoint = 0;
 	switch(spawnPoint){
 		case 0:
-			position[0] = (rand() % 1920);
+			//spawn on bottom of screen
+			position[0] = (rand() % int(gameXresolution));
 			position[1] = (rand() % 1);
 			break;
 		case 1:
-			position[0] = (rand() % 1920);
-			position[1] = (rand() % 1)  + 1000;
+			//spawn on top of screen
+			position[0] = (rand() % int(gameXresolution));
+			position[1] = (rand() % 1)  + int(gameYresolution - 60);
 			break;
 		case 2:
+			//spawn left of screen
 			position[0] = (rand() % 1);
-			position[1] = (rand() % 1080);
+			position[1] = (rand() % int(gameYresolution));
 			break;
 		case 3:
-			position[0] = (rand() % 1)  +1920;
-			position[1] = (rand() % 1080);
+			//spawn on right of screen
+			//Note: This gets wonky with more than one monitor/extended displays
+			position[0] = gameXresolution;
+			position[1] = (rand() % int(gameYresolution));
 			break;
 	}
 
@@ -97,11 +115,12 @@ Enemy::Enemy(){
 	velocity[1] = 0;
 };
 
+
+
 void Enemy::drawEnemy()
 {
         // square until we add sprites
-        
-        float sideLength = 3.0f;
+         sideLength = 10.0f;
          glColor3f(1.0f, 1.0f, 1.0f);
          glBegin(GL_POLYGON);
             glVertex2f(-sideLength, sideLength);
@@ -111,43 +130,54 @@ void Enemy::drawEnemy()
         glEnd();
 }
 
-
-void Enemy::updatePosition(float Xposition, float Yposition, float xWinResolution, float yWinResolution)
+void Enemy::updatePosition(float shibaXposition, float shibaYposition, float xWinResolution, float yWinResolution, int indexOfEnemy)
 {
-		float speed = .07 * (rand() % 2);
-
-    	if(position[0] < Xposition)
+		float speed = .01;
+		
+    	if(position[0] < shibaXposition)
 			velocity[0] += speed;
-		if(position[0] > Xposition)
+		if(position[0] > shibaXposition)
 			velocity[0] -= speed;
-		if(position[1] < Yposition)
+		if(position[1] < shibaYposition)
 			velocity[1] += speed;
-		if(position[1] > Yposition)
+		if(position[1] > shibaYposition)
 			velocity[1] -= speed;
 		
-
-		if(position[0] < 0 || position[0] > xWinResolution){
+		if((position[0] + sideLength) < 0 || (position[0] - sideLength) > xWinResolution)
 			velocity[0] *= -1;
-		}
-		if(position[1] < 0 || position[1] > yWinResolution){
+		if((position[1] + sideLength) < 0 || (position[1] - sideLength) > yWinResolution)
 			velocity[1] *= -1;
-		}
+
 		position[0] = position[0] + velocity[0];
-		position[1] = position[1] + velocity[1];   
+		position[1] = position[1] + velocity[1];
+		
+		//weird formatting just makes it easier for me to see for now
+		if(     (((position[0] - sideLength/2) < shibaXposition)  && ((position[0] + sideLength/2) > shibaXposition))
+																  &&
+				(((position[1] - sideLength/2) < shibaYposition)  && ((position[1] + sideLength/2) > shibaYposition))
+		) {
+			//TODO: turn into function that can also count num hit
+			enemies.erase(enemies.begin()+indexOfEnemy);
+		}
+
 		   
 }
- 
-void createEnemy(){
-	enemies.push_back(Enemy());
-}
 
-void destroyEnemy(int position){
+void createEnemy(int numToCreate)
+{
+	for(int i = 0; i < numToCreate; i++)
+		enemies.push_back(Enemy());
+}
+// destroys an element in a vector by it's index
+void destroyEnemy(int index)
+{
 	if(enemies.size() > 0)
-		enemies.erase(enemies.begin() + position);
+		enemies.erase(enemies.begin() + index);
 }
 
-void renderEnemies(){
-	for(int i = 0 ; i < enemies.size(); i++){
+void renderEnemies()
+{
+	for(unsigned int i = 0; i < enemies.size(); i++) {
 	glPushMatrix();
 		glTranslated(enemies[i].position[0], enemies[i].position[1], 0);
 		//printf(" %d: %f %f\n", i, enemies[i].position[0], enemies[i].position[1]);
@@ -157,6 +187,11 @@ void renderEnemies(){
 	}
 }
 
+void updateAllPosition(float shibaXposition, float shibaYposition, float xWinResolution, float yWinResolution){
+	for(unsigned int i = 0; i < enemies.size(); i++) {
+		enemies[i].updatePosition(shibaXposition, shibaYposition, xWinResolution, yWinResolution, i);
+	}
+}
 
 
 // void createEnemies(vector<Enemy> &EnemyInstance, int VecSize){
@@ -228,7 +263,6 @@ From game():
 
 //-------------------------------------------------------------------------
 	//Draw the asteroids
-	/**
 	{
 		Asteroid *a = g.ahead;
 		while (a) {

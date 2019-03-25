@@ -9,6 +9,10 @@ all: asteroids
 asteroids: $(FILES)
 	$(COMPILER) $(CFLAGS) $(FILES) $(FONTS) -Wall -Wextra $(LFLAGS) -oasteroids
 
+joeydebug: $(FILES)
+	$(COMPILER) $(CFLAGS) $(FILES) $(FONTS) -Wall -Wextra $(LFLAGS) -ojoeydebug -Djoeydebug
+
 clean:
 	rm -f asteroids
+	rm -f joeydebug
 	rm -f *.o

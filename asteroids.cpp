@@ -443,8 +443,7 @@ int main()
 	x11.set_mouse_position(100,100);
 	int done=0;
 
-
-	//createEnemies(enemies, numEnemiesToMake);
+	enemyGetResolution(gl->xres, gl->yres);
 	
 
 	while (!done) {
@@ -680,7 +679,7 @@ int check_keys(XEvent *e)
 	}
 	if (shift){}
 	switch (key) {
-		
+		static int i = 0;
 		case XK_c:
 			gl->showCredits ^= 1;
 			break;
@@ -689,21 +688,25 @@ int check_keys(XEvent *e)
 		/*
 		case XK_f:
 			break;
-		case XK_s:
-			break;
 		*/
+		case XK_s:
+			i++;
+			break;
 		case XK_Down:
 			break;
 		
 		case XK_equal:
-			createEnemy();
-			printf("%d\n", enemies.size());
+			createEnemy(i);
+			#ifdef joeydebug
+				//printf("%d\n", int(enemies.size()));
+			#endif
 			break;
 		
 		case XK_minus:
-			//0 for now
+			//can destroy enemy by index, right now is 0
+			//will kill the first in a vector element
 			destroyEnemy(0);
-
+		
 			break;
 		
 		
@@ -1025,9 +1028,6 @@ void render()
 	gameplayScreen();
 	
 	renderEnemies();
-	for(int i = 0 ; i < enemies.size(); i++){
-		enemies[i].updatePosition(g.ship.pos[0], g.ship.pos[1], gl->xres, gl->yres);
-	}
 	
 	if (gl->showCredits) {
 		drawCredits();
@@ -1082,6 +1082,9 @@ void gameplayScreen()
 	//-------------------------------------------------------------------------
 	//Draw the bullets
 	drawBullet();
+	//createEnemy(1);
+	updateAllPosition(g.ship.pos[0], g.ship.pos[1], gl->xres, gl->yres);
+	
 
 
 }

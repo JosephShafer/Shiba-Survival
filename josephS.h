@@ -6,27 +6,23 @@
 typedef float Vec[3];
 
 extern void josephS(float, float, GLuint);
-
+void enemyGetResolution(float, float);
 
 class Enemy{
 public:
     float position[2];
     float velocity[2];
-    
+    float sideLength;
     void drawEnemy();
-    void setStartingPosition();
-    void updatePosition(float, float, float, float);
-
-
+    void updatePosition(float, float, float, float, int);
     Enemy();
-//    ~Enemy();
 };
-
-void createEnemy();
-void destroyEnemy(int);
 extern std::vector<Enemy> enemies;
 
+void createEnemy(int);
+void destroyEnemy(int);
 void renderEnemies();
+void updateAllPosition(float, float, float, float);
 
 #endif
 

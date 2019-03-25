@@ -498,7 +498,7 @@ int main(int argc, char *argv[])
 	while (!done)
 	{
 		//update timer
-		updateTimer(gameTimer.getElapsedMinutes(), gameTimer.getElapsedSeconds());
+		updateTimer((int) gameTimer.getElapsedMinutes(), ((int) gameTimer.getElapsedSeconds() % 60));
 		while (x11.getXPending())
 		{
 			XEvent e = x11.getXNextEvent();

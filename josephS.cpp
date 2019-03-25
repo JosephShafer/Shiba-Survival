@@ -61,6 +61,17 @@ void enemyGetResolution(float Xres, float Yres){
 }
 
 
+
+/*
+dogs are scared of
+balloons
+trashbags
+garden hoses
+spray bottles
+
+chocolate?
+*/
+
 class Enemy{
 public:
     float position[2];
@@ -132,33 +143,33 @@ void Enemy::drawEnemy()
 
 void Enemy::updatePosition(float shibaXposition, float shibaYposition, float xWinResolution, float yWinResolution, int indexOfEnemy)
 {
-		float speed = .01;
-		
-    	if(position[0] < shibaXposition)
-			velocity[0] += speed;
-		if(position[0] > shibaXposition)
-			velocity[0] -= speed;
-		if(position[1] < shibaYposition)
-			velocity[1] += speed;
-		if(position[1] > shibaYposition)
-			velocity[1] -= speed;
-		
-		if((position[0] + sideLength) < 0 || (position[0] - sideLength) > xWinResolution)
-			velocity[0] *= -1;
-		if((position[1] + sideLength) < 0 || (position[1] - sideLength) > yWinResolution)
-			velocity[1] *= -1;
+	float speed = .01;
+	
+	if(position[0] < shibaXposition)
+		velocity[0] += speed;
+	if(position[0] > shibaXposition)
+		velocity[0] -= speed;
+	if(position[1] < shibaYposition)
+		velocity[1] += speed;
+	if(position[1] > shibaYposition)
+		velocity[1] -= speed;
+	
+	if((position[0] + sideLength) < 0 || (position[0] - sideLength) > xWinResolution)
+		velocity[0] *= -1;
+	if((position[1] + sideLength) < 0 || (position[1] - sideLength) > yWinResolution)
+		velocity[1] *= -1;
 
-		position[0] = position[0] + velocity[0];
-		position[1] = position[1] + velocity[1];
-		
-		//weird formatting just makes it easier for me to see for now
-		if(     (((position[0] - sideLength/2) < shibaXposition)  && ((position[0] + sideLength/2) > shibaXposition))
-																  &&
-				(((position[1] - sideLength/2) < shibaYposition)  && ((position[1] + sideLength/2) > shibaYposition))
-		) {
-			//TODO: turn into function that can also count num hit
-			enemies.erase(enemies.begin()+indexOfEnemy);
-		}
+	position[0] = position[0] + velocity[0];
+	position[1] = position[1] + velocity[1];
+	
+	//weird formatting just makes it easier for me to see for now
+	if(     (((position[0] - sideLength/2) < shibaXposition)  && ((position[0] + sideLength/2) > shibaXposition))
+																&&
+			(((position[1] - sideLength/2) < shibaYposition)  && ((position[1] + sideLength/2) > shibaYposition))
+	) {
+		//TODO: turn into function that can also count num hit
+		enemies.erase(enemies.begin()+indexOfEnemy);
+	}
 
 		   
 }

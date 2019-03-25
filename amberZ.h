@@ -28,8 +28,6 @@ class Timer
 	double getElapsedMinutes();
 };
 
-extern Timer gameTimer;
-
 class SSD
 {
 	private:
@@ -38,13 +36,15 @@ class SSD
 		SSD();
 		void updateDisplay(int);
 		void renderSSD();
+		void renderColon();
 };
 
-extern SSD min1, min2, sec1, sec2;
+extern Timer gameTimer;
+extern SSD min1, min2, col, sec1, sec2;
 
-void drawTimer(int, int);
+void drawTimer(int);
 void updateTimer(int, int);
 void amberZ(int, int, GLuint);
-void storeScore(char, int);
+void storeScore(char[], int);
 
 #endif

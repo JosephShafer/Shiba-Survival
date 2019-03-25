@@ -79,7 +79,7 @@ void SSD::updateDisplay(int num)
 			screen = std::bitset<7>("1110011");
 			break;
 		default:
-			screen = std::bitset<7>("1001111");
+			screen = std::bitset<7>("1001000");
 			break;
 	}
 }
@@ -144,25 +144,51 @@ void SSD::renderSSD()
 	}
 }
 
-SSD min1, min2, sec1, sec2;
+void SSD::renderColon()
+{
+	if (screen[6]) {
+		glBegin(GL_POLYGON);
+		glVertex2f(0.0f, 90.0f);
+		glVertex2f(0.0f, 100.0f);
+		glVertex2f(10.0f, 100.0f);
+		glVertex2f(10.0f, 90.0f);
 
-void drawTimer(int xres, int yres)
+		glEnd();
+	}
+	if (screen[3]) {
+		glBegin(GL_POLYGON);
+		glVertex2f(0.0f, 20.0f);
+		glVertex2f(0.0f, 10.0f);
+		glVertex2f(10.0f, 10.0f);
+		glVertex2f(10.0f, 20.0f);
+		glEnd();
+	}
+}
+
+SSD min1, min2, col, sec1, sec2;
+
+void drawTimer(int xres)
 {
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glPushMatrix();
-	glTranslated((xres / 2) - 100, 600.0f, 0.0f);
+	glTranslated((xres / 2) - 100, 595.0f, 0.0f);
 	min1.renderSSD();
-	glPopMatrix();
+	glPopMatrix();	
 	glPushMatrix();
-	glTranslated((xres / 2) - 50, 600.0f, 0.0f);
+	glTranslated((xres / 2) - 50, 595.0f, 0.0f);
 	min2.renderSSD();
 	glPopMatrix();
 	glPushMatrix();
-	glTranslated((xres / 2) + 50, 600.0f, 0.0f);
+	glTranslated((xres / 2), 595.0f, 0.0f);
+	col.renderColon();
+	col.updateDisplay(10);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslated((xres / 2) + 20, 595.0f, 0.0f);
 	sec1.renderSSD();
 	glPopMatrix();
 	glPushMatrix();
-	glTranslated((xres / 2) + 100, 600.0f, 0.0f);
+	glTranslated((xres / 2) + 70, 595.0f, 0.0f);
 	sec2.renderSSD();
 	glPopMatrix();
 }

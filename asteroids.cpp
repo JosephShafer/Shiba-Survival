@@ -66,17 +66,9 @@ public:
 	int xres, yres;
 	char keys[65536];
 	bool showCredits;
-	//added to work w/ storeScore()
 	char *user;
 	int score;
 	GLuint textures[5];
-	/*
-	GLuint amberZTexture;
-	GLuint danLTexture;
-	GLuint josephSTexture;
-	GLuint mabelleCTexture;
-	GLuint thomasBTexture;
-	*/
 	static Global *instance;
 	static Global *getInstance()
 	{
@@ -480,13 +472,9 @@ void drawCredits();
 int main(int argc, char *argv[])
 {
 	if (argc < 2)
-	{
 		gl->user = (char *)"anonymous";
-	}
 	else
-	{
 		gl->user = argv[1];
-	}
 	logOpen();
 	init_opengl();
 	srand(time(NULL));
@@ -752,7 +740,6 @@ int check_keys(XEvent *e)
 	{
 		//should be on game over
 		//left here for now until we add more functionality
-		extern void storeScore(char[], int);
 		storeScore(gl->user, gl->score);
 		return 1;
 	}
@@ -1156,7 +1143,7 @@ void gameplayScreen()
 	//-------------------------------------------------------------------------
 	//Draw the bullets
 	drawBullet();
-	drawTimer(gl->xres, gl->yres);
+	drawTimer(gl->xres);
 }
 
 void drawBullet()
@@ -1231,7 +1218,6 @@ void drawShip()
 
 void drawCredits()
 {
-	extern void amberZ(int, int, GLuint);
 	extern void josephS(float, float, GLuint);
 	extern void danL(int, int, GLuint);
 	extern void mabelleC(int, int, GLuint);

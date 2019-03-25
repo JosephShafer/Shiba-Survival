@@ -243,26 +243,4 @@ void amberZ(int x, int y, GLuint textureId)
 void storeScore(char user[], int score)
 {
 	printf("%s: %d", user, score);
-	/*
-	//send score data over to server
-	//will be displayed on the score page
-	//use "sudo apt install libcurl4-openssl-dev" for library
-	char post_data[256];
-	snprintf(post_data, sizeof(post_data), "user=%s&score=%d", user, score);
-	CURL *curl;
-	CURLcode res;
-	curl_global_init(CURL_GLOBAL_ALL);
-	curl = curl_easy_init();
-	if (curl) {
-		// Set the URL that receives POST
-		curl_easy_setopt(curl, CURLOPT_URL, "https://cs.csubak.edu/~azaragoza/3350/Shiba-Survival/save_scores.php");
-		// Set POST data
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data);
-		res = curl_easy_perform(curl);
-		if (res != CURLE_OK)
-			fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-		curl_easy_cleanup(curl);
-	}
-	curl_global_cleanup();
-	*/
 }

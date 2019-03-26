@@ -10,7 +10,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <curl/curl.h>
+//#include <curl/curl.h>
 #include <GL/glx.h>
 #include "fonts.h"
 

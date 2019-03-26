@@ -23,6 +23,7 @@ void createEnemy(int);
 void destroyEnemy(int);
 void renderEnemies();
 void updateAllPosition(float, float, float, float);
+void cleanupEnemies();
 
 #endif
 

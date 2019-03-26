@@ -204,6 +204,12 @@ void updateAllPosition(float shibaXposition, float shibaYposition, float xWinRes
 	}
 }
 
+void cleanupEnemies(){
+	while(enemies.size() != 0){
+		enemies.pop_back();
+	}
+}
+
 
 // void createEnemies(vector<Enemy> &EnemyInstance, int VecSize){
 // 	for(int i = 0; i < VecSize; i++){

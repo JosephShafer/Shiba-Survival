@@ -750,6 +750,8 @@ int check_keys(XEvent *e)
 		case XK_Escape:
 			if (gl-> showCredits){
 				gl->showCredits ^= 1;
+				//storeScore(gl->user, gl->score);
+				//return 1;
 			}
 			else {
 				gl->gameMenu ^= 1;
@@ -763,8 +765,6 @@ int check_keys(XEvent *e)
 		{
 			//should be on game over
 			//left here for now until we add more functionality
-			storeScore(gl->user, gl->score);
-			return 1;
 		}
 		*/
 		case XK_s:

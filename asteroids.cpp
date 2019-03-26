@@ -445,8 +445,11 @@ int main()
 	int done = 0;
 
 	enemyGetResolution(gl->xres, gl->yres);
-	gameTimer.startTimer();	
+	
 	while (!done) {
+		if(gl->gameStart != 1){
+			gameTimer.startTimer();	
+		}
 		//update timer
 		updateTimer((int) gameTimer.getElapsedMinutes(), ((int) gameTimer.getElapsedSeconds() % 60));
 		while (x11.getXPending()) {
@@ -750,6 +753,8 @@ int check_keys(XEvent *e)
 		case XK_Escape:
 			if (gl-> showCredits){
 				gl->showCredits ^= 1;
+				//should be on game over
+				//left here for now until we add more functionality
 				//storeScore(gl->user, gl->score);
 				//return 1;
 			}
@@ -760,13 +765,6 @@ int check_keys(XEvent *e)
 		
 		case XK_f:
 			break;
-		/*
-		case XK_Escape:
-		{
-			//should be on game over
-			//left here for now until we add more functionality
-		}
-		*/
 		case XK_s:
 			i++;
 			break;
@@ -846,6 +844,7 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 
 void physics()
 {
+	
 	//
 	//
 	//

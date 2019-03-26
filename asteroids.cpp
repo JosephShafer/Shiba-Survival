@@ -17,8 +17,10 @@
 //#include <GL/glu.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
+#include <vector>
 #include "log.h"
 #include "fonts.h"
+#include "josephS.h"
 #include "amberZ.h"
 
 //defined types
@@ -225,8 +227,8 @@ public:
 };
 */
 
-class Enemy
-{
+/*
+class Enemy {
 public:
 	Vec pos;
 	Vec vel;
@@ -237,6 +239,7 @@ public:
 
 public:
 };
+*/
 
 //sets up game state
 class Game
@@ -466,6 +469,10 @@ void drawBullet();
 void drawShip();
 void drawCredits();
 
+//std::vector<Enemy> enemies;
+//#define numEnemiesToMake 1000
+
+
 //==========================================================================
 // M A I N
 //==========================================================================
@@ -480,15 +487,15 @@ int main(int argc, char *argv[])
 	srand(time(NULL));
 	clock_gettime(CLOCK_REALTIME, &timePause);
 	clock_gettime(CLOCK_REALTIME, &timeStart);
-	x11.set_mouse_position(100, 100);
+	x11.set_mouse_position(100,100);
 	int done = 0;
-	gameTimer.startTimer();
-	while (!done)
-	{
+
+	enemyGetResolution(gl->xres, gl->yres);
+	gameTimer.startTimer();	
+	while (!done) {
 		//update timer
 		updateTimer((int) gameTimer.getElapsedMinutes(), ((int) gameTimer.getElapsedSeconds() % 60));
-		while (x11.getXPending())
-		{
+		while (x11.getXPending()) {
 			XEvent e = x11.getXNextEvent();
 			x11.check_resize(&e);
 			//check_mouse(&e);
@@ -728,35 +735,36 @@ int check_keys(XEvent *e)
 	{
 		return 0;
 	}
-	if (shift)
-	{
-	}
+	if (shift) {}
 	switch (key)
 	{
-	case XK_c:
-		gl->showCredits ^= 1;
-		break;
-	case XK_Escape:
-	{
-		//should be on game over
-		//left here for now until we add more functionality
-		storeScore(gl->user, gl->score);
-		return 1;
-	}
-	/*
-		case XK_f:
+		static int i = 0;
+		case XK_c:
+			gl->showCredits ^= 1;
 			break;
+		case XK_Escape:
+		{
+			//should be on game over
+			//left here for now until we add more functionality
+			storeScore(gl->user, gl->score);
+			return 1;
+		}
 		case XK_s:
+			i++;
 			break;
-		*/
-	case XK_Down:
-		break;
-		/*
+		case XK_Down:
+			break;
 		case XK_equal:
+			createEnemy(i);
+			#ifdef joeydebug
+			//printf("%d\n", int(enemies.size()));
+			#endif
 			break;
 		case XK_minus:
+			//can destroy enemy by index, right now is 0
+			//will kill the first in a vector element
+			destroyEnemy(0);
 			break;
-		*/
 	}
 	return 0;
 }
@@ -914,6 +922,7 @@ void physics()
 	physicsKeyEvents();
 }
 
+//Also movement stuff in Check Keys
 void shipControl()
 {
 	//Flt d0,d1,dist;
@@ -993,7 +1002,7 @@ void physicsKeyEvents()
 			g.ship.angle -= 360.0f;
 		*/
 		g.ship.angle = 90;
-		g.ship.pos[0]--;
+		g.ship.pos[0] -= 5;
 	}
 	if (gl->keys[XK_Right])
 	{
@@ -1003,7 +1012,7 @@ void physicsKeyEvents()
 			g.ship.angle += 360.0f;
 		*/
 		g.ship.angle = 270;
-		g.ship.pos[0]++;
+		g.ship.pos[0] += 5;
 	}
 	if (gl->keys[XK_Up])
 	{
@@ -1026,11 +1035,10 @@ void physicsKeyEvents()
 		}
 		*/
 		g.ship.angle = 360;
-		g.ship.pos[1]++;
+		g.ship.pos[1] += 5;
 	}
-	if (gl->keys[XK_Down])
-	{
-		g.ship.pos[1]--;
+	if (gl->keys[XK_Down]) {
+		g.ship.pos[1] -= 5;
 		g.ship.angle = 180;
 	}
 	if (gl->keys[XK_space])
@@ -1089,9 +1097,8 @@ void shootBullet()
 void render()
 {
 	gameplayScreen();
-
-	if (gl->showCredits)
-	{
+	renderEnemies();
+	if (gl->showCredits) {
 		drawCredits();
 	}
 }
@@ -1144,6 +1151,8 @@ void gameplayScreen()
 	//Draw the bullets
 	drawBullet();
 	drawTimer(gl->xres);
+	//createEnemy(1);
+	updateAllPosition(g.ship.pos[0], g.ship.pos[1], gl->xres, gl->yres);
 }
 
 void drawBullet()

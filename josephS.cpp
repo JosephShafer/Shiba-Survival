@@ -2,12 +2,7 @@
 //Author:  Joseph Shafer
 //Date:    2/15/2019
 
-#include <GL/glx.h>
-#include "fonts.h"
-#include <stdlib.h>
-#include <vector>
-#include <stdio.h>
-using namespace std;
+#include "josephS.h"
 
 typedef float Vec[3];
 
@@ -60,8 +55,6 @@ void enemyGetResolution(float Xres, float Yres){
 	gameYresolution = Yres;
 }
 
-
-
 /*
 dogs are scared of
 balloons
@@ -72,56 +65,117 @@ spray bottles
 chocolate?
 */
 
-class Enemy{
-public:
-    float position[2];
-	float velocity[2];
-	bool contactShiba = false;
-	float sideLength;
-	
-    void drawEnemy();
-	void destroyEnemy();
-    void updatePosition(float, float, float, float, int);
-	void createEnemy();
-	
-	Enemy();
+//=============================================================
+//Enemy functions
+//=============================================================
 
-};
 
+/*
+Never want to spawn on top of ship, would not be fair to player
+get shiba position, 
+can't spawn past edge, 
+
+
+*/
 
 vector<Enemy> enemies;
 
-Enemy::Enemy(){
+Enemy::Enemy(float shibaXPosition, float shibaYPosition){
 	//enemies spawn
-	static int spawnPoint = 0;
-	switch(spawnPoint){
-		case 0:
-			//spawn on bottom of screen
-			position[0] = (rand() % int(gameXresolution));
-			position[1] = (rand() % 1);
-			break;
-		case 1:
-			//spawn on top of screen
-			position[0] = (rand() % int(gameXresolution));
-			position[1] = (rand() % 1)  + int(gameYresolution - 60);
-			break;
-		case 2:
-			//spawn left of screen
-			position[0] = (rand() % 1);
-			position[1] = (rand() % int(gameYresolution));
-			break;
-		case 3:
-			//spawn on right of screen
-			//Note: This gets wonky with more than one monitor/extended displays
-			position[0] = gameXresolution;
-			position[1] = (rand() % int(gameYresolution));
-			break;
-	}
+	int spawnchoice = (rand() % 4);
+	int spaceAway = 100;
+	bool enemySpawned = false;
 
-	spawnPoint++;
-	if(spawnPoint == 4)
-		spawnPoint = 0;
-	
+
+	//spawn top right area of game area
+	while(!enemySpawned){
+		if (spawnchoice == 0){
+			if((shibaXPosition + spaceAway) < gameXresolution && (shibaYPosition + spaceAway) < gameYresolution){
+				position[0] = (rand() % ((int)(gameXresolution - spaceAway + 1 - shibaXPosition)))
+								+ shibaXPosition + spaceAway;
+				position[1] = (rand() % ((int)(gameYresolution - spaceAway + 1 - shibaYPosition)))
+								+ shibaYPosition + spaceAway;
+				enemySpawned = true;
+				#ifdef joeydebug
+					if(position[0] > gameXresolution || position[1] > gameYresolution){
+						printf("%f, %f\n", position[0], position[1]);
+					}else{
+						printf("success\n");
+					}
+				#endif
+
+			}else{
+				spawnchoice++;
+			}
+		}
+
+
+		//spawn top left area of shiba
+		if (spawnchoice == 1){
+			if((shibaXPosition) > 0 && (shibaYPosition + spaceAway) < gameYresolution){
+				position[0] = (rand() % ((int)(shibaXPosition - spaceAway + 1)));
+				position[1] = (rand() % ((int)(gameYresolution - spaceAway + 1 - shibaYPosition)))
+								+ shibaYPosition + spaceAway;
+
+				enemySpawned = true;
+
+				#ifdef joeydebug
+					if(position[0] < 0 || position[1] > gameYresolution){
+						printf("%f, %f\n", position[0], position[1]);
+					}else{
+						printf("success\n");
+					}
+				#endif
+			} else{
+				spawnchoice++;
+			}
+		}
+
+		// rand() % (max_number + 1 - minimum_number) + minimum_number
+		// bottom right
+		if (spawnchoice == 2){
+			if((shibaXPosition + spaceAway) < gameXresolution && (shibaYPosition > 0)){
+				position[0] = (rand() % ((int)(gameXresolution - spaceAway + 1 - shibaXPosition)))
+								+ shibaXPosition + spaceAway;
+				position[1] = (rand() % ((int)(shibaYPosition - spaceAway + 1 )));
+
+
+				enemySpawned = true;
+
+				#ifdef joeydebug
+					if(position[0] > gameXresolution || position[1] < 0){
+						printf("%f, %f\n", position[0], position[1]);
+					}else{
+						printf("success\n");
+					}
+				#endif
+			} else{
+				spawnchoice++;
+			}
+		}
+
+		// bottom left
+		if (spawnchoice == 3){
+			if((shibaXPosition - spaceAway) > 0 && (shibaYPosition - spaceAway > 0)){
+				position[0] = (rand() % ((int)(shibaXPosition - spaceAway + 1)));
+				position[1] = (rand() % ((int)(shibaYPosition - spaceAway + 1 )));
+
+				enemySpawned = true;
+
+			#ifdef joeydebug
+				if(position[0] < 0 || position[1] < 0){
+					printf("%f, %f\n", position[0], position[1]);
+				}else{
+					printf("success\n");
+				}
+			#endif
+			}else{
+				spawnchoice = 0;
+			}
+		}
+
+	}	//end while
+
 	velocity[0] = 0;
 	velocity[1] = 0;
 };
@@ -163,21 +217,23 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, float xWi
 	position[1] = position[1] + velocity[1];
 	
 	//weird formatting just makes it easier for me to see for now
-	if(     (((position[0] - sideLength/2) < shibaXposition)  && ((position[0] + sideLength/2) > shibaXposition))
-																&&
-			(((position[1] - sideLength/2) < shibaYposition)  && ((position[1] + sideLength/2) > shibaYposition))
+	if(     (((position[0] - sideLength) < shibaXposition)  && ((position[0] + sideLength) > shibaXposition))
+															  &&
+			(((position[1] - sideLength) < shibaYposition)  && ((position[1] + sideLength) > shibaYposition))
 	) {
 		//TODO: turn into function that can also count num hit
 		enemies.erase(enemies.begin()+indexOfEnemy);
-	}
-
-		   
+	}	   
 }
 
-void createEnemy(int numToCreate)
+//=============================================================
+// Functions used in Main file
+//=============================================================
+
+void createEnemy(int numToCreate, float shibaXPosition, float shibaYPosition)
 {
 	for(int i = 0; i < numToCreate; i++)
-		enemies.push_back(Enemy());
+		enemies.push_back(Enemy(shibaXPosition, shibaYPosition));
 }
 // destroys an element in a vector by it's index
 void destroyEnemy(int index)
@@ -209,6 +265,8 @@ void cleanupEnemies(){
 		enemies.pop_back();
 	}
 }
+
+
 
 
 // void createEnemies(vector<Enemy> &EnemyInstance, int VecSize){
@@ -392,3 +450,40 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 	}
 
     */
+
+
+/**
+ * old Enemy() constructor code. Keeping around just in case
+ 
+	switch(spawnPoint){
+		case 0:
+			//spawn on bottom of screen
+			if(shibaYPosition > gameYresolution/2) {
+				position[0] = (rand() % int(gameXresolution));
+				position[1] = (rand() % 1);
+			}
+			break;
+		case 1:
+			//spawn on top of screen
+			if(shibaYPosition < gameYresolution/2) {
+				position[0] = (rand() % int(gameXresolution));
+				position[1] = (rand() % 1)  + int(gameYresolution - 60);
+			}
+			break;
+		case 2:
+			//spawn left of screen
+			position[0] = (rand() % 1);
+			position[1] = (rand() % int(gameYresolution));
+			break;
+		case 3:
+			//spawn on right of screen
+			//Note: This gets wonky with more than one monitor/extended displays
+			position[0] = gameXresolution;
+			position[1] = (rand() % int(gameYresolution));
+			break;
+	}
+
+	spawnPoint++;
+	if(spawnPoint == 4)
+		spawnPoint = 0;
+**/

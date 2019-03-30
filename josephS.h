@@ -2,6 +2,12 @@
 #define joseph_h
 
 #include<vector>
+#include <GL/glx.h>
+#include "fonts.h"
+#include <stdlib.h>
+#include <vector>
+#include <stdio.h>
+using namespace std;
 
 typedef float Vec[3];
 
@@ -15,15 +21,17 @@ public:
     float sideLength;
     void drawEnemy();
     void updatePosition(float, float, float, float, int);
-    Enemy();
+    Enemy(float, float);
 };
+
 extern std::vector<Enemy> enemies;
 
-void createEnemy(int);
+void createEnemy(int, float, float);
 void destroyEnemy(int);
 void renderEnemies();
 void updateAllPosition(float, float, float, float);
 void cleanupEnemies();
+
 
 #endif
 

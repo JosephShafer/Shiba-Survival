@@ -4,6 +4,7 @@
 
 #include "josephS.h"
 
+
 typedef float Vec[3];
 
 void josephS(float x, float y, GLuint textid)
@@ -50,7 +51,8 @@ Ideas related to enemies:
 float gameXresolution;
 float gameYresolution;
 
-void enemyGetResolution(float Xres, float Yres){
+void enemyGetResolution(float Xres, float Yres)
+{
 	gameXresolution = Xres;
 	gameYresolution = Yres;
 }
@@ -61,6 +63,9 @@ balloons
 trashbags
 garden hoses
 spray bottles
+flea/bugs
+other dogs
+
 
 chocolate?
 */
@@ -79,13 +84,20 @@ can't spawn past edge,
 */
 
 vector<Enemy> enemies;
+int Enemy::enemiesHitShiba = 0; // static variable
 
-Enemy::Enemy(float shibaXPosition, float shibaYPosition){
+Enemy::Enemy(float shibaXPosition, float shibaYPosition)
+{
+
+	velocity[0] = 0;
+	velocity[1] = 0;
+	health = 100;
+	speed = .05;
+
 	//enemies spawn
 	int spawnchoice = (rand() % 4);
 	int spaceAway = 100;
 	bool enemySpawned = false;
-
 
 	//spawn top right area of game area
 	while(!enemySpawned){
@@ -98,9 +110,7 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition){
 				enemySpawned = true;
 				#ifdef joeydebug
 					if(position[0] > gameXresolution || position[1] > gameYresolution){
-						printf("%f, %f\n", position[0], position[1]);
-					}else{
-						printf("success\n");
+						printf("Top right Error: %f, %f\n", position[0], position[1]);
 					}
 				#endif
 
@@ -108,22 +118,16 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition){
 				spawnchoice++;
 			}
 		}
-
-
 		//spawn top left area of shiba
 		if (spawnchoice == 1){
 			if((shibaXPosition) > 0 && (shibaYPosition + spaceAway) < gameYresolution){
 				position[0] = (rand() % ((int)(shibaXPosition - spaceAway + 1)));
 				position[1] = (rand() % ((int)(gameYresolution - spaceAway + 1 - shibaYPosition)))
 								+ shibaYPosition + spaceAway;
-
 				enemySpawned = true;
-
 				#ifdef joeydebug
 					if(position[0] < 0 || position[1] > gameYresolution){
-						printf("%f, %f\n", position[0], position[1]);
-					}else{
-						printf("success\n");
+						printf("Top Left Error: %f, %f\n", position[0], position[1]);
 					}
 				#endif
 			} else{
@@ -138,15 +142,10 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition){
 				position[0] = (rand() % ((int)(gameXresolution - spaceAway + 1 - shibaXPosition)))
 								+ shibaXPosition + spaceAway;
 				position[1] = (rand() % ((int)(shibaYPosition - spaceAway + 1 )));
-
-
 				enemySpawned = true;
-
 				#ifdef joeydebug
 					if(position[0] > gameXresolution || position[1] < 0){
-						printf("%f, %f\n", position[0], position[1]);
-					}else{
-						printf("success\n");
+						printf("Bottom Right Error: %f, %f\n", position[0], position[1]);
 					}
 				#endif
 			} else{
@@ -159,25 +158,17 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition){
 			if((shibaXPosition - spaceAway) > 0 && (shibaYPosition - spaceAway > 0)){
 				position[0] = (rand() % ((int)(shibaXPosition - spaceAway + 1)));
 				position[1] = (rand() % ((int)(shibaYPosition - spaceAway + 1 )));
-
 				enemySpawned = true;
-
 			#ifdef joeydebug
 				if(position[0] < 0 || position[1] < 0){
-					printf("%f, %f\n", position[0], position[1]);
-				}else{
-					printf("success\n");
+					printf("Bottom Left Error: %f, %f\n", position[0], position[1]);
 				}
 			#endif
 			}else{
 				spawnchoice = 0;
 			}
 		}
-
 	}	//end while
-
-	velocity[0] = 0;
-	velocity[1] = 0;
 };
 
 
@@ -195,9 +186,8 @@ void Enemy::drawEnemy()
         glEnd();
 }
 
-void Enemy::updatePosition(float shibaXposition, float shibaYposition, float xWinResolution, float yWinResolution, int indexOfEnemy)
+void Enemy::updatePosition(float shibaXposition, float shibaYposition, int indexOfEnemy)
 {
-	float speed = .01;
 	
 	if(position[0] < shibaXposition)
 		velocity[0] += speed;
@@ -208,23 +198,37 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, float xWi
 	if(position[1] > shibaYposition)
 		velocity[1] -= speed;
 	
-	if((position[0] + sideLength) < 0 || (position[0] - sideLength) > xWinResolution)
+	if((position[0] + sideLength) < 0 || (position[0] - sideLength) > gameXresolution)
 		velocity[0] *= -1;
-	if((position[1] + sideLength) < 0 || (position[1] - sideLength) > yWinResolution)
+	if((position[1] + sideLength) < 0 || (position[1] - sideLength) > gameYresolution)
 		velocity[1] *= -1;
 
 	position[0] = position[0] + velocity[0];
 	position[1] = position[1] + velocity[1];
+	
 	
 	//weird formatting just makes it easier for me to see for now
 	if(     (((position[0] - sideLength) < shibaXposition)  && ((position[0] + sideLength) > shibaXposition))
 															  &&
 			(((position[1] - sideLength) < shibaYposition)  && ((position[1] + sideLength) > shibaYposition))
 	) {
-		//TODO: turn into function that can also count num hit
-		enemies.erase(enemies.begin()+indexOfEnemy);
-	}	   
+		shibaCollision(indexOfEnemy);
+	}
+
 }
+
+void Enemy::shibaCollision(int indexOfEnemy)
+{
+	enemies.erase(enemies.begin()+indexOfEnemy);
+	enemiesHitShiba++;
+}
+
+void Enemy::takeDamage(int damageDone)
+{
+	health -= damageDone;
+}
+
+
 
 //=============================================================
 // Functions used in Main file
@@ -254,19 +258,38 @@ void renderEnemies()
 	}
 }
 
-void updateAllPosition(float shibaXposition, float shibaYposition, float xWinResolution, float yWinResolution){
+void updateAllPosition(float shibaXposition, float shibaYposition)
+{
 	for(unsigned int i = 0; i < enemies.size(); i++) {
-		enemies[i].updatePosition(shibaXposition, shibaYposition, xWinResolution, yWinResolution, i);
+		enemies[i].updatePosition(shibaXposition, shibaYposition, i);
 	}
 }
 
-void cleanupEnemies(){
+void cleanupEnemies()
+{
 	while(enemies.size() != 0){
 		enemies.pop_back();
 	}
 }
 
+/**
+ * 
+Image enemySprite[1] = {"possibleEnemy.gif"};
+GLuint EnemyTexture;
 
+void enemyInit_openGL(){
+	int w = enemySprite[0].width;
+	int h = enemySprite[0].height;
+	glBindTexture(GL_TEXTURE_2D, EnemyTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	//
+	//must build a new set of data...
+	unsigned char *EnemyData = buildAlphaData(&enemySprite[0]);	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+		GL_RGBA, GL_UNSIGNED_BYTE, EnemyData);
+}
 
 
 // void createEnemies(vector<Enemy> &EnemyInstance, int VecSize){
@@ -274,7 +297,7 @@ void cleanupEnemies(){
 // 		EnemyInstance.push_back(Enemy());
 
 // }
-
+*/
 
 
 //Things I may use
@@ -454,6 +477,7 @@ void buildAsteroidFragment(Asteroid *ta, Asteroid *a)
 
 /**
  * old Enemy() constructor code. Keeping around just in case
+ * this makes them spawn on edges of game
  
 	switch(spawnPoint){
 		case 0:

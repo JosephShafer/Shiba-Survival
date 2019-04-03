@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <stdio.h>
+//#include "Image.h"
 using namespace std;
 
 typedef float Vec[3];
@@ -19,17 +20,24 @@ public:
     float position[2];
     float velocity[2];
     float sideLength;
+    float speed;
+    int health;
+    static int enemiesHitShiba;
     void drawEnemy();
-    void updatePosition(float, float, float, float, int);
+    void updatePosition(float, float, int);
+    void takeDamage(int);
+    void shibaCollision(int);
     Enemy(float, float);
 };
+
+//int Enemy::enemiesHitShiba = 0;
 
 extern std::vector<Enemy> enemies;
 
 void createEnemy(int, float, float);
 void destroyEnemy(int);
 void renderEnemies();
-void updateAllPosition(float, float, float, float);
+void updateAllPosition(float, float);
 void cleanupEnemies();
 
 

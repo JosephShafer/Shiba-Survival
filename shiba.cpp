@@ -760,7 +760,7 @@ void gameplayScreen()
 	drawBullet();
 	drawTimer(gl->xres);
 	//createEnemy(1);
-	updateAllPosition(g.ship.pos[0], g.ship.pos[1], gl->xres, gl->yres);
+	updateAllPosition(g.ship.pos[0], g.ship.pos[1]);
 
 
 }

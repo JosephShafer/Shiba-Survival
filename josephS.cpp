@@ -189,6 +189,7 @@ void Enemy::drawEnemy()
 void Enemy::updatePosition(float shibaXposition, float shibaYposition, int indexOfEnemy)
 {
 	
+
 	if(position[0] < shibaXposition)
 		velocity[0] += speed;
 	if(position[0] > shibaXposition)
@@ -198,14 +199,18 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 	if(position[1] > shibaYposition)
 		velocity[1] -= speed;
 	
-	if((position[0] + sideLength) < 0 || (position[0] - sideLength) > gameXresolution)
-		velocity[0] *= -1;
-	if((position[1] + sideLength) < 0 || (position[1] - sideLength) > gameYresolution)
-		velocity[1] *= -1;
-
 	position[0] = position[0] + velocity[0];
 	position[1] = position[1] + velocity[1];
 	
+	if((position[0] + sideLength) < sideLength) 
+		velocity[0] *= -1;
+	if((position[0] - sideLength) > gameXresolution)
+		velocity[0] *= -1;
+	if((position[1] + sideLength) < sideLength)
+		velocity[1] *= -1;
+	if((position[1] - sideLength) > gameYresolution)
+		velocity[1] *= -1;
+
 	
 	//weird formatting just makes it easier for me to see for now
 	if(     (((position[0] - sideLength) < shibaXposition)  && ((position[0] + sideLength) > shibaXposition))
@@ -214,6 +219,17 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 	) {
 		shibaCollision(indexOfEnemy);
 	}
+
+	#ifdef joeydebug
+		if(position[0] < -30)
+			printf("Enemy position error: Left of game window error\n");
+		if(position[0] > gameXresolution + 30)
+			printf("Enemy position error: right of game window error\n");
+		if(position[1] < -30)
+			printf("Enemy position error: below game window error\n");
+		if(position[1] > gameYresolution + 30)
+			printf("Enemy position error: Above game window error\n");
+	#endif
 
 }
 

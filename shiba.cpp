@@ -78,8 +78,8 @@ public:
 		return instance;
 	}
 	Global() {
-		xres = 1250;
-		yres = 900;
+		xres = 1366;
+		yres = 768;
 		memset(keys, 0, 65536);
 		showCredits = false;
 	}
@@ -340,7 +340,7 @@ public:
 		//it will undo the last change done by XDefineCursor
 		//(thus do only use ONCE XDefineCursor and then XUndefineCursor):
 	}
-} x11(1366, 768);
+} x11(gl->xres, gl->yres);
 
 //function prototypes
 void init_opengl(void);

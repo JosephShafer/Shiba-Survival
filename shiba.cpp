@@ -567,7 +567,7 @@ int check_keys(XEvent *e)
 			break;
 		case XK_equal:
 			createEnemy(i, g.ship.pos[0], g.ship.pos[1]);
-			#ifdef joeydebug
+			#ifdef debug
 			//printf("%d\n", int(enemies.size()));
 			#endif
 			break;

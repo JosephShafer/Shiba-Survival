@@ -9,8 +9,8 @@ all: shiba
 shiba: $(FILES)
 	$(COMPILER) $(CFLAGS) $(FILES) $(FONTS) -Wall -Wextra $(LFLAGS) -oshiba
 
-joeydebug: $(FILES)
-	$(COMPILER) $(CFLAGS) $(FILES) $(FONTS) -Wall -Wextra $(LFLAGS) -ojoeydebug -Djoeydebug
+debug: $(FILES)
+	$(COMPILER) $(CFLAGS) $(FILES) $(FONTS) -Wall -Wextra $(LFLAGS) -odebug -Ddebug
 
 clean:
-	rm -f shiba joeydebug *.o
+	rm -f shiba debug *.o

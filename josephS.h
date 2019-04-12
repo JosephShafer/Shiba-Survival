@@ -12,6 +12,26 @@ using namespace std;
 
 typedef float Vec[3];
 
+class JoeyGlobal{
+public:
+
+	float gameXresolution;
+	float gameYresolution;
+    
+    static JoeyGlobal *instance;
+    static JoeyGlobal *getInstance(){
+        if(!instance){
+            instance = new JoeyGlobal;
+        }
+        return instance;
+    }
+    JoeyGlobal(){
+        gameXresolution = 1366;
+		gameYresolution = 766;
+    }
+};
+
+
 extern void josephS(float, float, GLuint);
 void enemyGetResolution(float, float);
 
@@ -29,6 +49,9 @@ public:
     void shibaCollision(int);
     Enemy(float, float);
 };
+
+
+
 
 //int Enemy::enemiesHitShiba = 0;
 

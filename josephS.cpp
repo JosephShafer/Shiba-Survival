@@ -279,6 +279,34 @@ bool bulletHitEnemy(float bulletX, float bulletY){
 		return hit;
 }
 
+
+void primeSpawner(int milliseconds, float shibaXposition, float shibaYposition){
+
+	int primeArray[] = {101, 103, 107, 109, 113};
+
+	static int currentIndex = sizeof(primeArray) / sizeof(primeArray[0]) - 1;
+	static int numToMake = 1;
+
+	int spawnChecker = (milliseconds % primeArray[currentIndex]);
+	unsigned int enemyCap = 10;
+	
+
+	if(spawnChecker == 0 && enemies.size() < enemyCap){
+		createEnemy(numToMake, shibaXposition, shibaYposition);
+		if (currentIndex > 0) {
+			--currentIndex;
+		} else{
+			currentIndex = sizeof(primeArray) / sizeof(primeArray[0]) - 1;
+			numToMake++;
+		}
+	}
+
+	if(milliseconds % 401 == 0){
+		enemyCap++;
+	}
+
+}
+
 void josephS(float x, float y, GLuint textid)
 {
     //show name

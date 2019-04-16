@@ -771,7 +771,7 @@ void gameplayScreen()
 	//createEnemy(1);
 	updateAllPosition(g.ship.pos[0], g.ship.pos[1]);
 
-
+	primeSpawner(int(gameTimer.getElapsedMilliseconds()), g.ship.pos[0], g.ship.pos[1]);
 }
 
 void drawBullet()

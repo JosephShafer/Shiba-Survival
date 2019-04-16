@@ -4,7 +4,7 @@ FILES    = shiba.cpp log.cpp timers.cpp amberZ.cpp josephS.cpp danL.cpp mabelleC
 FONTS    = libggfonts.a
 LFLAGS   = -lrt -lX11 -lGLU -lGL -pthread -lm
 
-all: shiba
+all: shiba debug
 
 shiba: $(FILES)
 	$(COMPILER) $(CFLAGS) $(FILES) $(FONTS) -Wall -Wextra $(LFLAGS) -oshiba

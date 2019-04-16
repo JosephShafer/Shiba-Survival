@@ -6,6 +6,7 @@
 #include "fonts.h"
 #include <stdlib.h>
 #include <vector>
+
 #include <stdio.h>
 //#include "Image.h"
 using namespace std;
@@ -62,6 +63,7 @@ void renderEnemies();
 void updateAllPosition(float, float);
 void cleanupEnemies();
 bool bulletHitEnemy(float, float);
+void primeSpawner(int, float, float);
 extern void josephS(float, float, GLuint);
 
 

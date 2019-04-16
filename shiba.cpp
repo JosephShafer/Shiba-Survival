@@ -648,6 +648,9 @@ void bulletPositionControl()
 		else if (b->pos[1] > (float)gl->yres) {
 			b->pos[1] -= (float)gl->yres;
 		}
+
+		attackEnemy(b->pos[0], b->pos[1]);
+		
 		i++;
 	}
 }

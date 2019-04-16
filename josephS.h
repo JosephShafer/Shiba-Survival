@@ -32,7 +32,6 @@ public:
 };
 
 
-extern void josephS(float, float, GLuint);
 void enemyGetResolution(float, float);
 
 class Enemy{
@@ -62,6 +61,8 @@ void destroyEnemy(int);
 void renderEnemies();
 void updateAllPosition(float, float);
 void cleanupEnemies();
+void attackEnemy(float, float);
+extern void josephS(float, float, GLuint);
 
 
 #endif

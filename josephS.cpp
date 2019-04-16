@@ -56,7 +56,7 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 	velocity[0] = 0;
 	velocity[1] = 0;
 	health = 100;
-	speed = .001;
+	speed = .01;
 	
 
 	//enemies spawn
@@ -246,7 +246,7 @@ void updateAllPosition(float shibaXposition, float shibaYposition)
 	for(unsigned int i = 0; i < enemies.size(); i++) {
 		enemies[i].updatePosition(shibaXposition, shibaYposition, i);
 		// TODO MOVE TO OTHER FUNCTION MAYBE
-		if(enemies[i].health < 0){
+		if(enemies[i].health < 1){
 			destroyEnemy(i);
 		}
 		// END TODO
@@ -260,7 +260,8 @@ void cleanupEnemies()
 	}
 }
 
-void attackEnemy(float bulletX, float bulletY){
+bool bulletHitEnemy(float bulletX, float bulletY){
+	bool hit = false;
 	for(unsigned int j = 0; j < enemies.size(); j++){
 			if((bulletX - enemies[j].sideLength < enemies[j].position[0]) 
 				&&
@@ -271,9 +272,11 @@ void attackEnemy(float bulletX, float bulletY){
 				(bulletY - enemies[j].sideLength < enemies[j].position[1])
 				)
 				{
-				enemies[j].takeDamage(10);
+				enemies[j].takeDamage(100);
+				hit = true;
 			}
 		}
+		return hit;
 }
 
 void josephS(float x, float y, GLuint textid)

@@ -649,7 +649,13 @@ void bulletPositionControl()
 			b->pos[1] -= (float)gl->yres;
 		}
 
-		attackEnemy(b->pos[0], b->pos[1]);
+		
+		if(bulletHitEnemy(b->pos[0], b->pos[1])){
+			//removes bullet if hit
+			memcpy(&g.barr[i], &g.barr[g.nbullets-1],
+				sizeof(Bullet));
+			g.nbullets--;
+		}
 		
 		i++;
 	}

@@ -61,7 +61,7 @@ void destroyEnemy(int);
 void renderEnemies();
 void updateAllPosition(float, float);
 void cleanupEnemies();
-void attackEnemy(float, float);
+bool bulletHitEnemy(float, float);
 extern void josephS(float, float, GLuint);
 
 

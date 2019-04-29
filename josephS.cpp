@@ -5,9 +5,9 @@
 #include "josephS.h"
 
 JoeyGlobal *JoeyGlobal::instance = 0;
-JoeyGlobal *globalVars = globalVars->getInstance();
+JoeyGlobal *JSglobalVars = JSglobalVars->getInstance();
 
-typedef float Vec[3];
+//typedef float Vec[3];
 
 /*
 Ideas related to enemies:
@@ -19,8 +19,8 @@ Ideas related to enemies:
 
 void enemyGetResolution(float Xres, float Yres)
 {
-	globalVars->gameXresolution = Xres;
-	globalVars->gameYresolution = Yres;
+	JSglobalVars->gameXresolution = Xres;
+	JSglobalVars->gameYresolution = Yres;
 }
 
 /*
@@ -55,6 +55,7 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 
 	velocity[0] = 0;
 	velocity[1] = 0;
+	sideLength = float(rand() % 20 + 5);
 	health = 100;
 	speed = .01;
 	
@@ -67,14 +68,14 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 	//spawn top right area of game area
 	while(!enemySpawned){
 		if (spawnchoice == 0){
-			if((shibaXPosition + spaceAway) < globalVars->gameXresolution && (shibaYPosition + spaceAway) < globalVars->gameXresolution){
-				position[0] = (rand() % ((int)(globalVars->gameXresolution - spaceAway + 1 - shibaXPosition)))
+			if((shibaXPosition + spaceAway) < JSglobalVars->gameXresolution && (shibaYPosition + spaceAway) < JSglobalVars->gameXresolution){
+				position[0] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - shibaXPosition)))
 								+ shibaXPosition + spaceAway;
-				position[1] = (rand() % ((int)(globalVars->gameXresolution - spaceAway + 1 - shibaYPosition)))
+				position[1] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - shibaYPosition)))
 								+ shibaYPosition + spaceAway;
 				enemySpawned = true;
 				#ifdef debug
-					if(position[0] > globalVars->gameXresolution || position[1] > globalVars->gameXresolution){
+					if(position[0] > JSglobalVars->gameXresolution || position[1] > JSglobalVars->gameXresolution){
 						printf("Top right Error: %f, %f\n", position[0], position[1]);
 					}
 				#endif
@@ -85,13 +86,13 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 		}
 		//spawn top left area of shiba
 		if (spawnchoice == 1){
-			if((shibaXPosition) > 0 && (shibaYPosition + spaceAway) < globalVars->gameXresolution){
+			if((shibaXPosition) > 0 && (shibaYPosition + spaceAway) < JSglobalVars->gameXresolution){
 				position[0] = (rand() % ((int)(shibaXPosition - spaceAway + 1)));
-				position[1] = (rand() % ((int)(globalVars->gameXresolution - spaceAway + 1 - shibaYPosition)))
+				position[1] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - shibaYPosition)))
 								+ shibaYPosition + spaceAway;
 				enemySpawned = true;
 				#ifdef debug
-					if(position[0] < 0 || position[1] > globalVars->gameXresolution){
+					if(position[0] < 0 || position[1] > JSglobalVars->gameXresolution){
 						printf("Top Left Error: %f, %f\n", position[0], position[1]);
 					}
 				#endif
@@ -103,13 +104,13 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 		// rand() % (max_number + 1 - minimum_number) + minimum_number
 		// bottom right
 		if (spawnchoice == 2){
-			if((shibaXPosition + spaceAway) < globalVars->gameXresolution && (shibaYPosition > 0)){
-				position[0] = (rand() % ((int)(globalVars->gameXresolution - spaceAway + 1 - shibaXPosition)))
+			if((shibaXPosition + spaceAway) < JSglobalVars->gameXresolution && (shibaYPosition > 0)){
+				position[0] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - shibaXPosition)))
 								+ shibaXPosition + spaceAway;
 				position[1] = (rand() % ((int)(shibaYPosition - spaceAway + 1 )));
 				enemySpawned = true;
 				#ifdef debug
-					if(position[0] > globalVars->gameXresolution || position[1] < 0){
+					if(position[0] > JSglobalVars->gameXresolution || position[1] < 0){
 						printf("Bottom Right Error: %f, %f\n", position[0], position[1]);
 					}
 				#endif
@@ -141,7 +142,7 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 void Enemy::drawEnemy()
 {
         // square until we add sprites
-         sideLength = 10.0f;
+         //sideLength = 10.0f;
          glColor3f(1.0f, 1.0f, 1.0f);
          glBegin(GL_POLYGON);
             glVertex2f(-sideLength, sideLength);
@@ -169,11 +170,11 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 	
 	if((position[0] + sideLength) < sideLength) 
 		velocity[0] *= -1;
-	if((position[0] - sideLength) > globalVars->gameXresolution)
+	if((position[0] - sideLength) > JSglobalVars->gameXresolution)
 		velocity[0] *= -1;
 	if((position[1] + sideLength) < sideLength)
 		velocity[1] *= -1;
-	if((position[1] - sideLength) > globalVars->gameXresolution)
+	if((position[1] - sideLength) > JSglobalVars->gameXresolution)
 		velocity[1] *= -1;
 
 	
@@ -188,11 +189,11 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 	#ifdef debug
 		if(position[0] < -30)
 			printf("Enemy position error: Left of game window error\n");
-		if(position[0] > globalVars->gameXresolution + 30)
+		if(position[0] > JSglobalVars->gameXresolution + 30)
 			printf("Enemy position error: right of game window error\n");
 		if(position[1] < -30)
 			printf("Enemy position error: below game window error\n");
-		if(position[1] > globalVars->gameXresolution + 30)
+		if(position[1] > JSglobalVars->gameXresolution + 30)
 			printf("Enemy position error: Above game window error\n");
 	#endif
 
@@ -209,9 +210,6 @@ void Enemy::takeDamage(int damageDone)
 	health -= damageDone;
 	
 }
-
-
-
 
 //=============================================================
 // Functions used in Main file
@@ -260,7 +258,8 @@ void cleanupEnemies()
 	}
 }
 
-bool bulletHitEnemy(float bulletX, float bulletY){
+bool bulletHitEnemy(float bulletX, float bulletY)
+{
 	bool hit = false;
 	for(unsigned int j = 0; j < enemies.size(); j++){
 			if((bulletX - enemies[j].sideLength < enemies[j].position[0]) 
@@ -279,9 +278,8 @@ bool bulletHitEnemy(float bulletX, float bulletY){
 		return hit;
 }
 
-
-void primeSpawner(int milliseconds, float shibaXposition, float shibaYposition){
-
+void primeSpawner(int milliseconds, float shibaXposition, float shibaYposition)
+{
 	int primeArray[] = {101, 103, 107, 109, 113};
 
 	static int currentIndex = sizeof(primeArray) / sizeof(primeArray[0]) - 1;
@@ -290,7 +288,6 @@ void primeSpawner(int milliseconds, float shibaXposition, float shibaYposition){
 	int spawnChecker = (milliseconds % primeArray[currentIndex]);
 	unsigned int enemyCap = 10;
 	
-
 	if(spawnChecker == 0 && enemies.size() < enemyCap){
 		createEnemy(numToMake, shibaXposition, shibaYposition);
 		if (currentIndex > 0) {

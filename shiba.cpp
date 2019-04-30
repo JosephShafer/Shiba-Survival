@@ -768,6 +768,7 @@ void gameplayScreen()
 	//Draw the bullets
 	drawBullet();
 	drawTimer(gl->xres);
+	beginningScore();
 	//createEnemy(1);
 	updateAllPosition(g.ship.pos[0], g.ship.pos[1]);
 

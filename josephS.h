@@ -5,8 +5,8 @@
 #include "fonts.h"
 #include <stdlib.h>
 #include <vector>
-
 #include <stdio.h>
+#include "amberZ.h"
 //#include "Image.h"
 using namespace std;
 
@@ -52,6 +52,7 @@ public:
 //int Enemy::enemiesHitShiba = 0;
 
 extern std::vector<Enemy> enemies;
+extern SSD hundreds, tenths, ones;
 
 void createEnemy(int, float, float);
 void destroyEnemy(int);
@@ -60,6 +61,8 @@ void updateAllPosition(float, float);
 void cleanupEnemies();
 bool bulletHitEnemy(float, float);
 void primeSpawner(int, float, float);
+void beginningScore();
+void updateScore();
 extern void josephS(float, float, GLuint);
 
 

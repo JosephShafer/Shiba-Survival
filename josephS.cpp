@@ -219,6 +219,57 @@ void Enemy::takeDamage(int damageDone)
 	
 }
 
+
+
+//=============================================================
+//		Score Display
+//=============================================================
+SSD hundreds, tenths, ones;
+
+void beginningScore(){
+	float xTransform = .95;
+	float spacing = .040;
+
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glPushMatrix();
+	glTranslated(JSglobalVars->gameXresolution * xTransform, JSglobalVars->gameYresolution * .05, 0.0f);
+	ones.renderSSD();
+	glPopMatrix();
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glPushMatrix();
+	glTranslated(JSglobalVars->gameXresolution * (xTransform - spacing), JSglobalVars->gameYresolution * .05, 0.0f);
+	tenths.renderSSD();
+	glPopMatrix();	
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glPushMatrix();
+	glTranslated(JSglobalVars->gameXresolution * (xTransform - (2 * spacing)), JSglobalVars->gameYresolution * .05, 0.0f);
+	hundreds.renderSSD();
+	glPopMatrix();	
+}
+
+// TODO FINISH SCORE DISPLAY
+void updateScore(){
+	static int onesPlace = 0;
+	static int tensPlace = 0;
+	static int hundredsPlace = 0;
+	if(onesPlace < 9){
+		onesPlace++;
+		ones.updateDisplay(onesPlace);
+	} else{
+		onesPlace = 0;
+		ones.updateDisplay(onesPlace);
+		tensPlace++;
+	}
+	if(tensPlace < 10){
+		tenths.updateDisplay(tensPlace);
+	}else{
+			tensPlace = 0;
+			tenths.updateDisplay(tensPlace);
+			hundredsPlace++;
+			hundreds.updateDisplay(hundredsPlace);
+		}
+}
+
 //=============================================================
 // Functions used in Main file
 //=============================================================
@@ -281,6 +332,7 @@ bool bulletHitEnemy(float bulletX, float bulletY)
 				{
 				enemies[j].takeDamage(100);
 				hit = true;
+				updateScore();
 			}
 		}
 		return hit;

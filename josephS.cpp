@@ -1,4 +1,4 @@
-//Program: josephS.cpp
+///Program: josephS.cpp
 //Author:  Joseph Shafer
 //Date:    2/15/2019
 
@@ -168,14 +168,22 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 	position[0] = position[0] + velocity[0];
 	position[1] = position[1] + velocity[1];
 	
-	if((position[0] + sideLength) < sideLength) 
+	if((position[0] - sideLength) <= 0){
+		position[0] = sideLength;
 		velocity[0] *= -1;
-	if((position[0] - sideLength) > JSglobalVars->gameXresolution)
+	}
+	if((position[0] + sideLength) >= JSglobalVars->gameXresolution){
+		position[0] = JSglobalVars->gameXresolution - sideLength;
 		velocity[0] *= -1;
-	if((position[1] + sideLength) < sideLength)
+	}
+	if((position[1] - sideLength) <= 0){
+		position[1] = sideLength;
 		velocity[1] *= -1;
-	if((position[1] - sideLength) > JSglobalVars->gameXresolution)
+	}
+	if((position[1] + sideLength) >= JSglobalVars->gameYresolution){
+		position[1] = JSglobalVars->gameYresolution - sideLength;
 		velocity[1] *= -1;
+	}
 
 	
 	//weird formatting just makes it easier for me to see for now

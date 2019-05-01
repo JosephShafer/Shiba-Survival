@@ -60,7 +60,7 @@ void updateAllPosition(float, float);
 void cleanupEnemies();
 bool bulletHitEnemy(float, float, float *);
 void primeSpawner(int, float, float);
-float scoreCalculator(float, float * score);
+void scoreCalculator(float, float * score);
 void textScoreDisplay(float);
 extern void josephS(float, float, GLuint);
 

@@ -242,12 +242,13 @@ void textScoreDisplay(float scoreIncrease){
 	//used in bullet hit enemy
 }
 
-float scoreCalculator(float enemySize, float * score)
+void scoreCalculator(float enemySize, float * score)
 {
 	float scoreIncrease = 10000*(1/enemySize);
 	*score += scoreIncrease;
-	return scoreIncrease;
 }
+
+
 
 //=============================================================
 // Functions used in Main file

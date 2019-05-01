@@ -224,63 +224,29 @@ void Enemy::takeDamage(int damageDone)
 //=============================================================
 //		Score Display
 //=============================================================
-SSD hundreds, tenths, ones;
 
-void beginningScore()
-{
-	float xTransform = .95;
-	float spacing = .040;
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glPushMatrix();
-	glTranslated(JSglobalVars->gameXresolution * xTransform, JSglobalVars->gameYresolution * .05, 0.0f);
-	ones.renderSSD();
-	glPopMatrix();
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glPushMatrix();
-	glTranslated(JSglobalVars->gameXresolution * (xTransform - spacing), JSglobalVars->gameYresolution * .05, 0.0f);
-	tenths.renderSSD();
-	glPopMatrix();	
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glPushMatrix();
-	glTranslated(JSglobalVars->gameXresolution * (xTransform - (2 * spacing)), JSglobalVars->gameYresolution * .05, 0.0f);
-	hundreds.renderSSD();
-	glPopMatrix();	
-}
-
-// TODO FINISH SCORE DISPLAY
-void updateScore()
-{
-	static int onesPlace = 0;
-	static int tensPlace = 0;
-	static int hundredsPlace = 0;
-	if(onesPlace < 9){
-		onesPlace++;
-		ones.updateDisplay(onesPlace);
-	} else{
-		onesPlace = 0;
-		ones.updateDisplay(onesPlace);
-		tensPlace++;
-	}
-	if(tensPlace < 10){
-		tenths.updateDisplay(tensPlace);
-	}else{
-			tensPlace = 0;
-			tenths.updateDisplay(tensPlace);
-			hundredsPlace++;
-			hundreds.updateDisplay(hundredsPlace);
-		}
-}
-
+/**
+ * What I need:
+ * Display the Score
+ * Update the score in main file
+ * */
 
 void textScoreDisplay(float scoreIncrease){
 	Rect score;
     score.left = JSglobalVars->gameXresolution * .80;
     score.bot = JSglobalVars->gameYresolution * .95;
     score.center = 0;
-	static double i = 1.0;
-	i += scoreIncrease;
-    ggprint16(&score, 16, 0x00ffff00, "score: %019.0f", i);
+	//static double i = 1.0;
+	//i += scoreIncrease;
+    ggprint16(&score, 16, 0x00ffff00, "score: %019.0f", scoreIncrease);
+	//used in bullet hit enemy
+}
+
+float scoreCalculator(float enemySize, float * score)
+{
+	float scoreIncrease = 10000*(1/enemySize);
+	*score += scoreIncrease;
+	return scoreIncrease;
 }
 
 //=============================================================
@@ -330,7 +296,7 @@ void cleanupEnemies()
 	}
 }
 
-bool bulletHitEnemy(float bulletX, float bulletY)
+bool bulletHitEnemy(float bulletX, float bulletY, float * score)
 {
 	bool hit = false;
 	for(unsigned int j = 0; j < enemies.size(); j++){
@@ -345,7 +311,8 @@ bool bulletHitEnemy(float bulletX, float bulletY)
 				{
 				enemies[j].takeDamage(100);
 				hit = true;
-				textScoreDisplay(enemies[j].sideLength);
+				// TODO FIX COUPLING
+				scoreCalculator((enemies[j].sideLength), score);
 			}
 		}
 		return hit;

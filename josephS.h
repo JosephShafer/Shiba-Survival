@@ -52,20 +52,15 @@ public:
 //int Enemy::enemiesHitShiba = 0;
 
 extern std::vector<Enemy> enemies;
-// TODO Make vector that grows right
-// TODO Add static variable to make it so 
-// We can update score on server
-extern SSD hundreds, tenths, ones;
 
 void createEnemy(int, float, float);
 void destroyEnemy(int);
 void renderEnemies();
 void updateAllPosition(float, float);
 void cleanupEnemies();
-bool bulletHitEnemy(float, float);
+bool bulletHitEnemy(float, float, float *);
 void primeSpawner(int, float, float);
-void beginningScore();
-void updateScore();
+float scoreCalculator(float, float * score);
 void textScoreDisplay(float);
 extern void josephS(float, float, GLuint);
 

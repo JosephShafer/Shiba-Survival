@@ -652,13 +652,12 @@ void bulletPositionControl()
 		}
 
 		
-		if(bulletHitEnemy(b->pos[0], b->pos[1])){
+		if(bulletHitEnemy(b->pos[0], b->pos[1], &gl->score)){
 			//removes bullet if hit
 			memcpy(&g.barr[i], &g.barr[g.nbullets-1],
 				sizeof(Bullet));
 			g.nbullets--;
 		}
-		
 		i++;
 	}
 }
@@ -770,7 +769,6 @@ void gameplayScreen()
 	//Draw the bullets
 	drawBullet();
 	drawTimer(gl->xres);
-	//beginningScore();
 	textScoreDisplay(gl->score);
 	//createEnemy(1);
 	updateAllPosition(g.ship.pos[0], g.ship.pos[1]);

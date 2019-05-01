@@ -226,7 +226,8 @@ void Enemy::takeDamage(int damageDone)
 //=============================================================
 SSD hundreds, tenths, ones;
 
-void beginningScore(){
+void beginningScore()
+{
 	float xTransform = .95;
 	float spacing = .040;
 
@@ -248,7 +249,8 @@ void beginningScore(){
 }
 
 // TODO FINISH SCORE DISPLAY
-void updateScore(){
+void updateScore()
+{
 	static int onesPlace = 0;
 	static int tensPlace = 0;
 	static int hundredsPlace = 0;
@@ -268,6 +270,17 @@ void updateScore(){
 			hundredsPlace++;
 			hundreds.updateDisplay(hundredsPlace);
 		}
+}
+
+
+void textScoreDisplay(float scoreIncrease){
+	Rect score;
+    score.left = JSglobalVars->gameXresolution * .80;
+    score.bot = JSglobalVars->gameYresolution * .95;
+    score.center = 0;
+	static double i = 1.0;
+	i += scoreIncrease;
+    ggprint16(&score, 16, 0x00ffff00, "score: %019.0f", i);
 }
 
 //=============================================================
@@ -332,7 +345,7 @@ bool bulletHitEnemy(float bulletX, float bulletY)
 				{
 				enemies[j].takeDamage(100);
 				hit = true;
-				updateScore();
+				textScoreDisplay(enemies[j].sideLength);
 			}
 		}
 		return hit;

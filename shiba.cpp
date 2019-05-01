@@ -64,6 +64,7 @@ extern void timeCopy(struct timespec *dest, struct timespec *source);
 class Global {
 public:
 	int xres, yres;
+	float score;
 	char keys[65536];
 	bool showCredits;
 	bool gameMenu = true;
@@ -82,6 +83,7 @@ public:
 		yres = 768;
 		memset(keys, 0, 65536);
 		showCredits = false;
+		score = 0;
 	}
 };
 Global *Global::instance = 0;
@@ -768,7 +770,8 @@ void gameplayScreen()
 	//Draw the bullets
 	drawBullet();
 	drawTimer(gl->xres);
-	beginningScore();
+	//beginningScore();
+	textScoreDisplay(gl->score);
 	//createEnemy(1);
 	updateAllPosition(g.ship.pos[0], g.ship.pos[1]);
 

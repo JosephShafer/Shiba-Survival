@@ -9,9 +9,11 @@
 #include <chrono>
 #include <cmath>
 #include <cstdlib>
+#include <stdlib.h>
 #include <ctime>
-//#include <curl/curl.h>
 #include <GL/glx.h>
+#include "amberZ.h"
+#include "Image.h"
 #include "fonts.h"
 
 class Timer
@@ -44,6 +46,7 @@ extern SSD min1, min2, col, sec1, sec2;
 
 void drawTimer(int);
 void updateTimer(int, int);
+void drawSprite(GLuint, Image&, float, float, float, float);
 void amberZ(int, int, GLuint);
 void storeScore(char[], int);
 

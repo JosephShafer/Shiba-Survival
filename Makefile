@@ -1,6 +1,6 @@
 COMPILER = g++
 CFLAGS   = -I ./include
-FILES    = shiba.cpp log.cpp timers.cpp amberZ.cpp josephS.cpp danL.cpp mabelleC.cpp thomasB.cpp
+FILES    = shiba.cpp log.cpp timers.cpp amberZ.cpp josephS.cpp danL.cpp mabelleC.cpp thomasB.cpp Image.cpp
 FONTS    = libggfonts.a
 LFLAGS   = -lrt -lX11 -lGLU -lGL -pthread -lm
 

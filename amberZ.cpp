@@ -211,6 +211,36 @@ void updateTimer(int min, int sec)
 	}
 }
 
+void drawSprite(GLuint texture, Image& sprite, float width, float height, float xpos, float ypos)
+{
+	glPushMatrix();
+	glColor3f(1.0, 1.0, 1.0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.0f);
+	glColor4ub(255, 255, 255, 255);
+	int ix = sprite.frame % sprite.columns;
+	int iy = sprite.animation;
+	if (sprite.frame >= sprite.columns)
+		iy = 1;
+	float tx = (float) ix / sprite.columns;
+	float ty = (float) iy / sprite.rows;
+	glColor3f(1.0, 1.0, 1.0);
+	glBegin(GL_QUADS);
+	glTexCoord2f(tx, ty + (1.0 / sprite.rows));
+	glVertex2i(xpos - width, ypos - height);
+	glTexCoord2f(tx, ty);
+	glVertex2i(xpos - width, ypos + height);
+	glTexCoord2f(tx + (1.0 / sprite.columns), ty);
+	glVertex2i(xpos + width, ypos + height);
+	glTexCoord2f(tx + (1.0 / sprite.columns), ty + (1.0 / sprite.rows));
+	glVertex2i(xpos + width, ypos - height);
+	glEnd();
+	glPopMatrix();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_ALPHA_TEST);
+}
+
 // Displays my name and photo on the credits screen
 void amberZ(int x, int y, GLuint textureId)
 {

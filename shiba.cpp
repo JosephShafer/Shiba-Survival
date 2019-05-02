@@ -303,7 +303,7 @@ void render();
 void gameplayScreen();
 void drawBullet();
 void drawCredits();
-void updateFrame();
+//void updateFrame();
 extern void menu();
 extern int nbuttons;
 extern Button button[];
@@ -615,25 +615,25 @@ void physicsKeyEvents()
 	if (gl->keys[XK_Left]) {
 		g.shiba.angle = 90;
 		img[5].animation = 3;
-		updateFrame();
+		updateFrame(img[5]);
 		g.shiba.pos[0] -= 5;
 	}
 	if (gl->keys[XK_Right]) {
 		g.shiba.angle = 270;
 		img[5].animation = 1;
-		updateFrame();
+		updateFrame(img[5]);
 		g.shiba.pos[0] += 5;
 	}
 	if (gl->keys[XK_Up]) {
 		g.shiba.angle = 360;
 		img[5].animation = 2;
-		updateFrame();
+		updateFrame(img[5]);
 		g.shiba.pos[1] += 5;
 	}
 	if (gl->keys[XK_Down]) {
 		g.shiba.angle = 180;
 		img[5].animation = 0;
-		updateFrame();
+		updateFrame(img[5]);
 		g.shiba.pos[1] -= 5;
 	}
 	if (gl->keys[XK_space]) {
@@ -752,6 +752,7 @@ void drawBullet()
 	}
 }
 
+/*
 int counter = 0;
 void updateFrame() {
 	++counter %= 5;
@@ -761,41 +762,6 @@ void updateFrame() {
 	}
 	if (img[5].frame >= 4)
 		img[5].frame = 0;
-}
-
-/*
-void drawshiba()
-{
-	float cx = g.shiba.pos[0];
-	float cy = g.shiba.pos[1];
-	float w = 40.0;
-	float h = 40.0;
-	glPushMatrix();
-	glColor3f(1.0, 1.0, 1.0);
-	glBindTexture(GL_TEXTURE_2D, gl->textures[5]);
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.0f);
-	glColor4ub(255,255,255,255);
-	int ix = img[5].frame % img[5].columns;
-	int iy = img[5].animation;
-	if (img[5].frame >= img[5].columns)
-		iy = 1;
-	float tx = (float) ix / img[5].columns;
-	float ty = (float) iy / img[5].rows;
-	glColor3f(1.0, 1.0, 1.0);
-	glBegin(GL_QUADS);
-	glTexCoord2f(tx, ty + (1.0 / img[5].rows));
-	glVertex2i(cx - w, cy - h);
-	glTexCoord2f(tx, ty);
-	glVertex2i(cx - w, cy + h);
-	glTexCoord2f(tx + (1.0 / img[5].columns), ty);
-	glVertex2i(cx + w, cy + h);
-	glTexCoord2f(tx + (1.0 / img[5].columns), ty + (1.0 / img[5].rows));
-	glVertex2i(cx + w, cy - h);
-	glEnd();
-	glPopMatrix();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_ALPHA_TEST);
 }
 */
 

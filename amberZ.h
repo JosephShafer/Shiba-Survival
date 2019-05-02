@@ -47,6 +47,7 @@ extern SSD min1, min2, col, sec1, sec2;
 void drawTimer(int);
 void updateTimer(int, int);
 void drawSprite(GLuint, Image&, float, float, float, float);
+void updateFrame(Image&);
 void amberZ(int, int, GLuint);
 void storeScore(char[], int);
 

@@ -13,6 +13,7 @@ public:
 	int rows;
 	int columns;
 	int frame;
+	int frameCounter;
 	int animation;
 	unsigned char *data;
 	const char *file;

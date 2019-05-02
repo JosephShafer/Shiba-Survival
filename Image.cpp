@@ -4,8 +4,7 @@ Image::Image(const char *fname, int row, int col) {
 	file = fname;
 	rows = row;
 	columns = col;
-	frame = 0;
-	animation = 0;
+	frameCounter = frame = animation = 0;
 	if (fname[0] == '\0')
 		return;
 	int ppm_flag = 0;

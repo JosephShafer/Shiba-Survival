@@ -536,7 +536,7 @@ int check_keys(XEvent *e)
 			destroyEnemy(0);
 			break;
 		case XK_p:
-			spawnPowerUp(1, g.ship.pos[0], g.ship.pos[1]);
+			spawnPowerUp(1, g.shiba.pos[0], g.shiba.pos[1]);
 			break;
 	}
 	return 0;

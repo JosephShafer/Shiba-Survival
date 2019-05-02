@@ -275,7 +275,7 @@ void renderEnemies()
 {
 	for(unsigned int i = 0; i < enemies.size(); i++) {
 		enemies[i].drawEnemy();
-		updateFrame(enemy);
+		//updateFrame(enemy);
 	}
 }
 

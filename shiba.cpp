@@ -73,7 +73,7 @@ public:
 	char *user;
 	//float score;
 	
-	GLuint textures[6];
+	GLuint textures[7];
 	GLuint enemySprites[1];
 	static Global *instance;
 	static Global *getInstance() {
@@ -154,17 +154,18 @@ public:
 	}
 } g;
 
-Image img[6] = {
+Image img[7] = {
 	Image("./images/amberZ.png"),
 	Image("./images/josephS.png"),
 	Image("./images/danL.png"),
 	Image("./images/mabelleC.png"),
 	Image("./images/thomasB.png"),
-	Image("./images/Shiba-Sprites.png", 9, 4)
+	Image("./images/Shiba-Sprites.png", 9, 4),
+	Image("./images/grass13.png")
 };
 
 Image enemyArray[1] = {
-	Image("./images/Doctor_Left.png", 1, 4)
+	Image("./images/Doctor-BG.png", 1, 4)
 };
 
 //X Windows variables
@@ -299,6 +300,7 @@ public:
 } x11(gl->xres, gl->yres);
 
 //function prototypes
+unsigned char *buildAlphaData(Image *img);
 void init_opengl(void);
 int check_mouse(XEvent *e);
 int check_keys(XEvent *e);
@@ -365,6 +367,34 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+unsigned char *buildAlphaData(Image *img)
+{
+	int i;
+	unsigned char *newdata, *ptr;
+	unsigned char *data = (unsigned char *)img->data;
+	newdata = (unsigned char *)malloc(img->width * img->height * 4);
+	ptr = newdata;
+	unsigned char a, b, c;
+	unsigned char t0 = *(data + 0);
+	unsigned char t1 = *(data + 1);
+	unsigned char t2 = *(data + 2);
+	for (i = 0; i < img->width * img->height * 3; i += 3)
+	{
+			a = *(data + 0);
+			b = *(data + 1);
+			c = *(data + 2);
+			*(ptr + 0) = a;
+			*(ptr + 1) = b;
+			*(ptr + 2) = c;
+			*(ptr + 3) = 1;
+			if (a == t0 && b == t1 && c == t2)
+					*(ptr + 3) = 0;
+			ptr += 4;
+			data += 3;
+	}
+	return newdata;
+}
+
 void init_opengl(void)
 {
 	//OpenGL initialization
@@ -386,13 +416,22 @@ void init_opengl(void)
 	glEnable(GL_TEXTURE_2D);
 	initialize_fonts();
 
-	for (int i = 0; i < 6; i++) {
+	unsigned char *spriteData;
+
+	for (int i = 0; i < 7; i++) {
 		glGenTextures(1, &gl->textures[i]);
 		glBindTexture(GL_TEXTURE_2D, gl->textures[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexImage2D(GL_TEXTURE_2D, 0, 3, img[i].width, img[i].height, 0, GL_RGB,
+		if (i == 5) {
+			spriteData = buildAlphaData(&img[i]);
+    	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img[i].width, img[i].height, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+			free(spriteData);
+		}
+		else {
+			glTexImage2D(GL_TEXTURE_2D, 0, 3, img[i].width, img[i].height, 0, GL_RGB,
 			GL_UNSIGNED_BYTE, img[i].data);
+		}
 	}
 
 	for (int i = 0; i < 1; i++) {
@@ -400,11 +439,12 @@ void init_opengl(void)
 		glBindTexture(GL_TEXTURE_2D, gl->enemySprites[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexImage2D(GL_TEXTURE_2D, 0, 3, enemyArray[i].width, enemyArray[i].height, 0, GL_RGB,
-			GL_UNSIGNED_BYTE, enemyArray[i].data);
+		spriteData = buildAlphaData(&enemyArray[i]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, enemyArray[i].width, enemyArray[i].height, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+		free(spriteData);
+		//glTexImage2D(GL_TEXTURE_2D, 0, 3, enemyArray[i].width, enemyArray[i].height, 0, GL_RGB,
+		//	GL_UNSIGNED_BYTE, enemyArray[i].data);
 	}
-
-
 
 	getDoctorTextureFunction(gl->enemySprites[0]);
 }
@@ -668,6 +708,9 @@ void physicsKeyEvents()
 		updateFrame(img[5]);
 		g.shiba.pos[1] -= 5;
 	}
+	if (!gl->keys[XK_Left] && !gl->keys[XK_Right] && !gl->keys[XK_Up] && !gl->keys[XK_Down]) {
+		img[5].frame = 0;
+	}
 	if (gl->keys[XK_space]) {
 		shootBullet();
 	}
@@ -725,6 +768,7 @@ void render()
 	
 	if (gl->gameMenu){
 		x11.show_mouse_cursor(1);
+		glClear(GL_COLOR_BUFFER_BIT);
 		menu();
 	}
 	if (gl->gameStart){
@@ -742,6 +786,14 @@ void gameplayScreen()
 {
 	Rect r;
 	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(1.0, 1.0, 1.0);
+	glBindTexture(GL_TEXTURE_2D, gl->textures[6]);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 1.0); glVertex2i(0, 0);
+		glTexCoord2f(0.0, 0.0); glVertex2i(0, gl->yres);
+		glTexCoord2f(0.25, 0.0); glVertex2i(gl->xres, gl->yres);
+		glTexCoord2f(0.25, 1.0); glVertex2i(gl->xres, 0);
+	glEnd();
 	//
 	r.bot = gl->yres - 20;
 	r.left = 10;

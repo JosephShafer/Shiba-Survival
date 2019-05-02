@@ -5,7 +5,6 @@
 
 #include <GL/glx.h>
 #include "fonts.h"
-#include "danL.h"
 
 void danL(int x, int y, GLuint textid)
 {
@@ -30,4 +29,3 @@ void danL(int x, int y, GLuint textid)
     ggprint16(&r, 16, 0x00ffff00, "Dan Leinker");
 }
 
-PowerUp::PowerUp

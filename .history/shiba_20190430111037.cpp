@@ -25,7 +25,6 @@
 #include "josephS.h"
 #include "amberZ.h"
 #include "thomasB.h"
-#include "danL.h"
 
 //defined types
 typedef float Flt;

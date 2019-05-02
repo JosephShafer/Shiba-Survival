@@ -56,13 +56,25 @@ class SSD
 		void renderColon();
 };
 
+class SpriteTimer {
+public:
+	double physicsRate;
+	double oobillion;
+	struct timespec timeStart, timeEnd, timeCurrent;
+	struct timespec walkTime;
+	SpriteTimer();
+	double timeDiff(struct timespec *start, struct timespec *end);
+	void timeCopy(struct timespec *dest, struct timespec *source);
+	void recordTime(struct timespec *t);
+};
+
 extern Timer gameTimer;
 extern SSD min1, min2, col, sec1, sec2;
 
 void drawTimer(int);
 void updateTimer(int, int);
 void drawSprite(GLuint, Image&, float, float, float, float);
-void updateFrame(Image&);
+void updateFrame(Image&, SpriteTimer&, double);
 void amberZ(int, int, GLuint);
 BIO * ssl_setup_bio(void);
 void set_non_blocking(const int sock);

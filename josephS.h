@@ -43,6 +43,7 @@ public:
     float speed;
     int health;
     static int enemiesHitShiba;
+    SpriteTimer timer;
     void drawEnemy();
     void updatePosition(float, float, int);
     void takeDamage(int);

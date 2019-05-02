@@ -262,8 +262,35 @@ void drawSprite(GLuint texture, Image &sprite, float width, float height, float 
 	glDisable(GL_ALPHA_TEST);
 }
 
-void updateFrame(Image &sprite)
+SpriteTimer::SpriteTimer() {
+	physicsRate = 1.0 / 30.0;
+	oobillion = 1.0 / 1e9;
+}
+
+double SpriteTimer::timeDiff(struct timespec *start, struct timespec *end) {
+	return (double)(end->tv_sec - start->tv_sec ) +
+		(double)(end->tv_nsec - start->tv_nsec) * oobillion;
+}
+
+void SpriteTimer::timeCopy(struct timespec *dest, struct timespec *source) {
+	memcpy (dest, source, sizeof(struct timespec));
+}
+
+void SpriteTimer::recordTime(struct timespec *t) {
+	clock_gettime(CLOCK_REALTIME, t);
+}
+
+void updateFrame(Image &sprite, SpriteTimer &timer, double delay)
 {
+	timer.recordTime(&timer.timeCurrent);
+	double timeSpan = timer.timeDiff(&timer.walkTime, &timer.timeCurrent);
+	if (timeSpan > delay) {
+		++sprite.frame;
+		if (sprite.frame >= sprite.columns)
+			sprite.frame = 0;
+		timer.recordTime(&timer.walkTime);
+	}
+	/*
 	++sprite.frameCounter %= (sprite.columns + 1);
 	if (sprite.frameCounter == sprite.columns)
 	{
@@ -271,6 +298,7 @@ void updateFrame(Image &sprite)
 	}
 	if (sprite.frame >= sprite.columns)
 		sprite.frame = 0;
+	*/
 }
 
 // Displays my name and photo on the credits screen

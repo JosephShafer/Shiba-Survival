@@ -102,6 +102,7 @@ public:
 	Vec vel;
 	float angle;
 	float color[3];
+	SpriteTimer timer;
 public:
 	Shiba() {
 		VecZero(dir);
@@ -687,25 +688,25 @@ void physicsKeyEvents()
 	if (gl->keys[XK_Left]) {
 		g.shiba.angle = 90;
 		img[5].animation = 3;
-		updateFrame(img[5]);
+		updateFrame(img[5], g.shiba.timer, 0.1);
 		g.shiba.pos[0] -= 5;
 	}
 	if (gl->keys[XK_Right]) {
 		g.shiba.angle = 270;
 		img[5].animation = 1;
-		updateFrame(img[5]);
+		updateFrame(img[5], g.shiba.timer, 0.1);
 		g.shiba.pos[0] += 5;
 	}
 	if (gl->keys[XK_Up]) {
 		g.shiba.angle = 360;
 		img[5].animation = 2;
-		updateFrame(img[5]);
+		updateFrame(img[5], g.shiba.timer, 0.1);
 		g.shiba.pos[1] += 5;
 	}
 	if (gl->keys[XK_Down]) {
 		g.shiba.angle = 180;
 		img[5].animation = 0;
-		updateFrame(img[5]);
+		updateFrame(img[5], g.shiba.timer, 0.1);
 		g.shiba.pos[1] -= 5;
 	}
 	if (!gl->keys[XK_Left] && !gl->keys[XK_Right] && !gl->keys[XK_Up] && !gl->keys[XK_Down]) {

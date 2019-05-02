@@ -26,6 +26,7 @@
 #include "Image.h"
 #include "fonts.h"
 #include "log.h"
+#include "danL.h"
 
 //defined types
 typedef float Flt;
@@ -552,6 +553,9 @@ int check_keys(XEvent *e)
 			//will kill the first in a vector element
 			destroyEnemy(0);
 			break;
+		case XK_p:
+			spawnPowerUp(1, g.shiba.pos[0], g.shiba.pos[1]);
+			break;
 	}
 	return 0;
 }
@@ -727,6 +731,7 @@ void render()
 		x11.show_mouse_cursor(0);
 		gameplayScreen();
 		renderEnemies();
+		renderPowerUps();
 	}
 	if (gl->showCredits) {
 		drawCredits();

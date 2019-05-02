@@ -49,6 +49,26 @@ public:
     Enemy(float, float);
 };
 
+class Lives{
+    public:
+        int currentLives;
+        void setLives(int);
+        int getLives();
+        void changeLives(int);
+    Lives();
+};
+
+class Score{
+    public:
+        float currentScore;
+        void setScore(float);
+        float getScore();
+        float calculateScore(float);
+    Score();
+};
+
+extern Lives numLivesLeft;
+extern Score scoreObject;
 //int Enemy::enemiesHitShiba = 0;
 
 extern std::vector<Enemy> enemies;
@@ -58,10 +78,11 @@ void destroyEnemy(int);
 void renderEnemies();
 void updateAllPosition(float, float);
 void cleanupEnemies();
-bool bulletHitEnemy(float, float, float *);
+bool bulletHitEnemy(float, float);
 void primeSpawner(int, float, float);
 void scoreCalculator(float, float * score);
-void textScoreDisplay(float);
+void textScoreDisplay();
+void livesTextDisplay();
 extern void josephS(float, float, GLuint);
 
 

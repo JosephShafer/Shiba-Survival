@@ -64,6 +64,7 @@ extern void timeCopy(struct timespec *dest, struct timespec *source);
 class Global {
 public:
 	int xres, yres;
+	//int lives;
 	float score;
 	char keys[65536];
 	bool showCredits;
@@ -84,6 +85,7 @@ public:
 		memset(keys, 0, 65536);
 		showCredits = false;
 		score = 0;
+		//lives = 3;
 	}
 };
 Global *Global::instance = 0;
@@ -652,7 +654,7 @@ void bulletPositionControl()
 		}
 
 		
-		if(bulletHitEnemy(b->pos[0], b->pos[1], &gl->score)){
+		if(bulletHitEnemy(b->pos[0], b->pos[1])){
 			//removes bullet if hit
 			memcpy(&g.barr[i], &g.barr[g.nbullets-1],
 				sizeof(Bullet));
@@ -769,8 +771,11 @@ void gameplayScreen()
 	//Draw the bullets
 	drawBullet();
 	drawTimer(gl->xres);
-	textScoreDisplay(gl->score);
+	textScoreDisplay();
+	livesTextDisplay(); 
 	//createEnemy(1);
+
+
 	updateAllPosition(g.ship.pos[0], g.ship.pos[1]);
 
 	primeSpawner(int(gameTimer.getElapsedMilliseconds()), g.ship.pos[0], g.ship.pos[1]);

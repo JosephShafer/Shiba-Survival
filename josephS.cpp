@@ -48,6 +48,8 @@ can't spawn past edge,
 */
 
 vector<Enemy> enemies;
+Lives numLivesLeft;
+Score scoreObject;
 int Enemy::enemiesHitShiba = 0; // static variable
 
 Enemy::Enemy(float shibaXPosition, float shibaYPosition)
@@ -192,6 +194,7 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 			(((position[1] - sideLength) < shibaYposition)  && ((position[1] + sideLength) > shibaYposition))
 	) {
 		shibaCollision(indexOfEnemy);
+		numLivesLeft.changeLives(-1);
 	}
 
 	#ifdef debug
@@ -219,8 +222,6 @@ void Enemy::takeDamage(int damageDone)
 	
 }
 
-
-
 //=============================================================
 //		Score Display
 //=============================================================
@@ -231,28 +232,70 @@ void Enemy::takeDamage(int damageDone)
  * Update the score in main file
  * */
 
-void textScoreDisplay(float scoreIncrease){
+void textScoreDisplay()
+{
 	Rect score;
     score.left = JSglobalVars->gameXresolution * .80;
     score.bot = JSglobalVars->gameYresolution * .95;
     score.center = 0;
 	//static double i = 1.0;
 	//i += scoreIncrease;
-    ggprint16(&score, 16, 0x00ffff00, "score: %019.0f", scoreIncrease);
+    ggprint16(&score, 16, 0x00ffff00, "Score: %019.0f", scoreObject.getScore());
 	//used in bullet hit enemy
 }
 
-void scoreCalculator(float enemySize, float * score)
+// void scoreCalculator(float enemySize, float * score)
+// {
+// 	float scoreIncrease = 10000*(1/enemySize);
+// 	*score += scoreIncrease;
+// }
+
+Lives::Lives(){
+	currentLives= 3;
+};
+
+int Lives::getLives(){
+	return currentLives;
+};
+
+void Lives::setLives(int changeValue){
+	currentLives = changeValue;
+};
+
+void Lives::changeLives(int difference){
+	currentLives += difference;
+};
+
+Score::Score()
 {
-	float scoreIncrease = 10000*(1/enemySize);
-	*score += scoreIncrease;
+	currentScore = 0;
+};
+
+float Score::calculateScore(float scoreIncrease){
+	return 100000*(1/scoreIncrease);
+};
+
+void Score::setScore(float scoreSet){
+	currentScore += scoreSet;
+};
+
+float Score::getScore(){
+	return currentScore;
+};
+
+void livesTextDisplay()
+{
+	Rect livesLeft;
+    livesLeft.left = JSglobalVars->gameXresolution * .80;
+    livesLeft.bot = JSglobalVars->gameYresolution * .925;
+    livesLeft.center = 0;
+	ggprint16(&livesLeft, 16, 0x00ffff00, "Lives: %d", numLivesLeft.getLives());
 }
-
-
-
 //=============================================================
 // Functions used in Main file
 //=============================================================
+
+
 
 void createEnemy(int numToCreate, float shibaXPosition, float shibaYPosition)
 {
@@ -297,7 +340,7 @@ void cleanupEnemies()
 	}
 }
 
-bool bulletHitEnemy(float bulletX, float bulletY, float * score)
+bool bulletHitEnemy(float bulletX, float bulletY)
 {
 	bool hit = false;
 	for(unsigned int j = 0; j < enemies.size(); j++){
@@ -312,8 +355,8 @@ bool bulletHitEnemy(float bulletX, float bulletY, float * score)
 				{
 				enemies[j].takeDamage(100);
 				hit = true;
-				// TODO FIX COUPLING
-				scoreCalculator((enemies[j].sideLength), score);
+				// TODO FIX COUPLING?
+				scoreObject.setScore(scoreObject.calculateScore(enemies[j].sideLength));
 			}
 		}
 		return hit;

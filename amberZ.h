@@ -5,13 +5,26 @@
 #ifndef AMBERZ_H
 #define AMBERZ_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <bitset>
 #include <chrono>
 #include <cmath>
 #include <cstdlib>
-#include <stdlib.h>
 #include <ctime>
 #include <GL/glx.h>
+
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <fcntl.h>
+#include <openssl/crypto.h>
+#include <openssl/x509.h>
+#include <openssl/pem.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+
 #include "amberZ.h"
 #include "Image.h"
 #include "fonts.h"

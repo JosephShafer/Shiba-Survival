@@ -515,7 +515,7 @@ int check_keys(XEvent *e)
 			break;
 		case XK_equal:
 			createEnemy(i, g.shiba.pos[0], g.shiba.pos[1]);
-			#ifdef debug
+			#ifdef DEBUG
 			//printf("%d\n", int(enemies.size()));
 			#endif
 			break;
@@ -751,19 +751,6 @@ void drawBullet()
 		glEnd();
 	}
 }
-
-/*
-int counter = 0;
-void updateFrame() {
-	++counter %= 5;
-	printf ("%d\n", counter);
-	if (counter == 4) {
-		++img[5].frame;
-	}
-	if (img[5].frame >= 4)
-		img[5].frame = 0;
-}
-*/
 
 void drawCredits()
 {

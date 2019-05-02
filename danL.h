@@ -1,3 +1,6 @@
+#ifndef DANL_H
+#define DANL_H
+
 #include <GL/glx.h>
 #include "fonts.h"
 #include <stdlib.h>
@@ -22,3 +25,5 @@ void spawnPowerUp(int, float, float);
 void destroyPowerUp(int);
 void renderPowerUps();
 extern void danL(float, float, GLuint);
+
+#endif

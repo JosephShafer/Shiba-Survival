@@ -73,6 +73,7 @@ public:
 	//float score;
 	
 	GLuint textures[6];
+	GLuint enemySprites[1];
 	static Global *instance;
 	static Global *getInstance() {
 		if (!instance) {
@@ -159,6 +160,10 @@ Image img[6] = {
 	Image("./images/mabelleC.png"),
 	Image("./images/thomasB.png"),
 	Image("./images/Shiba-Sprites.png", 9, 4)
+};
+
+Image enemyArray[1] = {
+	Image("./images/Doctor_Left.png", 1, 4)
 };
 
 //X Windows variables
@@ -388,6 +393,19 @@ void init_opengl(void)
 		glTexImage2D(GL_TEXTURE_2D, 0, 3, img[i].width, img[i].height, 0, GL_RGB,
 			GL_UNSIGNED_BYTE, img[i].data);
 	}
+
+	for (int i = 0; i < 1; i++) {
+		glGenTextures(1, &gl->enemySprites[i]);
+		glBindTexture(GL_TEXTURE_2D, gl->enemySprites[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, enemyArray[i].width, enemyArray[i].height, 0, GL_RGB,
+			GL_UNSIGNED_BYTE, enemyArray[i].data);
+	}
+
+
+
+	getDoctorTextureFunction(gl->enemySprites[0]);
 }
 
 void normalize2d(Vec v)

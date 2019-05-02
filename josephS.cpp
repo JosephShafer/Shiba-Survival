@@ -50,6 +50,7 @@ can't spawn past edge,
 vector<Enemy> enemies;
 Lives numLivesLeft;
 Score scoreObject;
+Image enemy = Image("./images/Doctor_Left.png", 1, 4);
 int Enemy::enemiesHitShiba = 0; // static variable
 
 Enemy::Enemy(float shibaXPosition, float shibaYPosition)
@@ -145,13 +146,10 @@ void Enemy::drawEnemy()
 {
         // square until we add sprites
          //sideLength = 10.0f;
-         glColor3f(1.0f, 1.0f, 1.0f);
-         glBegin(GL_POLYGON);
-            glVertex2f(-sideLength, sideLength);
-            glVertex2f(sideLength, sideLength);
-            glVertex2f(sideLength, -sideLength);
-            glVertex2f(-sideLength, -sideLength);
-        glEnd();
+                
+
+       
+        drawSprite(JSglobalVars->doctorTextureID, enemy, sideLength, sideLength, position[0], position[1]);
 }
 
 void Enemy::updatePosition(float shibaXposition, float shibaYposition, int indexOfEnemy)
@@ -313,10 +311,11 @@ void renderEnemies()
 {
 	for(unsigned int i = 0; i < enemies.size(); i++) {
 	glPushMatrix();
-		glTranslated(enemies[i].position[0], enemies[i].position[1], 0);
+		//glTranslated(enemies[i].position[0], enemies[i].position[1], 0);
 		//printf(" %d: %f %f\n", i, enemies[i].position[0], enemies[i].position[1]);
 		//enemies[i].updatePosition(g.ship.pos[0], g.ship.pos[1], gl->xres, gl->yres);
 		enemies[i].drawEnemy();
+		updateFrame(enemy);
 	glPopMatrix();
 	}
 }
@@ -386,6 +385,12 @@ void primeSpawner(int milliseconds, float shibaXposition, float shibaYposition)
 		enemyCap++;
 	}
 
+}
+
+
+void getDoctorTextureFunction(GLuint recievedTexture){
+	 
+		JSglobalVars->doctorTextureID = recievedTexture;
 }
 
 void josephS(float x, float y, GLuint textid)

@@ -7,7 +7,7 @@
 #include <vector>
 #include <stdio.h>
 #include "amberZ.h"
-//#include "Image.h"
+#include "Image.h"
 using namespace std;
 
 typedef float Vec[3];
@@ -17,6 +17,7 @@ public:
 
 	float gameXresolution;
 	float gameYresolution;
+    GLuint doctorTextureID;
     
     static JoeyGlobal *instance;
     static JoeyGlobal *getInstance(){
@@ -83,6 +84,7 @@ void primeSpawner(int, float, float);
 void scoreCalculator(float, float * score);
 void textScoreDisplay();
 void livesTextDisplay();
+void getDoctorTextureFunction(GLuint);
 extern void josephS(float, float, GLuint);
 
 

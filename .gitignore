@@ -1,4 +1,5 @@
 debug
 shiba
 .vscode/
+.history/
 *.code-workspace

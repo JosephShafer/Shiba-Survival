@@ -69,6 +69,7 @@ public:
 	bool showCredits;
 	bool gameMenu = true;
 	bool gameStart = false;
+	char *user;
 	float score;
 	
 	GLuint textures[6];
@@ -310,9 +311,16 @@ extern Button button[];
 //==========================================================================
 // M A I N
 //==========================================================================
-int main()
+int main(int argc, char *argv[])
 {
 	logOpen();
+
+	if (argc < 2) {
+		gl->user = (char *) "anonymous";
+	} else {
+		gl->user = argv[1];
+	}
+
 	init_opengl();
 	srand(time(NULL));
 	clock_gettime(CLOCK_REALTIME, &timePause);
@@ -321,7 +329,7 @@ int main()
 	int done = 0;
 
 	enemyGetResolution(gl->xres, gl->yres);
-	
+
 	while (!done) {
 		if(gl->gameStart != 1){
 			gameTimer.startTimer();	
@@ -450,6 +458,7 @@ int check_mouse(XEvent *e)
 							break;
 						case 4:
 							printf("Quit was clicked\n");
+							storeScore(gl->user, gl->score);
 							exit(0);
 					}
 				}

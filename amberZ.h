@@ -15,7 +15,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <GL/glx.h>
-
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <fcntl.h>
@@ -24,10 +23,13 @@
 #include <openssl/pem.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
-
 #include "amberZ.h"
 #include "Image.h"
 #include "fonts.h"
+
+#define PORT 443
+#define USERAGENT "CMPS-3350"
+#define MAX_READ_ERRORS 100
 
 class Timer
 {
@@ -62,6 +64,8 @@ void updateTimer(int, int);
 void drawSprite(GLuint, Image&, float, float, float, float);
 void updateFrame(Image&);
 void amberZ(int, int, GLuint);
+BIO * ssl_setup_bio(void);
+void set_non_blocking(const int sock);
 void storeScore(char[], int);
 
 #endif

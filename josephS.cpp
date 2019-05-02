@@ -76,7 +76,7 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 				position[1] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - shibaYPosition)))
 								+ shibaYPosition + spaceAway;
 				enemySpawned = true;
-				#ifdef debug
+				#ifdef DEBUG
 					if(position[0] > JSglobalVars->gameXresolution || position[1] > JSglobalVars->gameXresolution){
 						printf("Top right Error: %f, %f\n", position[0], position[1]);
 					}
@@ -93,7 +93,7 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 				position[1] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - shibaYPosition)))
 								+ shibaYPosition + spaceAway;
 				enemySpawned = true;
-				#ifdef debug
+				#ifdef DEBUG
 					if(position[0] < 0 || position[1] > JSglobalVars->gameXresolution){
 						printf("Top Left Error: %f, %f\n", position[0], position[1]);
 					}
@@ -111,7 +111,7 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 								+ shibaXPosition + spaceAway;
 				position[1] = (rand() % ((int)(shibaYPosition - spaceAway + 1 )));
 				enemySpawned = true;
-				#ifdef debug
+				#ifdef DEBUG
 					if(position[0] > JSglobalVars->gameXresolution || position[1] < 0){
 						printf("Bottom Right Error: %f, %f\n", position[0], position[1]);
 					}
@@ -127,7 +127,7 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 				position[0] = (rand() % ((int)(shibaXPosition - spaceAway + 1)));
 				position[1] = (rand() % ((int)(shibaYPosition - spaceAway + 1 )));
 				enemySpawned = true;
-			#ifdef debug
+			#ifdef DEBUG
 				if(position[0] < 0 || position[1] < 0){
 					printf("Bottom Left Error: %f, %f\n", position[0], position[1]);
 				}
@@ -197,7 +197,7 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 		numLivesLeft.changeLives(-1);
 	}
 
-	#ifdef debug
+	#ifdef DEBUG
 		if(position[0] < -30)
 			printf("Enemy position error: Left of game window error\n");
 		if(position[0] > JSglobalVars->gameXresolution + 30)

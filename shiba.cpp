@@ -20,11 +20,12 @@
 #include <X11/keysym.h>
 #include <GL/glx.h>
 #include <vector>
-#include "log.h"
-#include "fonts.h"
-#include "josephS.h"
 #include "amberZ.h"
+#include "josephS.h"
 #include "thomasB.h"
+#include "Image.h"
+#include "fonts.h"
+#include "log.h"
 
 //defined types
 typedef float Flt;
@@ -64,14 +65,14 @@ extern void timeCopy(struct timespec *dest, struct timespec *source);
 class Global {
 public:
 	int xres, yres;
-	//int lives;
-	float score;
 	char keys[65536];
 	bool showCredits;
 	bool gameMenu = true;
 	bool gameStart = false;
+	char *user;
+	//float score;
 	
-	GLuint textures[5];
+	GLuint textures[6];
 	static Global *instance;
 	static Global *getInstance() {
 		if (!instance) {
@@ -84,79 +85,15 @@ public:
 		yres = 768;
 		memset(keys, 0, 65536);
 		showCredits = false;
-		score = 0;
+		//score = 0;
 		//lives = 3;
 	}
 };
 Global *Global::instance = 0;
 Global *gl = gl->getInstance();
 
-//Added image class from rainforest.cpp
-class Image {
-public:
-	int width, height;
-	unsigned char *data;
-	const char *file;
-	~Image() { delete [] data; }
-	Image(const char *fname) {
-		file = fname;
-		if (fname[0] == '\0')
-			return;
-		//printf("fname **%s**\n", fname);
-		int ppmFlag = 0; 
-		char name[40];
-		strcpy(name, fname);
-		int slen = strlen(name);
-		char ppmname[80];
-		if (strncmp(name+(slen-4), ".ppm", 4) == 0)
-			ppmFlag = 1;
-		if (ppmFlag) {
-			strcpy(ppmname, name);
-		} else {
-			name[slen-4] = '\0';
-			//printf("name **%s**\n", name);
-			sprintf(ppmname,"%s.ppm", name);
-			//printf("ppmname **%s**\n", ppmname);
-			char ts[100];
-			//system("convert eball.jpg eball.ppm");
-			sprintf(ts, "convert %s %s", fname, ppmname);
-			system(ts);
-		}
-		//sprintf(ts, "%s", name);
-		FILE *fpi = fopen(ppmname, "r");
-		if (fpi) {
-			char line[200];
-			fgets(line, 200, fpi);
-			fgets(line, 200, fpi);
-			//skip comments and blank lines
-			while (line[0] == '#' || strlen(line) < 2)
-				fgets(line, 200, fpi);
-			sscanf(line, "%i %i", &width, &height);
-			fgets(line, 200, fpi);
-			//get pixel data
-			int n = width * height * 3;			
-			data = new unsigned char[n];			
-			for (int i=0; i<n; i++)
-				data[i] = fgetc(fpi);
-			fclose(fpi);
-		} else {
-			printf("ERROR opening image: %s\n",ppmname);
-			exit(0);
-		}
-		if (!ppmFlag)
-			unlink(ppmname);
-	}
-};
-
-Image img[5] = {
-"./images/amberZ.png",
-"./images/josephS.png",
-"./images/danL.png",
-"./images/mabelleC.png",
-"./images/thomasB.png"};
-
 //dog
-class Ship {
+class Shiba {
 public:
 	Vec dir;
 	Vec pos;
@@ -164,7 +101,7 @@ public:
 	float angle;
 	float color[3];
 public:
-	Ship() {
+	Shiba() {
 		VecZero(dir);
 		pos[0] = (Flt)(gl->xres/2);
 		pos[1] = (Flt)(gl->yres/2);
@@ -196,7 +133,7 @@ public:
 //sets up game state
 class Game {
 public:
-	Ship ship;
+	Shiba shiba;
 	Bullet *barr;
 	int nbullets;
 	struct timespec bulletTimer;
@@ -214,6 +151,15 @@ public:
 		delete [] barr;
 	}
 } g;
+
+Image img[6] = {
+	Image("./images/amberZ.png"),
+	Image("./images/josephS.png"),
+	Image("./images/danL.png"),
+	Image("./images/mabelleC.png"),
+	Image("./images/thomasB.png"),
+	Image("./images/Shiba-Sprites.png", 9, 4)
+};
 
 //X Windows variables
 class X11_wrapper {
@@ -352,23 +298,30 @@ int check_mouse(XEvent *e);
 int check_keys(XEvent *e);
 void physics();
 void physicsKeyEvents();
-void shipControl();
+void shibaControl();
 void bulletPositionControl();
 void shootBullet();
 void render();
 void gameplayScreen();
 void drawBullet();
-void drawShip();
 void drawCredits();
+//void updateFrame();
 extern void menu();
 extern int nbuttons;
 extern Button button[];
 //==========================================================================
 // M A I N
 //==========================================================================
-int main()
+int main(int argc, char *argv[])
 {
 	logOpen();
+
+	if (argc < 2) {
+		gl->user = (char *) "anonymous";
+	} else {
+		gl->user = argv[1];
+	}
+
 	init_opengl();
 	srand(time(NULL));
 	clock_gettime(CLOCK_REALTIME, &timePause);
@@ -377,7 +330,7 @@ int main()
 	int done = 0;
 
 	enemyGetResolution(gl->xres, gl->yres);
-	
+
 	while (!done) {
 		if(gl->gameStart != 1){
 			gameTimer.startTimer();	
@@ -427,7 +380,7 @@ void init_opengl(void)
 	glEnable(GL_TEXTURE_2D);
 	initialize_fonts();
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 		glGenTextures(1, &gl->textures[i]);
 		glBindTexture(GL_TEXTURE_2D, gl->textures[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -498,7 +451,7 @@ int check_mouse(XEvent *e)
 							printf("How to play was clicked\n");
 							break;
 						case 2:
-							printf("High score was clicked\n");;
+							printf("High score was clicked\n");
 							break;
 						case 3:
 							printf("Credits was clicked\n");
@@ -506,6 +459,7 @@ int check_mouse(XEvent *e)
 							break;
 						case 4:
 							printf("Quit was clicked\n");
+							storeScore(gl->user, scoreObject.getScore());
 							exit(0);
 					}
 				}
@@ -548,7 +502,7 @@ int check_keys(XEvent *e)
 			gl->showCredits ^= 1;
 			break;
 		case XK_Escape:
-			if (gl-> showCredits){
+			if (gl->showCredits){
 				gl->showCredits ^= 1;
 
 				//should be on game over
@@ -570,8 +524,8 @@ int check_keys(XEvent *e)
 		case XK_Down:
 			break;
 		case XK_equal:
-			createEnemy(i, g.ship.pos[0], g.ship.pos[1]);
-			#ifdef debug
+			createEnemy(i, g.shiba.pos[0], g.shiba.pos[1]);
+			#ifdef DEBUG
 			//printf("%d\n", int(enemies.size()));
 			#endif
 			break;
@@ -588,7 +542,7 @@ int check_keys(XEvent *e)
 
 void physics()
 {
-	shipControl();
+	shibaControl();
 	//Update bullet positions
 	bulletPositionControl();
 	//check keys pressed now
@@ -596,26 +550,26 @@ void physics()
 }
 
 //Also movement stuff in Check Keys
-//This function also flips the ship to other side if they 
+//This function also flips the shiba to other side if they 
 //go over the edge
-void shipControl()
+void shibaControl()
 {
 	//Flt d0,d1,dist;
-	//Update ship position
-	g.ship.pos[0] += g.ship.vel[0];
-	g.ship.pos[1] += g.ship.vel[1];
+	//Update shiba position
+	g.shiba.pos[0] += g.shiba.vel[0];
+	g.shiba.pos[1] += g.shiba.vel[1];
 	//Check for collision with window edges
-	if (g.ship.pos[0] < 0.0) {
-		g.ship.pos[0] += (float)gl->xres;
+	if (g.shiba.pos[0] < 0.0) {
+		g.shiba.pos[0] += (float)gl->xres;
 	}
-	else if (g.ship.pos[0] > (float)gl->xres) {
-		g.ship.pos[0] -= (float)gl->xres;
+	else if (g.shiba.pos[0] > (float)gl->xres) {
+		g.shiba.pos[0] -= (float)gl->xres;
 	}
-	else if (g.ship.pos[1] < 0.0) {
-		g.ship.pos[1] += (float)gl->yres;
+	else if (g.shiba.pos[1] < 0.0) {
+		g.shiba.pos[1] += (float)gl->yres;
 	}
-	else if (g.ship.pos[1] > (float)gl->yres) {
-		g.ship.pos[1] -= (float)gl->yres;
+	else if (g.shiba.pos[1] > (float)gl->yres) {
+		g.shiba.pos[1] -= (float)gl->yres;
 	}
 }
 
@@ -660,6 +614,7 @@ void bulletPositionControl()
 				sizeof(Bullet));
 			g.nbullets--;
 		}
+		
 		i++;
 	}
 }
@@ -668,21 +623,28 @@ void bulletPositionControl()
 void physicsKeyEvents()
 {
 	if (gl->keys[XK_Left]) {
-		g.ship.angle = 90;
-		g.ship.pos[0] -= 5;
+		g.shiba.angle = 90;
+		img[5].animation = 3;
+		updateFrame(img[5]);
+		g.shiba.pos[0] -= 5;
 	}
 	if (gl->keys[XK_Right]) {
-		
-		g.ship.angle = 270;
-		g.ship.pos[0] += 5;
+		g.shiba.angle = 270;
+		img[5].animation = 1;
+		updateFrame(img[5]);
+		g.shiba.pos[0] += 5;
 	}
 	if (gl->keys[XK_Up]) {
-		g.ship.angle = 360;
-		g.ship.pos[1] += 5;
+		g.shiba.angle = 360;
+		img[5].animation = 2;
+		updateFrame(img[5]);
+		g.shiba.pos[1] += 5;
 	}
 	if (gl->keys[XK_Down]) {
-		g.ship.pos[1] -= 5;
-		g.ship.angle = 180;
+		g.shiba.angle = 180;
+		img[5].animation = 0;
+		updateFrame(img[5]);
+		g.shiba.pos[1] -= 5;
 	}
 	if (gl->keys[XK_space]) {
 		shootBullet();
@@ -713,12 +675,12 @@ void shootBullet()
 			//Bullet *b = new Bullet;
 			Bullet *b = &g.barr[g.nbullets];
 			timeCopy(&b->time, &bt);
-			b->pos[0] = g.ship.pos[0];
-			b->pos[1] = g.ship.pos[1];
-			b->vel[0] = g.ship.vel[0];
-			b->vel[1] = g.ship.vel[1];
-			//convert ship angle to radians
-			Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
+			b->pos[0] = g.shiba.pos[0];
+			b->pos[1] = g.shiba.pos[1];
+			b->vel[0] = g.shiba.vel[0];
+			b->vel[1] = g.shiba.vel[1];
+			//convert shiba angle to radians
+			Flt rad = ((g.shiba.angle+90.0) / 360.0f) * PI * 2.0;
 			//convert angle to a vector
 			Flt xdir = cos(rad);
 			Flt ydir = sin(rad);
@@ -765,9 +727,10 @@ void gameplayScreen()
 	ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g.nbullets);
 	//ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
 	//-------------------------------------------------------------------------
-	//Draw the ship
-	drawShip();
-	
+	//Draw the shiba
+	//drawshiba();
+	drawSprite(gl->textures[5], img[5], 40.0, 40.0, g.shiba.pos[0], g.shiba.pos[1]);
+
 	//Draw the bullets
 	drawBullet();
 	drawTimer(gl->xres);
@@ -776,9 +739,9 @@ void gameplayScreen()
 	//createEnemy(1);
 
 
-	updateAllPosition(g.ship.pos[0], g.ship.pos[1]);
+	updateAllPosition(g.shiba.pos[0], g.shiba.pos[1]);
 
-	primeSpawner(int(gameTimer.getElapsedMilliseconds()), g.ship.pos[0], g.ship.pos[1]);
+	primeSpawner(int(gameTimer.getElapsedMilliseconds()), g.shiba.pos[0], g.shiba.pos[1]);
 }
 
 void drawBullet()
@@ -802,58 +765,12 @@ void drawBullet()
 	}
 }
 
-void drawShip()
-{
-	glColor3fv(g.ship.color);
-	glPushMatrix();
-	glTranslatef(g.ship.pos[0], g.ship.pos[1], g.ship.pos[2]);
-	//float angle = atan2(ship.dir[1], ship.dir[0]);
-	glRotatef(g.ship.angle, 0.0f, 0.0f, 1.0f);
-	glBegin(GL_TRIANGLES);
-	//glVertex2f(-10.0f, -10.0f);
-	//glVertex2f(  0.0f, 20.0f);
-	//glVertex2f( 10.0f, -10.0f);
-	glVertex2f(-12.0f, -10.0f);
-	glVertex2f(  0.0f, 20.0f);
-	glVertex2f(  0.0f, -6.0f);
-	glVertex2f(  0.0f, -6.0f);
-	glVertex2f(  0.0f, 20.0f);
-	glVertex2f( 12.0f, -10.0f);
-	glEnd();
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glBegin(GL_POINTS);
-	glVertex2f(0.0f, 0.0f);
-	glEnd();
-	glPopMatrix();
-	if (gl->keys[XK_Up] || gl->keys[XK_Down] || gl->keys[XK_Right] || gl->keys[XK_Left] || g.mouseThrustOn) {
-		int i;
-		//draw thrust
-		Flt rad = ((g.ship.angle+90.0) / 360.0f) * PI * 2.0;
-		//convert angle to a vector
-		Flt xdir = cos(rad);
-		Flt ydir = sin(rad);
-		Flt xs,ys,xe,ye,r;
-		glBegin(GL_LINES);
-		for (i=0; i<16; i++) {
-			xs = -xdir * 11.0f + rnd() * 4.0 - 2.0;
-			ys = -ydir * 11.0f + rnd() * 4.0 - 2.0;
-			r = rnd()*40.0+40.0;
-			xe = -xdir * r + rnd() * 18.0 - 9.0;
-			ye = -ydir * r + rnd() * 18.0 - 9.0;
-			glColor3f(rnd()*.3+.7, rnd()*.3+.7, 0);
-			glVertex2f(g.ship.pos[0]+xs,g.ship.pos[1]+ys);
-			glVertex2f(g.ship.pos[0]+xe,g.ship.pos[1]+ye);
-		}
-		glEnd();
-	}
-}
-
 void drawCredits()
 {
 		extern void amberZ(int, int, GLuint);
 		extern void josephS(float, float, GLuint);
-        extern void danL(int, int, GLuint);
-        extern void mabelleC(int, int, GLuint);
+    extern void danL(int, int, GLuint);
+    extern void mabelleC(int, int, GLuint);
 		extern void thomasB(int, int, GLuint);
 		glClear(GL_COLOR_BUFFER_BIT);
 		Rect rcred;

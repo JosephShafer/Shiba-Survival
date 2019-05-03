@@ -45,31 +45,54 @@ Image enemyImages[numEnemyImages] = {
 						//Image("./images/Cat-Sprites.png", 4, 4)
 						};
 
-Enemy::Enemy(float shibaXPosition, float shibaYPosition)
+Enemy::Enemy()
 {
-
 	velocity[0] = 0;
 	velocity[1] = 0;
-	sideLength = float(rand() % 30 + 5);
+	sideLength = float(rand() % 50 + 5);
 	health = 100;
 	speed = .01;
 	imageIndex = rand() % numEnemyImages;
 	textureUsed = JSglobalVars->textureArray[imageIndex];
 	imageUsed = &enemyImages[imageIndex];
+	//shibaX = 0;
+	//shibaY = 0;
+};
 
-	//enemies spawn
+float Enemy::getShibaX(){
+	return shibaX;
+};
+
+void Enemy::setShibaX(float shibaXposition){
+	shibaX = shibaXposition;
+};
+
+float Enemy::getShibaY(){
+	return shibaY;
+};
+
+void Enemy::setShibaY(float shibaYposition){
+	shibaY = shibaYposition;
+};
+
+void Enemy::spawn(float Xposition, float Yposition)
+{
 	int spawnchoice = (rand() % 4);
 	int spaceAway = 100;
 	bool enemySpawned = false;
 
+	if(sideLength > 45){
+		splitter = true;
+	}
+
 	//spawn top right area of game area
 	while(!enemySpawned) {
 		if (spawnchoice == 0) {
-			if((shibaXPosition + spaceAway) < JSglobalVars->gameXresolution && (shibaYPosition + spaceAway) < JSglobalVars->gameXresolution) {
-				position[0] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - shibaXPosition)))
-								+ shibaXPosition + spaceAway;
-				position[1] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - shibaYPosition)))
-								+ shibaYPosition + spaceAway;
+			if((Xposition + spaceAway) < JSglobalVars->gameXresolution && (Yposition + spaceAway) < JSglobalVars->gameXresolution) {
+				position[0] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - Xposition)))
+								+ Xposition + spaceAway;
+				position[1] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - Yposition)))
+								+ Yposition + spaceAway;
 				enemySpawned = true;
 				#ifdef DEBUG
 					if(position[0] > JSglobalVars->gameXresolution || position[1] > JSglobalVars->gameXresolution) {
@@ -83,10 +106,10 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 		}
 		//spawn top left area of shiba
 		if (spawnchoice == 1) {
-			if((shibaXPosition) > 0 && (shibaYPosition + spaceAway) < JSglobalVars->gameXresolution) {
-				position[0] = (rand() % ((int)(shibaXPosition - spaceAway + 1)));
-				position[1] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - shibaYPosition)))
-								+ shibaYPosition + spaceAway;
+			if((Xposition) > 0 && (Yposition + spaceAway) < JSglobalVars->gameXresolution) {
+				position[0] = (rand() % ((int)(Xposition - spaceAway + 1)));
+				position[1] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - Yposition)))
+								+ Yposition + spaceAway;
 				enemySpawned = true;
 				#ifdef DEBUG
 					if(position[0] < 0 || position[1] > JSglobalVars->gameXresolution) {
@@ -101,10 +124,10 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 		// rand() % (max_number + 1 - minimum_number) + minimum_number
 		// bottom right
 		if (spawnchoice == 2) {
-			if((shibaXPosition + spaceAway) < JSglobalVars->gameXresolution && (shibaYPosition > 0)) {
-				position[0] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - shibaXPosition)))
-								+ shibaXPosition + spaceAway;
-				position[1] = (rand() % ((int)(shibaYPosition - spaceAway + 1 )));
+			if((Xposition + spaceAway) < JSglobalVars->gameXresolution && (Yposition > 0)) {
+				position[0] = (rand() % ((int)(JSglobalVars->gameXresolution - spaceAway + 1 - Xposition)))
+								+ Xposition + spaceAway;
+				position[1] = (rand() % ((int)(Yposition - spaceAway + 1 )));
 				enemySpawned = true;
 				#ifdef DEBUG
 					if(position[0] > JSglobalVars->gameXresolution || position[1] < 0) {
@@ -118,9 +141,9 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 
 		// bottom left
 		if (spawnchoice == 3) {
-			if((shibaXPosition - spaceAway) > 0 && (shibaYPosition - spaceAway > 0)) {
-				position[0] = (rand() % ((int)(shibaXPosition - spaceAway + 1)));
-				position[1] = (rand() % ((int)(shibaYPosition - spaceAway + 1 )));
+			if((Xposition - spaceAway) > 0 && (Yposition - spaceAway > 0)) {
+				position[0] = (rand() % ((int)(Xposition - spaceAway + 1)));
+				position[1] = (rand() % ((int)(Yposition - spaceAway + 1 )));
 				enemySpawned = true;
 			#ifdef DEBUG
 				if(position[0] < 0 || position[1] < 0) {
@@ -132,7 +155,12 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 			}
 		}
 	}	//end while
+
+	//cout << position[0] << " ";
+	//cout << position[1] << endl;
 };
+
+
 
 void Enemy::drawEnemy()
 {
@@ -270,19 +298,39 @@ void textScoreDisplay()
 }
 //=============================================================
 // Functions used in Main file
-//=============================================================
+//========================================================ma=====
 
 void createEnemy(int numToCreate, float shibaXPosition, float shibaYPosition)
 {
-	for(int i = 0; i < numToCreate; i++)
-		enemies.push_back(Enemy(shibaXPosition, shibaYPosition));
+	for(int i = 0; i < numToCreate; i++){
+		enemies.push_back(Enemy());
+		//cout << shibaXPosition << endl;
+		enemies.back().setShibaX(shibaXPosition);
+		enemies.back().setShibaY(shibaYPosition);
+
+
+		enemies.back().spawn(enemies.back().getShibaX(), enemies.back().getShibaY());
+
+		//cout << enemies[enemies.size()].position[0] << " " <<enemies << endl; 
+	}
+
+	//cout << enemies[4].position[0] << " " << enemies[4].position[1] << endl;
+	//for(int i = 0; i < numToCreate; i++){
+	//	enemies[i].spawn();
+	//}
+		
 }
 
 // destroys an element in a vector by it's index
 void destroyEnemy(int index)
 {
-	if(enemies.size() > 0)
+	if(enemies.size() > 0){
+		if(enemies[index].splitter == true){
+			//createEnemy(10, enemies[index].getShibaX(), enemies[index].getShibaY());
+			numLivesLeft.changeLives(1);
+		}
 		enemies.erase(enemies.begin() + index);
+	}
 }
 
 void renderEnemies()
@@ -325,6 +373,7 @@ bool bulletHitEnemy(float bulletX, float bulletY)
 				(bulletY - enemies[j].sideLength < enemies[j].position[1])
 				)
 				{
+
 				enemies[j].takeDamage(100);
 				hit = true;
 				scoreObject.setScore(scoreObject.calculateScore(enemies[j].sideLength));
@@ -342,7 +391,10 @@ void primeSpawner(int milliseconds, float shibaXposition, float shibaYposition)
 
 	int spawnChecker = (milliseconds % primeArray[currentIndex]);
 	unsigned int enemyCap = 10;
-	
+	if(enemies.size() < 1){
+	//	createEnemy(1, shibaXposition, shibaYposition);
+		
+	}
 	if(spawnChecker == 0 && enemies.size() < enemyCap) {
 		createEnemy(numToMake, shibaXposition, shibaYposition);
 		if (currentIndex > 0) {
@@ -360,12 +412,13 @@ void primeSpawner(int milliseconds, float shibaXposition, float shibaYposition)
 }
 
 
-void getDoctorTextureFunction(GLuint recievedTexture) {
+void getTexturesFunction(GLuint recievedTexture) {
 	 
 	static int i = 0;
 	JSglobalVars->textureArray[i] = recievedTexture;
 	i++;
 }
+
 
 void josephS(float x, float y, GLuint textid)
 {

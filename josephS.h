@@ -20,6 +20,9 @@ public:
 	float gameXresolution;
 	float gameYresolution;
     GLuint textureArray[3];
+
+    float * shibaXPtr;
+    float * shibaYPtr;
     
     static JoeyGlobal *instance;
     static JoeyGlobal *getInstance(){
@@ -39,6 +42,10 @@ void enemyGetResolution(float, float);
 
 class Enemy{
 public:
+
+    float shibaX;
+    float shibaY;
+
     float position[2];
     float velocity[2];
     float sideLength;
@@ -47,15 +54,24 @@ public:
     GLuint textureUsed;
     Image* imageUsed;
     int imageIndex;
+
+
+    bool splitter = false;
+
     
     static int enemiesHitShiba;
     SpriteTimer timer;
+    void spawn(float, float);
+    float getShibaX();
+    float getShibaY();
+    void setShibaX(float);
+    void setShibaY(float);
     void drawEnemy();
     void updatePosition(float, float, int);
     void takeDamage(int);
     void shibaCollision(int);
     void setTexture();
-    Enemy(float, float);
+    Enemy();
 };
 
 class Lives{
@@ -93,7 +109,7 @@ void primeSpawner(int, float, float);
 void scoreCalculator(float, float * score);
 void textScoreDisplay();
 void livesTextDisplay();
-void getDoctorTextureFunction(GLuint);
+void getTexturesFunction(GLuint);
 extern void josephS(float, float, GLuint);
 
 

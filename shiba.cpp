@@ -445,7 +445,7 @@ void init_opengl(void)
 		//glTexImage2D(GL_TEXTURE_2D, 0, 3, enemyImages[i].width, enemyImages[i].height, 0, GL_RGB,
 		//	GL_UNSIGNED_BYTE, enemyImages[i].data);
 		
-		getDoctorTextureFunction(gl->enemySprites[i]);
+		getTexturesFunction(gl->enemySprites[i]);
 	}
 
 }

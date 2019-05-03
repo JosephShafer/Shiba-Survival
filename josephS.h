@@ -62,10 +62,10 @@ public:
     static int enemiesHitShiba;
     SpriteTimer timer;
     void spawn(float, float);
-    float getShibaX();
-    float getShibaY();
-    void setShibaX(float);
-    void setShibaY(float);
+    float getShibaXListener();
+    float getShibaYListener();
+    void setShibaXListener(float);
+    void setShibaYListener(float);
     void drawEnemy();
     void updatePosition(float, float, int);
     void takeDamage(int);

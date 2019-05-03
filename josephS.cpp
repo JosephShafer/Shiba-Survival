@@ -59,19 +59,19 @@ Enemy::Enemy()
 	//shibaY = 0;
 };
 
-float Enemy::getShibaX(){
+float Enemy::getShibaXListener(){
 	return shibaX;
 };
 
-void Enemy::setShibaX(float shibaXposition){
+void Enemy::setShibaXListener(float shibaXposition){
 	shibaX = shibaXposition;
 };
 
-float Enemy::getShibaY(){
+float Enemy::getShibaYListener(){
 	return shibaY;
 };
 
-void Enemy::setShibaY(float shibaYposition){
+void Enemy::setShibaYListener(float shibaYposition){
 	shibaY = shibaYposition;
 };
 
@@ -305,11 +305,11 @@ void createEnemy(int numToCreate, float shibaXPosition, float shibaYPosition)
 	for(int i = 0; i < numToCreate; i++){
 		enemies.push_back(Enemy());
 		//cout << shibaXPosition << endl;
-		enemies.back().setShibaX(shibaXPosition);
-		enemies.back().setShibaY(shibaYPosition);
+		enemies.back().setShibaXListener(shibaXPosition);
+		enemies.back().setShibaYListener(shibaYPosition);
 
 
-		enemies.back().spawn(enemies.back().getShibaX(), enemies.back().getShibaY());
+		enemies.back().spawn(enemies.back().getShibaXListener(), enemies.back().getShibaYListener());
 
 		//cout << enemies[enemies.size()].position[0] << " " <<enemies << endl; 
 	}

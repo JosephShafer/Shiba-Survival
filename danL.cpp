@@ -43,11 +43,12 @@ PowerUp::PowerUp(float ShibaX, float ShibaY)
     type = 0;
 
     int away = 20;
+    //TODO test to make sure these values are coming out right
     position[0] = ((int)ShibaX + (rand() % (xres - away))) % xres;
     position[1] = ((int)ShibaY + (rand() % (yres - away))) % yres;
 
     #ifdef DEBUG
-    printf("\nPowerUp Constructor");
+    printf("\nPowerUp Constructor %f %f",position[0],position[1]);
     #endif
 }
 
@@ -62,11 +63,13 @@ void PowerUp::drawPowerUp()
         glEnd();
 }
 
-void powerUpTimer(int mil, float ShibaX, float ShibaY) {
-    //if (abs((mil % 10000) - 100) < 100) {
-        //spawnPowerUp(1,ShibaX,ShibaY);
-        //printf("RANDOM SPAWWWWN %i",mil);
-    //}
+void powerUpPhysicsCheck(float ShibaX, float ShibaY) {
+    powerUpTimer(ShibaX, ShibaY);
+    powerUpCollisionCheck(ShibaX, ShibaY);
+}
+
+void powerUpTimer(float ShibaX, float ShibaY) {
+    //See if we should spawn some powerups
     if ((rand() % 100) == 1) {
         spawnPowerUp(1,ShibaX,ShibaY);
     }
@@ -81,6 +84,11 @@ void spawnPowerUp(int num, float shibaX, float shibaY) {
     #endif
 	for(int i = 0; i < num; i++)
 		power_ups.push_back(PowerUp(shibaX, shibaY));
+}
+
+void powerUpCollisionCheck(float ShibaX,float ShibaY) {
+    
+
 }
 
 void renderPowerUps() {

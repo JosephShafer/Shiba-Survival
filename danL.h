@@ -21,10 +21,12 @@ class PowerUp{
 
 extern std::vector<PowerUp> powerups;
 
-void powerUpTimer(int, float, float);
+void powerUpPhysicsCheck(float, float);
+void powerUpTimer(float, float);
 void spawnPowerUp(int, float, float);
 void destroyPowerUp(int);
 void renderPowerUps();
+void powerUpCollisionCheck(float, float);
 extern void danL(float, float, GLuint);
 
 #endif

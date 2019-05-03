@@ -611,8 +611,7 @@ void physics()
 	//check keys pressed now
 	physicsKeyEvents();
 	if (gl->gameStart) {
-		powerUpTimer(int(gameTimer.getElapsedMilliseconds()), 
-			g.shiba.pos[0], g.shiba.pos[1]);
+		powerUpPhysicsCheck(g.shiba.pos[0], g.shiba.pos[1]);
 	}
 }
 

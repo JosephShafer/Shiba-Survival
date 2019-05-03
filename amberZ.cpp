@@ -391,7 +391,7 @@ void storeScore(char user[], int score)
 	SSL_connect(ssl);
 	set_non_blocking(sd);
 	sprintf(req, "GET /%s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s\r\n\r\n", pagename, hostname, ag->userAgent);
-	printf("%s\n", req);
+	//printf("%s\n", req);
 	req_len = strlen(req);
 	ret = SSL_write(ssl, req, req_len);
 	if (ret <= 0) {

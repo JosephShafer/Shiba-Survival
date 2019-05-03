@@ -29,6 +29,12 @@
 #include "Image.h"
 #include "fonts.h"
 
+/*
+ TODO
+ - Make shiba blink when hit
+ - Retrieve and store data from score page
+**/
+
 class SSD
 {
 	private:

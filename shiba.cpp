@@ -71,6 +71,7 @@ public:
 	bool gameMenu = true;
 	bool gameStart = false;
 	char *user;
+	AmbersGlobals *ag;
 	//float score;
 	
 	GLuint textures[7];
@@ -87,6 +88,7 @@ public:
 		yres = 768;
 		memset(keys, 0, 65536);
 		showCredits = false;
+		ag = ag->getInstance();
 		//score = 0;
 		//lives = 3;
 	}
@@ -338,10 +340,10 @@ int main(int argc, char *argv[])
 
 	while (!done) {
 		if(gl->gameStart != 1){
-			gameTimer.startTimer();	
+			gl->ag->gameTimer.startTimer();	
 		}
 		//update timer
-		updateTimer((int) gameTimer.getElapsedMinutes(), ((int) gameTimer.getElapsedSeconds() % 60));
+		updateTimer((int) gl->ag->gameTimer.getElapsedMinutes(), ((int) gl->ag->gameTimer.getElapsedSeconds() % 60));
 		while (x11.getXPending()) {
 			XEvent e = x11.getXNextEvent();
 			x11.check_resize(&e);
@@ -818,7 +820,7 @@ void gameplayScreen()
 
 	updateAllPosition(g.shiba.pos[0], g.shiba.pos[1]);
 
-	primeSpawner(int(gameTimer.getElapsedMilliseconds()), g.shiba.pos[0], g.shiba.pos[1]);
+	primeSpawner(int(gl->ag->gameTimer.getElapsedMilliseconds()), g.shiba.pos[0], g.shiba.pos[1]);
 }
 
 void drawBullet()

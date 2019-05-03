@@ -1,6 +1,8 @@
-// Program: amberZ.h
-// Author:  Amber Zaragoza
-// Personal functions for Shiba Survival
+/*
+ Program: amberZ.h
+ Author:  Amber Zaragoza
+ Personal functions for Shiba Survival
+**/
 
 #ifndef AMBERZ_H
 #define AMBERZ_H
@@ -27,24 +29,6 @@
 #include "Image.h"
 #include "fonts.h"
 
-#define PORT 443
-#define USERAGENT "CMPS-3350"
-#define MAX_READ_ERRORS 100
-
-class Timer
-{
-  private:
-	std::chrono::time_point<std::chrono::system_clock> startTime;
-	std::chrono::time_point<std::chrono::system_clock> endTime;
-	bool isRunning = false;
-  public:
-	void startTimer();
-	void stopTimer();
-	double getElapsedMilliseconds();
-	double getElapsedSeconds();
-	double getElapsedMinutes();
-};
-
 class SSD
 {
 	private:
@@ -56,20 +40,58 @@ class SSD
 		void renderColon();
 };
 
-class SpriteTimer {
-public:
-	double physicsRate;
-	double oobillion;
-	struct timespec timeStart, timeEnd, timeCurrent;
-	struct timespec walkTime;
-	SpriteTimer();
-	double timeDiff(struct timespec *start, struct timespec *end);
-	void timeCopy(struct timespec *dest, struct timespec *source);
-	void recordTime(struct timespec *t);
+class SSDTimer
+{
+  private:
+		std::chrono::time_point<std::chrono::system_clock> startTime;
+		std::chrono::time_point<std::chrono::system_clock> endTime;
+		bool isRunning = false;
+  public:
+		void startTimer();
+		void stopTimer();
+		double getElapsedMilliseconds();
+		double getElapsedSeconds();
+		double getElapsedMinutes();
 };
 
-extern Timer gameTimer;
-extern SSD min1, min2, col, sec1, sec2;
+class SpriteTimer {
+	public:
+		double physicsRate;
+		double oobillion;
+		struct timespec startTime;
+		struct timespec endTime;
+		struct timespec currentTime;
+		struct timespec animationTime;
+		SpriteTimer();
+		double timeDiff(struct timespec* start, struct timespec* end);
+		void timeCopy(struct timespec* dest, struct timespec* source);
+		void recordTime(struct timespec* t);
+};
+
+class AmbersGlobals {
+	public:
+		SSD minute1;
+		SSD minute2;
+		SSD colon;
+		SSD second1;
+		SSD second2;
+		SSDTimer gameTimer;
+		int port;
+		char *userAgent;
+		int maxReadErrors;
+		static AmbersGlobals *instance;
+		static AmbersGlobals *getInstance() {
+			if (!instance) {
+				instance = new AmbersGlobals;
+			}
+			return instance;
+		}
+		AmbersGlobals() {
+			port = 443;
+			userAgent = (char *) "CMPS-3350";
+			maxReadErrors = 100;
+		}
+};
 
 void drawTimer(int);
 void updateTimer(int, int);

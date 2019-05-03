@@ -74,7 +74,7 @@ public:
 	//float score;
 	
 	GLuint textures[7];
-	GLuint enemySprites[1];
+	GLuint enemySprites[3];
 	static Global *instance;
 	static Global *getInstance() {
 		if (!instance) {
@@ -163,10 +163,6 @@ Image img[7] = {
 	Image("./images/thomasB.png"),
 	Image("./images/Shiba-Sprites.png", 9, 4),
 	Image("./images/grass13.png")
-};
-
-Image enemyArray[1] = {
-	Image("./images/Doctor-BG.png", 1, 4)
 };
 
 //X Windows variables
@@ -418,7 +414,7 @@ void init_opengl(void)
 	initialize_fonts();
 
 	unsigned char *spriteData;
-
+	
 	for (int i = 0; i < 7; i++) {
 		glGenTextures(1, &gl->textures[i]);
 		glBindTexture(GL_TEXTURE_2D, gl->textures[i]);
@@ -434,20 +430,22 @@ void init_opengl(void)
 			GL_UNSIGNED_BYTE, img[i].data);
 		}
 	}
-
-	for (int i = 0; i < 1; i++) {
+	
+	//int numEnemySprites = sizeof(enemyImages) / (sizeof(enemyImages[0]) - 1);
+	for (int i = 0; i < numEnemyImages; i++) {
 		glGenTextures(1, &gl->enemySprites[i]);
 		glBindTexture(GL_TEXTURE_2D, gl->enemySprites[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		spriteData = buildAlphaData(&enemyArray[i]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, enemyArray[i].width, enemyArray[i].height, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+		spriteData = buildAlphaData(&enemyImages[i]);
+    	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, enemyImages[i].width, enemyImages[i].height, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
 		free(spriteData);
-		//glTexImage2D(GL_TEXTURE_2D, 0, 3, enemyArray[i].width, enemyArray[i].height, 0, GL_RGB,
-		//	GL_UNSIGNED_BYTE, enemyArray[i].data);
+		//glTexImage2D(GL_TEXTURE_2D, 0, 3, enemyImages[i].width, enemyImages[i].height, 0, GL_RGB,
+		//	GL_UNSIGNED_BYTE, enemyImages[i].data);
+		
+		getDoctorTextureFunction(gl->enemySprites[i]);
 	}
 
-	getDoctorTextureFunction(gl->enemySprites[0]);
 }
 
 void normalize2d(Vec v)

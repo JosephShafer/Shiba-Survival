@@ -4,8 +4,11 @@
 
 #include "josephS.h"
 
+
+
 JoeyGlobal *JoeyGlobal::instance = 0;
 JoeyGlobal *JSglobalVars = JSglobalVars->getInstance();
+
 
 void enemyGetResolution(float Xres, float Yres)
 {
@@ -31,18 +34,29 @@ chocolate?
 vector<Enemy> enemies;
 Lives numLivesLeft;
 Score scoreObject;
-Image enemy = Image("./images/Doctor_Left.png", 1, 4);
+//remember to update h file, global, and the modulus
+
 int Enemy::enemiesHitShiba = 0; // static variable
+
+Image enemyImages[numEnemyImages] = {
+						Image("./images/Cat-Sprites.png", 4, 4),
+						Image("./images/Doctor_Left.png", 1, 4),
+						Image("./images/Shiba-Sprites.png", 9, 4)
+						//Image("./images/Cat-Sprites.png", 4, 4)
+						};
 
 Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 {
 
 	velocity[0] = 0;
 	velocity[1] = 0;
-	sideLength = float(rand() % 20 + 5);
+	sideLength = float(rand() % 30 + 5);
 	health = 100;
 	speed = .01;
-	
+	imageIndex = rand() % numEnemyImages;
+	textureUsed = JSglobalVars->textureArray[imageIndex];
+	imageUsed = &enemyImages[imageIndex];
+
 	//enemies spawn
 	int spawnchoice = (rand() % 4);
 	int spaceAway = 100;
@@ -122,7 +136,7 @@ Enemy::Enemy(float shibaXPosition, float shibaYPosition)
 
 void Enemy::drawEnemy()
 {
-        drawSprite(JSglobalVars->doctorTextureID, enemy, sideLength, sideLength, position[0], position[1]);
+        drawSprite(textureUsed, *imageUsed, sideLength, sideLength, position[0], position[1]);
 }
 
 void Enemy::updatePosition(float shibaXposition, float shibaYposition, int indexOfEnemy)
@@ -197,15 +211,6 @@ void Enemy::takeDamage(int damageDone)
 //		Score Display
 //=============================================================
 
-void textScoreDisplay()
-{
-	Rect score;
-    score.left = JSglobalVars->gameXresolution * .80;
-    score.bot = JSglobalVars->gameYresolution * .95;
-    score.center = 0;
-    ggprint16(&score, 16, 0x00ffff00, "Score: %019.0f", scoreObject.getScore());
-}
-
 Lives::Lives()
 {
 	currentLives= 3;
@@ -225,6 +230,15 @@ void Lives::changeLives(int difference)
 {
 	currentLives += difference;
 };
+
+void livesTextDisplay()
+{
+	Rect livesLeft;
+    livesLeft.left = JSglobalVars->gameXresolution * .80;
+    livesLeft.bot = JSglobalVars->gameYresolution * .925;
+    livesLeft.center = 0;
+	ggprint16(&livesLeft, 16, 0x00ffff00, "Lives: %d", numLivesLeft.getLives());
+}
 
 Score::Score()
 {
@@ -246,13 +260,13 @@ float Score::getScore()
 	return currentScore;
 };
 
-void livesTextDisplay()
+void textScoreDisplay()
 {
-	Rect livesLeft;
-    livesLeft.left = JSglobalVars->gameXresolution * .80;
-    livesLeft.bot = JSglobalVars->gameYresolution * .925;
-    livesLeft.center = 0;
-	ggprint16(&livesLeft, 16, 0x00ffff00, "Lives: %d", numLivesLeft.getLives());
+	Rect score;
+    score.left = JSglobalVars->gameXresolution * .80;
+    score.bot = JSglobalVars->gameYresolution * .95;
+    score.center = 0;
+    ggprint16(&score, 16, 0x00ffff00, "Score: %019.0f", scoreObject.getScore());
 }
 //=============================================================
 // Functions used in Main file
@@ -275,7 +289,7 @@ void renderEnemies()
 {
 	for(unsigned int i = 0; i < enemies.size(); i++) {
 		enemies[i].drawEnemy();
-		updateFrame(enemy, enemies[i].timer, 0.5);
+		updateFrame(*(enemies[i].imageUsed), enemies[i].timer, 3.0);
 	}
 }
 
@@ -348,7 +362,9 @@ void primeSpawner(int milliseconds, float shibaXposition, float shibaYposition)
 
 void getDoctorTextureFunction(GLuint recievedTexture) {
 	 
-		JSglobalVars->doctorTextureID = recievedTexture;
+	static int i = 0;
+	JSglobalVars->textureArray[i] = recievedTexture;
+	i++;
 }
 
 void josephS(float x, float y, GLuint textid)

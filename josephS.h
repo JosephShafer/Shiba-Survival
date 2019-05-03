@@ -5,9 +5,11 @@
 #include "fonts.h"
 #include <stdlib.h>
 #include <vector>
+#include <iostream>
 #include <stdio.h>
 #include "amberZ.h"
 #include "Image.h"
+#define numEnemyImages 3
 using namespace std;
 
 typedef float Vec[3];
@@ -17,7 +19,7 @@ public:
 
 	float gameXresolution;
 	float gameYresolution;
-    GLuint doctorTextureID;
+    GLuint textureArray[3];
     
     static JoeyGlobal *instance;
     static JoeyGlobal *getInstance(){
@@ -42,12 +44,17 @@ public:
     float sideLength;
     float speed;
     int health;
+    GLuint textureUsed;
+    Image* imageUsed;
+    int imageIndex;
+    
     static int enemiesHitShiba;
     SpriteTimer timer;
     void drawEnemy();
     void updatePosition(float, float, int);
     void takeDamage(int);
     void shibaCollision(int);
+    void setTexture();
     Enemy(float, float);
 };
 
@@ -72,6 +79,7 @@ class Score{
 extern Lives numLivesLeft;
 extern Score scoreObject;
 //int Enemy::enemiesHitShiba = 0;
+extern Image enemyImages[3];
 
 extern std::vector<Enemy> enemies;
 

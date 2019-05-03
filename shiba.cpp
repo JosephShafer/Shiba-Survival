@@ -609,6 +609,10 @@ void physics()
 	bulletPositionControl();
 	//check keys pressed now
 	physicsKeyEvents();
+	if (gl->gameStart) {
+		powerUpTimer(int(gameTimer.getElapsedMilliseconds()), 
+			g.shiba.pos[0], g.shiba.pos[1]);
+	}
 }
 
 //Also movement stuff in Check Keys

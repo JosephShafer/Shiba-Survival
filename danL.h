@@ -21,6 +21,7 @@ class PowerUp{
 
 extern std::vector<PowerUp> powerups;
 
+void powerUpTimer(int, float, float);
 void spawnPowerUp(int, float, float);
 void destroyPowerUp(int);
 void renderPowerUps();

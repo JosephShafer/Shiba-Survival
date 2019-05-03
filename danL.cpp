@@ -5,9 +5,12 @@
 #include <GL/glx.h>
 #include "fonts.h"
 #include "danL.h"
+#include "amberZ.h"
 
 int xres = 1366;
 int yres = 768;
+const float size = 10;
+const int powerUpInterval = 3000;
 
 void danL(int x, int y, GLuint textid)
 {
@@ -39,8 +42,9 @@ PowerUp::PowerUp(float ShibaX, float ShibaY)
     // Type of powerup, Only one type for now
     type = 0;
 
-    position[0] = rand() % xres + 1;
-    position[1] = rand() % yres + 1;
+    int away = 20;
+    position[0] = ((int)ShibaX + (rand() % (xres - away))) % xres;
+    position[1] = ((int)ShibaY + (rand() % (yres - away))) % yres;
 
     #ifdef DEBUG
     printf("\nPowerUp Constructor");
@@ -49,26 +53,37 @@ PowerUp::PowerUp(float ShibaX, float ShibaY)
 
 void PowerUp::drawPowerUp()
 {
-        // square until we add sprites
-         //sideLength = 10.0f;
-         glColor3f(1.0f, -1.0f, -1.0f);
+         glColor3f(0.0f, 0.0f, 1.0f);
          glBegin(GL_POLYGON);
-            glVertex2f(-10.0, 10.0);
-            glVertex2f(10.0, 10.0);
-            glVertex2f(10.0, -10.0);
-            glVertex2f(-10.0, -10.0);
+            glVertex2f(-size, size);
+            glVertex2f(size, size);
+            glVertex2f(size, -size);
+            glVertex2f(-size, -size);
         glEnd();
 }
 
-void spawnPowerUp(int num, float shibaX, float shibaY)
-{
+void powerUpTimer(int mil, float ShibaX, float ShibaY) {
+    //if (abs((mil % 10000) - 100) < 100) {
+        //spawnPowerUp(1,ShibaX,ShibaY);
+        //printf("RANDOM SPAWWWWN %i",mil);
+    //}
+    if ((rand() % 100) == 1) {
+        spawnPowerUp(1,ShibaX,ShibaY);
+    }
+    #ifdef DEBUG
+    //printf("\nPowerUpTimer function %i",mil);
+    #endif
+}
+
+void spawnPowerUp(int num, float shibaX, float shibaY) {
+    #ifdef DEBUG
     printf("\nspawnPowerup function");
+    #endif
 	for(int i = 0; i < num; i++)
 		power_ups.push_back(PowerUp(shibaX, shibaY));
 }
 
-void renderPowerUps()
-{
+void renderPowerUps() {
 	for(unsigned int i = 0; i < power_ups.size(); i++) {
 	    glPushMatrix();
 		glTranslated(power_ups[i].position[0], power_ups[i].position[1], 0);

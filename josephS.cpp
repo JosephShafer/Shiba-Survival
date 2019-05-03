@@ -199,6 +199,8 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 		velocity[1] *= -1;
 	}
 
+
+	// TODO Put Blink here?
 	if((( (position[0] - sideLength) < shibaXposition)
 		  && 
 		  ((position[0] + sideLength) > shibaXposition))
@@ -209,6 +211,7 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 		shibaCollision(indexOfEnemy);
 		numLivesLeft.changeLives(-1);
 	}
+	//End TODO
 
 	#ifdef DEBUG
 		if(position[0] < -30)
@@ -223,17 +226,20 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 
 }
 
+// TODO put blink here or in conditional in update position?
 void Enemy::shibaCollision(int indexOfEnemy)
 {
 	enemies.erase(enemies.begin()+indexOfEnemy);
 	enemiesHitShiba++;
 }
-
+//End TODO
 void Enemy::takeDamage(int damageDone)
 {
 	health -= damageDone;
 	
 }
+
+
 
 //=============================================================
 //		Score Display

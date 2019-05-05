@@ -80,6 +80,7 @@ class Lives{
         void setLives(int);
         int getLives();
         void changeLives(int);
+        void livesTextDisplay();
     Lives();
 };
 
@@ -89,6 +90,7 @@ class Score{
         void setScore(float);
         float getScore();
         float calculateScore(float);
+        void textScoreDisplay();
     Score();
 };
 
@@ -107,8 +109,6 @@ void cleanupEnemies();
 bool bulletHitEnemy(float, float);
 void primeSpawner(int, float, float);
 void scoreCalculator(float, float * score);
-void textScoreDisplay();
-void livesTextDisplay();
 void getTexturesFunction(GLuint);
 extern void josephS(float, float, GLuint);
 

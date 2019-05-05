@@ -813,8 +813,8 @@ void gameplayScreen()
 	//Draw the bullets
 	drawBullet();
 	drawTimer(gl->xres);
-	textScoreDisplay();
-	livesTextDisplay(); 
+	scoreObject.textScoreDisplay();
+	numLivesLeft.livesTextDisplay(); 
 	//createEnemy(1);
 
 

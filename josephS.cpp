@@ -42,7 +42,6 @@ Image enemyImages[numEnemyImages] = {
 						Image("./images/Cat-Sprites.png", 4, 4),
 						Image("./images/Doctor_Left.png", 1, 4),
 						Image("./images/Shiba-Sprites.png", 9, 4)
-						//Image("./images/Cat-Sprites.png", 4, 4)
 						};
 
 Enemy::Enemy()
@@ -265,11 +264,11 @@ void Lives::changeLives(int difference)
 	currentLives += difference;
 };
 
-void livesTextDisplay()
+void Lives::livesTextDisplay()
 {
 	Rect livesLeft;
-    livesLeft.left = JSglobalVars->gameXresolution * .80;
-    livesLeft.bot = JSglobalVars->gameYresolution * .925;
+    livesLeft.left = JSglobalVars->gameXresolution * .010;
+    livesLeft.bot = JSglobalVars->gameYresolution * .010;
     livesLeft.center = 0;
 	ggprint16(&livesLeft, 16, 0x00ffff00, "Lives: %d", numLivesLeft.getLives());
 }
@@ -294,11 +293,11 @@ float Score::getScore()
 	return currentScore;
 };
 
-void textScoreDisplay()
+void Score::textScoreDisplay()
 {
 	Rect score;
     score.left = JSglobalVars->gameXresolution * .80;
-    score.bot = JSglobalVars->gameYresolution * .95;
+    score.bot = JSglobalVars->gameYresolution * .010;
     score.center = 0;
     ggprint16(&score, 16, 0x00ffff00, "Score: %019.0f", scoreObject.getScore());
 }
@@ -398,7 +397,7 @@ void primeSpawner(int milliseconds, float shibaXposition, float shibaYposition)
 	int spawnChecker = (milliseconds % primeArray[currentIndex]);
 	unsigned int enemyCap = 10;
 	if(enemies.size() < 1){
-	//	createEnemy(1, shibaXposition, shibaYposition);
+		createEnemy(5, shibaXposition, shibaYposition);
 		
 	}
 	if(spawnChecker == 0 && enemies.size() < enemyCap) {

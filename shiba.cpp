@@ -571,7 +571,7 @@ int check_keys(XEvent *e)
 				//return 1;
 			}
 			else {
-				cleanupEnemies();
+				enemyController.cleanupEnemies();
 				gl->gameMenu ^= 1;
 				gl->gameStart ^= 1;
 			}
@@ -584,7 +584,7 @@ int check_keys(XEvent *e)
 		case XK_Down:
 			break;
 		case XK_equal:
-			createEnemy(i, g.shiba.pos[0], g.shiba.pos[1]);
+			enemyController.createEnemy(i, g.shiba.pos[0], g.shiba.pos[1]);
 			#ifdef DEBUG
 			//printf("%d\n", int(enemies.size()));
 			#endif
@@ -592,7 +592,7 @@ int check_keys(XEvent *e)
 		case XK_minus:
 			//can destroy enemy by index, right now is 0
 			//will kill the first in a vector element
-			destroyEnemy(0);
+			enemyController.destroyEnemy(0);
 			break;
 		case XK_p:
 			spawnPowerUp(1, g.shiba.pos[0], g.shiba.pos[1]);
@@ -674,7 +674,7 @@ void bulletPositionControl()
 		}
 
 		
-		if(bulletHitEnemy(b->pos[0], b->pos[1])){
+		if(enemyController.bulletHitEnemy(b->pos[0], b->pos[1])){
 			//removes bullet if hit
 			memcpy(&g.barr[i], &g.barr[g.nbullets-1],
 				sizeof(Bullet));
@@ -778,7 +778,7 @@ void render()
 	if (gl->gameStart){
 		x11.show_mouse_cursor(0);
 		gameplayScreen();
-		renderEnemies();
+		enemyController.renderEnemies();
 		renderPowerUps();
 	}
 	if (gl->showCredits) {
@@ -818,9 +818,9 @@ void gameplayScreen()
 	//createEnemy(1);
 
 
-	updateAllPosition(g.shiba.pos[0], g.shiba.pos[1]);
+	enemyController.updateAllPosition(g.shiba.pos[0], g.shiba.pos[1]);
 
-	primeSpawner(int(gl->ag->gameTimer.getElapsedMilliseconds()), g.shiba.pos[0], g.shiba.pos[1]);
+	enemyController.primeSpawner(int(gl->ag->gameTimer.getElapsedMilliseconds()), g.shiba.pos[0], g.shiba.pos[1]);
 }
 
 void drawBullet()

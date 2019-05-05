@@ -31,12 +31,12 @@ chocolate?
 //Enemy functions
 //=============================================================
 
-vector<Enemy> enemies;
+//vector<Enemy> enemies;
 Lives numLivesLeft;
 Score scoreObject;
 //remember to update h file, global, and the modulus
 
-int Enemy::enemiesHitShiba = 0; // static variable
+
 
 Image enemyImages[numEnemyImages] = {
 						Image("./images/Cat-Sprites.png", 4, 4),
@@ -207,7 +207,7 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 			(((position[1] - sideLength) < shibaYposition)
 			  && 
 			  ((position[1] + sideLength) > shibaYposition))) {
-		shibaCollision(indexOfEnemy);
+		enemyController.shibaCollision(indexOfEnemy);
 		numLivesLeft.changeLives(-1);
 	}
 	//End TODO
@@ -226,10 +226,9 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 }
 
 // TODO put blink here or in conditional in update position?
-void Enemy::shibaCollision(int indexOfEnemy)
+void EnemyControl::shibaCollision(int indexOfEnemy)
 {
 	enemies.erase(enemies.begin()+indexOfEnemy);
-	enemiesHitShiba++;
 }
 //End TODO
 void Enemy::takeDamage(int damageDone)
@@ -303,9 +302,15 @@ void Score::textScoreDisplay()
 }
 //=============================================================
 // Functions used in Main file
-//========================================================ma=====
+//=============================================================
 
-void createEnemy(int numToCreate, float shibaXPosition, float shibaYPosition)
+EnemyControl enemyController;
+
+// EnemyControl::EnemyControl(){
+// 	vector<Enemy> enemies;
+// }
+
+void EnemyControl::createEnemy(int numToCreate, float shibaXPosition, float shibaYPosition)
 {
 	for(int i = 0; i < numToCreate; i++){
 		enemies.push_back(Enemy());
@@ -327,7 +332,7 @@ void createEnemy(int numToCreate, float shibaXPosition, float shibaYPosition)
 }
 
 // destroys an element in a vector by it's index
-void destroyEnemy(int index)
+void EnemyControl::destroyEnemy(int index)
 {
 	if(enemies.size() > 0){
 		if(enemies[index].splitter == true){
@@ -338,7 +343,7 @@ void destroyEnemy(int index)
 	}
 }
 
-void renderEnemies()
+void EnemyControl::renderEnemies()
 {
 	for(unsigned int i = 0; i < enemies.size(); i++) {
 		enemies[i].drawEnemy();
@@ -346,7 +351,7 @@ void renderEnemies()
 	}
 }
 
-void updateAllPosition(float shibaXposition, float shibaYposition)
+void EnemyControl::updateAllPosition(float shibaXposition, float shibaYposition)
 {
 	for(unsigned int i = 0; i < enemies.size(); i++) {
 		enemies[i].updatePosition(shibaXposition, shibaYposition, i);
@@ -358,14 +363,14 @@ void updateAllPosition(float shibaXposition, float shibaYposition)
 	}
 }
 
-void cleanupEnemies()
+void EnemyControl::cleanupEnemies()
 {
 	while(enemies.size() != 0) {
 		enemies.pop_back();
 	}
 }
 
-bool bulletHitEnemy(float bulletX, float bulletY)
+bool EnemyControl::bulletHitEnemy(float bulletX, float bulletY)
 {
 	bool hit = false;
 	for(unsigned int j = 0; j < enemies.size(); j++) {
@@ -387,7 +392,7 @@ bool bulletHitEnemy(float bulletX, float bulletY)
 		return hit;
 }
 
-void primeSpawner(int milliseconds, float shibaXposition, float shibaYposition)
+void EnemyControl::primeSpawner(int milliseconds, float shibaXposition, float shibaYposition)
 {
 	int primeArray[] = {101, 103, 107, 109, 113};
 

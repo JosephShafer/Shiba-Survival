@@ -45,7 +45,6 @@ public:
 
     float shibaX;
     float shibaY;
-
     float position[2];
     float velocity[2];
     float sideLength;
@@ -54,12 +53,9 @@ public:
     GLuint textureUsed;
     Image* imageUsed;
     int imageIndex;
-
-
     bool splitter = false;
 
     
-    static int enemiesHitShiba;
     SpriteTimer timer;
     void spawn(float, float);
     float getShibaXListener();
@@ -69,9 +65,22 @@ public:
     void drawEnemy();
     void updatePosition(float, float, int);
     void takeDamage(int);
-    void shibaCollision(int);
     void setTexture();
     Enemy();
+};
+
+class EnemyControl{
+    public:
+        vector<Enemy> enemies;
+        void shibaCollision(int);
+        void createEnemy(int, float, float);
+        void destroyEnemy(int);
+        void renderEnemies();
+        void updateAllPosition(float, float);
+        void cleanupEnemies();
+        bool bulletHitEnemy(float, float);
+        void primeSpawner(int, float, float);
+        //EnemyControl();
 };
 
 class Lives{
@@ -96,19 +105,13 @@ class Score{
 
 extern Lives numLivesLeft;
 extern Score scoreObject;
+extern EnemyControl enemyController;
 //int Enemy::enemiesHitShiba = 0;
 extern Image enemyImages[3];
+//extern std::vector<Enemy> enemies;
 
-extern std::vector<Enemy> enemies;
 
-void createEnemy(int, float, float);
-void destroyEnemy(int);
-void renderEnemies();
-void updateAllPosition(float, float);
-void cleanupEnemies();
-bool bulletHitEnemy(float, float);
-void primeSpawner(int, float, float);
-void scoreCalculator(float, float * score);
+//void scoreCalculator(float, float * score);
 void getTexturesFunction(GLuint);
 extern void josephS(float, float, GLuint);
 

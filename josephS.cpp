@@ -48,7 +48,7 @@ Enemy::Enemy()
 {
 	velocity[0] = 0;
 	velocity[1] = 0;
-	sideLength = float(rand() % 50 + 5);
+	sideLength = float(rand() % 60 + 15);
 	health = 100;
 	speed = .01;
 	imageIndex = rand() % numEnemyImages;
@@ -56,23 +56,23 @@ Enemy::Enemy()
 	imageUsed = &enemyImages[imageIndex];
 	//shibaX = 0;
 	//shibaY = 0;
-};
+}
 
 float Enemy::getShibaXListener(){
 	return shibaX;
-};
+}
 
 void Enemy::setShibaXListener(float shibaXposition){
 	shibaX = shibaXposition;
-};
+}
 
 float Enemy::getShibaYListener(){
 	return shibaY;
-};
+}
 
 void Enemy::setShibaYListener(float shibaYposition){
 	shibaY = shibaYposition;
-};
+}
 
 void Enemy::spawn(float Xposition, float Yposition)
 {
@@ -157,7 +157,7 @@ void Enemy::spawn(float Xposition, float Yposition)
 
 	//cout << position[0] << " ";
 	//cout << position[1] << endl;
-};
+}
 
 
 
@@ -246,22 +246,22 @@ void Enemy::takeDamage(int damageDone)
 Lives::Lives()
 {
 	currentLives= 3;
-};
+}
 
 int Lives::getLives()
 {
 	return currentLives;
-};
+}
 
 void Lives::setLives(int changeValue)
 {
 	currentLives = changeValue;
-};
+}
 
 void Lives::changeLives(int difference)
 {
 	currentLives += difference;
-};
+}
 
 void Lives::livesTextDisplay()
 {
@@ -275,22 +275,26 @@ void Lives::livesTextDisplay()
 Score::Score()
 {
 	currentScore = 0;
-};
+}
 
 float Score::calculateScore(float scoreIncrease)
 {
-	return 100000*(1/scoreIncrease);
-};
+	return 1000*(1/scoreIncrease);
+}
 
-void Score::setScore(float scoreSet)
+void Score::setScore(float scoreSet){
+	currentScore = scoreSet;
+}
+
+void Score::changeScore(float scoreChange)
 {
-	currentScore += scoreSet;
-};
+	currentScore += scoreChange;
+}
 
 float Score::getScore()
 {
 	return currentScore;
-};
+}
 
 void Score::textScoreDisplay()
 {
@@ -298,7 +302,7 @@ void Score::textScoreDisplay()
     score.left = JSglobalVars->gameXresolution * .80;
     score.bot = JSglobalVars->gameYresolution * .010;
     score.center = 0;
-    ggprint16(&score, 16, 0x00ffff00, "Score: %019.0f", scoreObject.getScore());
+    ggprint16(&score, 16, 0x00ffff00, "Score: %010.0f", scoreObject.getScore());
 }
 //=============================================================
 // Functions used in Main file
@@ -386,7 +390,7 @@ bool EnemyControl::bulletHitEnemy(float bulletX, float bulletY)
 
 				enemies[j].takeDamage(100);
 				hit = true;
-				scoreObject.setScore(scoreObject.calculateScore(enemies[j].sideLength));
+				scoreObject.changeScore(scoreObject.calculateScore(enemies[j].sideLength));
 			}
 		}
 		return hit;

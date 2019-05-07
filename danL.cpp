@@ -74,7 +74,7 @@ bool PowerUp::collisionCheck(float ShibaX, float ShibaY) {
 }
 
 void PowerUp::activatePowerUp() {
-    scoreObject.setScore(100);
+    scoreObject.changeScore(100); //Changed name in my file so changed here -Joey
 }
 
 void powerUpPhysicsCheck(float ShibaX, float ShibaY) {

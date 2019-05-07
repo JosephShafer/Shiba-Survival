@@ -98,6 +98,7 @@ class Score{
         float currentScore;
         void setScore(float);
         float getScore();
+        void changeScore(float);
         float calculateScore(float);
         void textScoreDisplay();
     Score();

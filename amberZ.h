@@ -7,15 +7,12 @@
 #ifndef AMBERZ_H
 #define AMBERZ_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 #include <bitset>
 #include <chrono>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
+#include <fstream>
+#include <sstream>
+#include <bits/stdc++.h> 
+#include <vector>
 #include <GL/glx.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -28,12 +25,6 @@
 #include "amberZ.h"
 #include "Image.h"
 #include "fonts.h"
-
-/*
- TODO
- - Make shiba blink when hit
- - Retrieve and store data from score page
-**/
 
 class SSD
 {
@@ -76,6 +67,8 @@ class SpriteTimer {
 
 class AmbersGlobals {
 	public:
+		int xres;
+		int yres;
 		SSD minute1;
 		SSD minute2;
 		SSD colon;
@@ -85,6 +78,8 @@ class AmbersGlobals {
 		int port;
 		char *userAgent;
 		int maxReadErrors;
+		int topScores;
+		std::vector<std::pair<std::string, int>> scores;
 		static AmbersGlobals *instance;
 		static AmbersGlobals *getInstance() {
 			if (!instance) {
@@ -93,9 +88,12 @@ class AmbersGlobals {
 			return instance;
 		}
 		AmbersGlobals() {
+			xres = 1366;
+			yres = 766;
 			port = 443;
 			userAgent = (char *) "CMPS-3350";
 			maxReadErrors = 100;
+			topScores = 1;
 		}
 };
 
@@ -104,8 +102,13 @@ void updateTimer(int, int);
 void drawSprite(GLuint, Image&, float, float, float, float);
 void updateFrame(Image&, SpriteTimer&, double);
 void amberZ(int, int, GLuint);
-BIO * ssl_setup_bio(void);
-void set_non_blocking(const int sock);
+BIO *sslSetupBIO(void);
+void setNonBlocking(const int);
+void connectToWebsite(char[], char[]);
+bool sortbysec(const std::pair<std::string, int>&, const std::pair<std::string, int>&);
 void storeScore(char[], int);
+void getTopScores();
+int getRanking(std::string, int);
+void showScores();
 
 #endif

@@ -70,6 +70,8 @@ public:
 	bool showCredits;
 	bool gameMenu = true;
 	bool gameStart = false;
+	bool gameScores = false;
+	bool sentScore = false;
 	char *user;
 	AmbersGlobals *ag;
 	//float score;
@@ -511,6 +513,8 @@ int check_mouse(XEvent *e)
 							printf("How to play was clicked\n");
 							break;
 						case 2:
+							gl->gameMenu ^= 1;
+							gl->gameScores ^= 1;
 							printf("High score was clicked\n");
 							break;
 						case 3:
@@ -519,7 +523,9 @@ int check_mouse(XEvent *e)
 							break;
 						case 4:
 							printf("Quit was clicked\n");
-							storeScore(gl->user, scoreObject.getScore());
+							if (scoreObject.getScore() > 0) {
+								storeScore(gl->user, scoreObject.getScore());
+							}
 							exit(0);
 					}
 				}
@@ -562,7 +568,7 @@ int check_keys(XEvent *e)
 			gl->showCredits ^= 1;
 			break;
 		case XK_Escape:
-			if (gl->showCredits){
+			if (gl->showCredits) {
 				gl->showCredits ^= 1;
 
 				//should be on game over
@@ -570,12 +576,23 @@ int check_keys(XEvent *e)
 				//storeScore(gl->user, gl->score);
 				//return 1;
 			}
-			else {
+			if (gl->gameScores) {
+				gl->gameMenu ^= 1;
+				gl->gameScores ^= 1;
+				gl->ag->topScores = 1;
+			}
+			if (gl->gameStart) {
 				enemyController.cleanupEnemies();
 				gl->gameMenu ^= 1;
 				gl->gameStart ^= 1;
 			}
-		
+			if (gl->sentScore) {
+				if (scoreObject.getScore() > 0) {
+					storeScore(gl->user, scoreObject.getScore());
+				}
+				gl->sentScore ^= 1;
+			}
+			break;
 		case XK_f:
 			break;
 		case XK_s:
@@ -783,6 +800,9 @@ void render()
 	}
 	if (gl->showCredits) {
 		drawCredits();
+	}
+	if (gl->gameScores) {
+		showScores();
 	}
 }
 

@@ -326,7 +326,7 @@ void amberZ(int x, int y, GLuint textureId)
 	ggprint16(&r, 16, 0x00ffffff, "Amber Zaragoza");
 }
 
-BIO * ssl_setup_bio(void)
+BIO *sslSetupBIO(void)
 {
 	BIO * bio = NULL;
 	OpenSSL_add_all_algorithms();
@@ -338,7 +338,7 @@ BIO * ssl_setup_bio(void)
 	return bio;
 }
 
-void set_non_blocking(const int sock)
+void setNonBlocking(const int sock)
 {
 	int opts;
 	opts = fcntl(sock, F_GETFL);
@@ -353,7 +353,7 @@ void set_non_blocking(const int sock)
 	}
 }
 
-void storeScore(char user[], int score)
+void connectToWebsite(char user[], int score)
 {
 	int sd;
 	struct hostent *host;
@@ -368,12 +368,11 @@ void storeScore(char user[], int score)
 	char pagename[256];
 	sprintf(pagename, "~azaragoza/3350/Shiba-Survival/save_scores.php?user=%s&score=%d", user, score);
 	int port = ag->port;
-	int bytes;
-	char buf[256];
 	int ret;
-	outbio = ssl_setup_bio();
-	if (SSL_library_init() < 0)
+	outbio = sslSetupBIO();
+	if (SSL_library_init() < 0) {
 		BIO_printf(outbio, "Could not initialize the OpenSSL library !\n");
+	}
 	method = SSLv23_client_method();
 	ctx = SSL_CTX_new(method);
 	SSL_CTX_set_options(ctx, SSL_OP_NO_SSLv2);
@@ -389,23 +388,120 @@ void storeScore(char user[], int score)
 	ssl = SSL_new(ctx);
 	SSL_set_fd(ssl, sd);
 	SSL_connect(ssl);
-	set_non_blocking(sd);
+	setNonBlocking(sd);
 	sprintf(req, "GET /%s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s\r\n\r\n", pagename, hostname, ag->userAgent);
-	//printf("%s\n", req);
 	req_len = strlen(req);
 	ret = SSL_write(ssl, req, req_len);
 	if (ret <= 0) {
 		fprintf(stderr, "ERROR: SSL_write\n");
 		fflush(stderr);
 	}
-	bytes = -1;
-	memset(buf, '\0', sizeof(buf));
-	while (bytes <= 0) {
-		bytes = SSL_read(ssl, buf, sizeof(buf));
-		usleep(10000);
-	}
-	fflush(stdout);
 	SSL_free(ssl);
 	close(sd);
 	SSL_CTX_free(ctx);
+}
+
+void storeScore(char user[], int score) {
+	std::ofstream file;
+	file.open("scores.csv", std::ios::app);
+	if (file.is_open()) {
+		file << user << "," << score << std::endl << std::endl;
+		file.close();
+		connectToWebsite((char *) user, score);
+		getTopScores();
+	} else {
+		printf ("%s", "Unable to open file");
+	}
+}
+
+bool sortbysec(const std::pair<std::string, int> &a, const std::pair<std::string, int> &b) { 
+	return (a.second > b.second); 
+}
+
+void getTopScores() {
+	ag->scores.clear();
+	std::pair<std::string, int> p;
+	std::ifstream file("scores.csv");
+	std::string line;
+	std::string name;
+	int score;
+	while (getline(file, line)) {
+		std::stringstream ss(line);
+		std::string value;
+		while (std::getline(ss, value, ',')) {
+			try {
+				name = value;
+				std::getline(ss, value, ',');
+				score = stod(value);
+				p.first = name;
+				p.second = score;
+				ag->scores.push_back(p);
+			}
+			catch (...) {
+				break;
+			}
+		}
+	}
+	sort(ag->scores.begin(), ag->scores.end(), sortbysec);
+}
+
+int getRanking(std::string user, int score) {
+	std::pair<std::string, int> p = {user, score};
+	std::vector<std::pair<std::string, int>>::iterator pos = ag->scores.begin();
+	pos = std::find(ag->scores.begin(), ag->scores.end(), p);
+	if (pos != ag->scores.end()) {
+		return (pos - ag->scores.begin() + 1);
+	}
+	return 0;
+}
+
+void showScores() {
+	if (ag->topScores) {
+		getTopScores();
+		ag->topScores = 0;
+		std::cout << getRanking("anonymous", 25369) << std::endl;
+	}
+  glClear(GL_COLOR_BUFFER_BIT);
+	Rect r;
+	if (ag->scores.size() >= 1) {
+		/* Highest */
+		r.left = ag->xres/2 - 100;
+		r.bot = ag->yres - 100;
+		r.center = 0;
+		ggprint16(&r, 0, 0x00ffffff, ag->scores[0].first.c_str());
+		r.left = ag->xres/2 + 100;
+		ggprint16(&r, 0, 0x00ffffff, "%d", ag->scores[0].second);
+	}
+	if (ag->scores.size() >= 2) {
+		/* Second highest */
+		r.left = ag->xres/2 - 100;
+		r.bot = ag->yres - 150;
+		ggprint16(&r, 0, 0x00ffffff, ag->scores[1].first.c_str());
+		r.left = ag->xres/2 + 100;
+		ggprint16(&r, 0, 0x00ffffff, "%d", ag->scores[1].second);
+	}
+	if (ag->scores.size() >= 3) {
+		/* Third highest */
+		r.left = ag->xres/2 - 100;
+		r.bot = ag->yres - 200;
+		ggprint16(&r, 0, 0x00ffffff, ag->scores[2].first.c_str());
+		r.left = ag->xres/2 + 100;
+		ggprint16(&r, 0, 0x00ffffff, "%d", ag->scores[2].second);
+	}
+	if (ag->scores.size() >= 4) {
+		/* Fourth highest */
+		r.left = ag->xres/2 - 100;
+		r.bot = ag->yres - 250;
+		ggprint16(&r, 0, 0x00ffffff, ag->scores[3].first.c_str());
+		r.left = ag->xres/2 + 100;
+		ggprint16(&r, 0, 0x00ffffff, "%d", ag->scores[3].second);
+	}
+	if (ag->scores.size() >= 5) {
+		/* Fifth highest */
+		r.left = ag->xres/2 - 100;
+		r.bot = ag->yres - 300;
+		ggprint16(&r, 0, 0x00ffffff, ag->scores[4].first.c_str());
+		r.left = ag->xres/2 + 100;
+		ggprint16(&r, 0, 0x00ffffff, "%d", ag->scores[4].second);
+	}
 }

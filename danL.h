@@ -16,17 +16,19 @@ class PowerUp{
         int type;
         void drawPowerUp();
         void shibaCollision(int);
+        bool collisionCheck(float,float);
+        void activatePowerUp();
         PowerUp(float,float);
 };
 
-extern std::vector<PowerUp> powerups;
+extern std::vector<PowerUp> power_ups;
 
 void powerUpPhysicsCheck(float, float);
 void powerUpTimer(float, float);
 void spawnPowerUp(int, float, float);
 void destroyPowerUp(int);
 void renderPowerUps();
-void powerUpCollisionCheck(float, float);
+void powerUpCollision(float, float);
 extern void danL(float, float, GLuint);
 
 #endif

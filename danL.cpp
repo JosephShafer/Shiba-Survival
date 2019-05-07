@@ -6,10 +6,12 @@
 #include "fonts.h"
 #include "danL.h"
 #include "amberZ.h"
+#include "josephS.h"
 
 int xres = 1366;
 int yres = 768;
-const float size = 10;
+const int shiba_size = 40;
+const float power_up_size = 10;
 const int powerUpInterval = 3000;
 
 void danL(int x, int y, GLuint textid)
@@ -56,16 +58,28 @@ void PowerUp::drawPowerUp()
 {
          glColor3f(0.0f, 0.0f, 1.0f);
          glBegin(GL_POLYGON);
-            glVertex2f(-size, size);
-            glVertex2f(size, size);
-            glVertex2f(size, -size);
-            glVertex2f(-size, -size);
+            glVertex2f(-power_up_size, power_up_size);
+            glVertex2f(power_up_size, power_up_size);
+            glVertex2f(power_up_size, -power_up_size);
+            glVertex2f(-power_up_size, -power_up_size);
         glEnd();
+}
+
+bool PowerUp::collisionCheck(float ShibaX, float ShibaY) {
+    bool collisionX = ShibaX + shiba_size >= position[0] &&
+        position[0] + power_up_size >= ShibaX; 
+    bool collisionY = ShibaY + shiba_size >= position[1] &&
+        position[1] + power_up_size >= ShibaY; 
+    return collisionX && collisionY; 
+}
+
+void PowerUp::activatePowerUp() {
+    scoreObject.setScore(100);
 }
 
 void powerUpPhysicsCheck(float ShibaX, float ShibaY) {
     powerUpTimer(ShibaX, ShibaY);
-    powerUpCollisionCheck(ShibaX, ShibaY);
+    powerUpCollision(ShibaX, ShibaY);
 }
 
 void powerUpTimer(float ShibaX, float ShibaY) {
@@ -86,9 +100,24 @@ void spawnPowerUp(int num, float shibaX, float shibaY) {
 		power_ups.push_back(PowerUp(shibaX, shibaY));
 }
 
-void powerUpCollisionCheck(float ShibaX,float ShibaY) {
-    
-
+void powerUpCollision(float ShibaX,float ShibaY) {
+    //for (int i = 0; i < power_ups.size(); i++) {
+    //for (auto & element : power_ups) {
+    //for (vector<PowerUp>::iterator it=power_ups.begin(); it != power_ups.end()){
+    for (auto it=power_ups.begin(); it != power_ups.end();){
+        printf("\n%f",it->position[0]);
+        // If it collides
+        // -Apply powerup
+        // -Destroy powerup
+        if (it->collisionCheck(ShibaX,ShibaY)) {
+            it->activatePowerUp();
+            it = power_ups.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 }
 
 void renderPowerUps() {

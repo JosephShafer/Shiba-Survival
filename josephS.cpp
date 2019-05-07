@@ -299,7 +299,7 @@ float Score::getScore()
 void Score::textScoreDisplay()
 {
 	Rect score;
-    score.left = JSglobalVars->gameXresolution * .80;
+    score.left = JSglobalVars->gameXresolution * .87;
     score.bot = JSglobalVars->gameYresolution * .010;
     score.center = 0;
     ggprint16(&score, 16, 0x00ffff00, "Score: %010.0f", scoreObject.getScore());

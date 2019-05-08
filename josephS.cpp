@@ -56,13 +56,10 @@ Enemy::Enemy()
 	speed = .01;
 
 	if(sideLength <= 26){
-		cout << sideLength << "first " <<endl;
 		imageIndex = 0;
 	}else if(sideLength > 26 && sideLength <= 50){
-		cout << sideLength << "second " <<endl;
 			imageIndex = 1; 
 	}else{
-		cout << sideLength << "third " <<endl;
 			imageIndex = 2;
 	}
 
@@ -95,6 +92,9 @@ void Enemy::splitterSpawn(float Xposition, float Yposition){
 	int eccentricty = 10;
 	velocity[0] = int((rand() % eccentricty) - 5);
 	velocity[1] = int((rand() % eccentricty) - 5);
+	imageIndex = 0;
+	imageUsed = &enemyImages[imageIndex];
+	textureUsed =JSglobalVars->textureArray[imageIndex];
 
 	sideLength = float(rand() % 20 + 15);
 
@@ -247,7 +247,7 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 				  numLivesLeft.changeLives(-1);
 		}
 		}
-		renderScatterShot(shibaXposition, shibaYposition);
+		renderScatterShot();
 
 		
 
@@ -329,7 +329,7 @@ void makeShots(float x, float y){
 	}
 }
 
-void renderScatterShot(float x, float y){
+void renderScatterShot(){
 	
 	int slowDown = 5;
 

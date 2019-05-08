@@ -523,9 +523,6 @@ int check_mouse(XEvent *e)
 							break;
 						case 4:
 							printf("Quit was clicked\n");
-							if (scoreObject.getScore() > 0) {
-								storeScore(gl->user, scoreObject.getScore());
-							}
 							exit(0);
 					}
 				}
@@ -586,11 +583,13 @@ int check_keys(XEvent *e)
 				gl->gameMenu ^= 1;
 				gl->gameStart ^= 1;
 			}
-			if (gl->sentScore) {
+			if (!gl->sentScore) {
 				if (scoreObject.getScore() > 0) {
+					printf("%s\n", "Sending score");
 					storeScore(gl->user, scoreObject.getScore());
+					gl->sentScore ^= 1;
+					scoreObject.setScore(0);
 				}
-				gl->sentScore ^= 1;
 			}
 			break;
 		case XK_f:

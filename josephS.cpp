@@ -3,12 +3,12 @@
 //Date:    2/15/2019
 
 #include "josephS.h"
-
-
+#include <iostream>
 
 JoeyGlobal *JoeyGlobal::instance = 0;
 JoeyGlobal *JSglobalVars = JSglobalVars->getInstance();
 
+vector<ScatterShot> scatterShotObject;
 
 void enemyGetResolution(float Xres, float Yres)
 {
@@ -88,6 +88,8 @@ void Enemy::splitterSpawn(float Xposition, float Yposition){
 
 	splitter = false;
 }
+
+
 
 void Enemy::spawn(float Xposition, float Yposition)
 {
@@ -211,6 +213,32 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 	}
 
 
+		//TODO MOVE TO OTHER FUNCTION===================================
+		for(unsigned int i = 0; i < scatterShotObject.size(); i++){
+
+			if(scatterShotObject[i].position[0] < 0 || scatterShotObject[i].position[1] > JSglobalVars->gameXresolution){
+				scatterShotObject.erase(scatterShotObject.begin() + i);
+			}
+
+			if(scatterShotObject[i].position[1] < 0 || scatterShotObject[i].position[1] > JSglobalVars->gameYresolution){
+				scatterShotObject.erase(scatterShotObject.begin() + i);
+			}
+
+			if((( (scatterShotObject[i].position[0] - scatterShotObject[i].sideLength) < shibaXposition)
+		  && 
+		  ((scatterShotObject[i].position[0] + scatterShotObject[i].sideLength) > shibaXposition))
+			&&
+			(((scatterShotObject[i].position[1] - scatterShotObject[i].sideLength) < shibaYposition)
+			  && 
+			  ((scatterShotObject[i].position[1] + scatterShotObject[i].sideLength) > shibaYposition))) {
+				  scatterShotObject.erase(scatterShotObject.begin() + i);
+				  numLivesLeft.changeLives(-1);
+		}
+		}
+		renderScatterShot(shibaXposition, shibaYposition);
+
+		
+
 	// TODO Put Blink here?
 	if((( (position[0] - sideLength) < shibaXposition)
 		  && 
@@ -249,6 +277,63 @@ void Enemy::takeDamage(int damageDone)
 	
 }
 
+ScatterShot::ScatterShot(){
+	position[0] = rand() % 300;
+	position[1] = rand() % 300;
+	sideLength = 5;
+}
+
+void ScatterShot::drawShot(){
+
+	glColor3f(25.0f, 25.0f, 25.0f);
+         glBegin(GL_POLYGON);
+            glVertex2f(0, sideLength);
+            glVertex2f(sideLength, sideLength);
+            glVertex2f(sideLength, 0);
+            glVertex2f(0, 0);
+        glEnd();
+}
+
+void makeShots(float x, float y){
+
+	float pi = 3.14;
+	int numToMake = 20;
+	float angle = 0;
+
+	for(int i = 0; i < numToMake; i++){
+		scatterShotObject.push_back(ScatterShot());
+		scatterShotObject.back().position[0] = x;
+		scatterShotObject.back().position[1] = y;
+		//scatterShotObject.back().xDirection = cos(xDir);
+		scatterShotObject.back().xDirection = cos(angle);
+		scatterShotObject.back().yDirection = sin(angle);
+		
+		if(angle > 2 *pi){
+			angle = 0;
+		}
+
+		angle += 2*(pi)/numToMake;
+
+	}
+}
+
+void renderScatterShot(float x, float y){
+	
+	int slowDown = 5;
+
+	for(unsigned int i = 0; i < scatterShotObject.size(); i++) {
+		scatterShotObject[i].position[0] += scatterShotObject[i].xDirection/slowDown;
+		scatterShotObject[i].position[1] += scatterShotObject[i].yDirection/slowDown;
+
+
+
+	    glPushMatrix();
+			glTranslated(scatterShotObject[i].position[0], scatterShotObject[i].position[1], 0);
+			scatterShotObject[i].drawShot();
+	    glPopMatrix();
+	}
+
+}
 
 
 //=============================================================
@@ -330,6 +415,7 @@ void EnemyControl::createSplitEnemy(float xPosition, float yPosition){
 	for(int i = 0; i < 5; i++){
 		enemies.push_back(Enemy());
 		enemies.back().splitterSpawn(xPosition, yPosition);
+		
 
 	}
 }
@@ -362,6 +448,7 @@ void EnemyControl::destroyEnemy(int index)
 		if(enemies[index].splitter == true){
 			float positionX = enemies[index].position[0];
 			float positionY = enemies[index].position[1];
+			makeShots(positionX, positionY);
 			createSplitEnemy(positionX, positionY);
 			
 			numLivesLeft.changeLives(1);

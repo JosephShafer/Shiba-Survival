@@ -11,6 +11,7 @@
 #include <chrono>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 #include <bits/stdc++.h> 
 #include <vector>
 #include <GL/glx.h>

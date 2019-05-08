@@ -586,11 +586,12 @@ int check_keys(XEvent *e)
 				gl->gameMenu ^= 1;
 				gl->gameStart ^= 1;
 			}
-			if (gl->sentScore) {
+			if (!gl->sentScore) {
 				if (scoreObject.getScore() > 0) {
+					printf("%s\n", "Sending score");
 					storeScore(gl->user, scoreObject.getScore());
+					gl->sentScore ^= 1;
 				}
-				gl->sentScore ^= 1;
 			}
 			break;
 		case XK_f:

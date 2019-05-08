@@ -366,7 +366,9 @@ void connectToWebsite(char user[], int score)
 	int req_len;
 	char hostname[256] = "cs.csubak.edu";
 	char pagename[256];
-	sprintf(pagename, "~azaragoza/3350/Shiba-Survival/save_scores.php?user=%s&score=%d", user, score);
+	sprintf(pagename, 
+		"~azaragoza/3350/Shiba-Survival/save_scores.php?user=%s&score=%d",
+		user, score);
 	int port = ag->port;
 	int ret;
 	outbio = sslSetupBIO();
@@ -383,13 +385,15 @@ void connectToWebsite(char user[], int score)
 	addr.sin_port = htons(port);
 	addr.sin_addr.s_addr = *(long*)(host->h_addr);
 	if (connect(sd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
-		BIO_printf(outbio, "%s: Cannot connect to host %s [%s] on port %d.\n", hostname, hostname, inet_ntoa(addr.sin_addr), port);
+		BIO_printf(outbio, "%s: Cannot connect to host %s [%s] on port %d.\n",
+			hostname, hostname, inet_ntoa(addr.sin_addr), port);
 	}
 	ssl = SSL_new(ctx);
 	SSL_set_fd(ssl, sd);
 	SSL_connect(ssl);
 	setNonBlocking(sd);
-	sprintf(req, "GET /%s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s\r\n\r\n", pagename, hostname, ag->userAgent);
+	sprintf(req, "GET /%s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s\r\n\r\n",
+		pagename, hostname, ag->userAgent);
 	req_len = strlen(req);
 	ret = SSL_write(ssl, req, req_len);
 	if (ret <= 0) {
@@ -401,11 +405,12 @@ void connectToWebsite(char user[], int score)
 	SSL_CTX_free(ctx);
 }
 
-void storeScore(char user[], int score) {
+void storeScore(char user[], int score)
+{
 	std::ofstream file;
 	file.open("scores.csv", std::ios::app);
 	if (file.is_open()) {
-		file << user << "," << score << std::endl << std::endl;
+		file << user << "," << score << std::endl;
 		file.close();
 		connectToWebsite((char *) user, score);
 		getTopScores();
@@ -414,38 +419,44 @@ void storeScore(char user[], int score) {
 	}
 }
 
-bool sortbysec(const std::pair<std::string, int> &a, const std::pair<std::string, int> &b) { 
+bool sortbysec(const std::pair<std::string, int> &a, const
+	std::pair<std::string, int> &b)
+{
 	return (a.second > b.second); 
 }
 
-void getTopScores() {
+void getTopScores()
+{
 	ag->scores.clear();
 	std::pair<std::string, int> p;
 	std::ifstream file("scores.csv");
 	std::string line;
 	std::string name;
 	int score;
-	while (getline(file, line)) {
-		std::stringstream ss(line);
-		std::string value;
-		while (std::getline(ss, value, ',')) {
-			try {
-				name = value;
-				std::getline(ss, value, ',');
-				score = stod(value);
-				p.first = name;
-				p.second = score;
-				ag->scores.push_back(p);
-			}
-			catch (...) {
-				break;
+	if (file.peek() != '\0') {
+		while (getline(file, line)) {
+			std::stringstream ss(line);
+			std::string value;
+			while (std::getline(ss, value, ',')) {
+				try {
+					name = value;
+					std::getline(ss, value, ',');
+					score = stod(value);
+					p.first = name;
+					p.second = score;
+					ag->scores.push_back(p);
+				}
+				catch (...) {
+					break;
+				}
 			}
 		}
+		sort(ag->scores.begin(), ag->scores.end(), sortbysec);
 	}
-	sort(ag->scores.begin(), ag->scores.end(), sortbysec);
 }
 
-int getRanking(std::string user, int score) {
+int getRanking(std::string user, int score)
+{
 	std::pair<std::string, int> p = {user, score};
 	std::vector<std::pair<std::string, int>>::iterator pos = ag->scores.begin();
 	pos = std::find(ag->scores.begin(), ag->scores.end(), p);
@@ -455,53 +466,40 @@ int getRanking(std::string user, int score) {
 	return 0;
 }
 
-void showScores() {
+void showScores()
+{
 	if (ag->topScores) {
 		getTopScores();
 		ag->topScores = 0;
-		std::cout << getRanking("anonymous", 25369) << std::endl;
+		//std::cout << getRanking("anonymous", 25369) << std::endl;
 	}
   glClear(GL_COLOR_BUFFER_BIT);
 	Rect r;
-	if (ag->scores.size() >= 1) {
-		/* Highest */
-		r.left = ag->xres/2 - 100;
-		r.bot = ag->yres - 100;
-		r.center = 0;
-		ggprint16(&r, 0, 0x00ffffff, ag->scores[0].first.c_str());
-		r.left = ag->xres/2 + 100;
-		ggprint16(&r, 0, 0x00ffffff, "%d", ag->scores[0].second);
-	}
-	if (ag->scores.size() >= 2) {
-		/* Second highest */
-		r.left = ag->xres/2 - 100;
+	r.left = 635;
+	r.bot = ag->yres - 100;
+	r.center = 0;
+	if (!ag->scores.empty()) {
+		ggprint16(&r, 0, 0x00ffffff, "Local High Scores");
 		r.bot = ag->yres - 150;
-		ggprint16(&r, 0, 0x00ffffff, ag->scores[1].first.c_str());
-		r.left = ag->xres/2 + 100;
-		ggprint16(&r, 0, 0x00ffffff, "%d", ag->scores[1].second);
+		int leftCol = ag->xres/2 - 100;
+		int rightCol = ag->xres/2 + 115;
+		for (int i = 0; i < 10; i++) {
+			if (i < (int) ag->scores.size()) {
+				r.left = leftCol;
+				std::transform(ag->scores[i].first.begin(), ag->scores[i].first.end(),
+					ag->scores[i].first.begin(), ::toupper);
+				ggprint16(&r, 0, 0x00ffffff, ag->scores[i].first.c_str());
+				r.left = rightCol;
+				ggprint16(&r, 0, 0x00ffffff, "%d", ag->scores[i].second);
+				r.bot -= 50;
+			} else {
+				break;
+			}
+		}
 	}
-	if (ag->scores.size() >= 3) {
-		/* Third highest */
-		r.left = ag->xres/2 - 100;
-		r.bot = ag->yres - 200;
-		ggprint16(&r, 0, 0x00ffffff, ag->scores[2].first.c_str());
-		r.left = ag->xres/2 + 100;
-		ggprint16(&r, 0, 0x00ffffff, "%d", ag->scores[2].second);
-	}
-	if (ag->scores.size() >= 4) {
-		/* Fourth highest */
-		r.left = ag->xres/2 - 100;
-		r.bot = ag->yres - 250;
-		ggprint16(&r, 0, 0x00ffffff, ag->scores[3].first.c_str());
-		r.left = ag->xres/2 + 100;
-		ggprint16(&r, 0, 0x00ffffff, "%d", ag->scores[3].second);
-	}
-	if (ag->scores.size() >= 5) {
-		/* Fifth highest */
-		r.left = ag->xres/2 - 100;
-		r.bot = ag->yres - 300;
-		ggprint16(&r, 0, 0x00ffffff, ag->scores[4].first.c_str());
-		r.left = ag->xres/2 + 100;
-		ggprint16(&r, 0, 0x00ffffff, "%d", ag->scores[4].second);
-	}
+	r.left = 620;
+	ggprint16(&r, 0, 0x00ffffff, "View more scores at");
+	r.left = ag->xres/2 - 180;
+	r.bot -= 30;
+	ggprint16(&r, 0, 0x00ffffff, "https://cs.csubak.edu/~azaragoza/Shiba-Survival/");
 }

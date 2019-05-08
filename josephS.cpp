@@ -39,9 +39,9 @@ Score scoreObject;
 
 
 Image enemyImages[numEnemyImages] = {
-						Image("./images/Cat-Sprites.png", 4, 4),
 						Image("./images/Doctor_Left.png", 1, 4),
-						Image("./images/Shiba-Sprites.png", 9, 4)
+						Image("./images/Shiba-Sprites.png", 9, 4),
+						Image("./images/Cat-Sprites.png", 4, 4)
 						};
 
 Enemy::Enemy()
@@ -54,7 +54,19 @@ Enemy::Enemy()
 	}
 	health = 100;
 	speed = .01;
-	imageIndex = rand() % numEnemyImages;
+
+	if(sideLength <= 26){
+		cout << sideLength << "first " <<endl;
+		imageIndex = 0;
+	}else if(sideLength > 26 && sideLength <= 50){
+		cout << sideLength << "second " <<endl;
+			imageIndex = 1; 
+	}else{
+		cout << sideLength << "third " <<endl;
+			imageIndex = 2;
+	}
+
+	//imageIndex = rand() % numEnemyImages;
 	textureUsed = JSglobalVars->textureArray[imageIndex];
 	imageUsed = &enemyImages[imageIndex];
 	//shibaX = 0;

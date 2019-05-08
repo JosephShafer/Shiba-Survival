@@ -7,12 +7,14 @@
 #include "danL.h"
 #include "amberZ.h"
 #include "josephS.h"
+#include "Image.h"
 
 int xres = 1366;
 int yres = 768;
-const int shiba_size = 40;
-const float power_up_size = 10;
+const int shiba_size = 80;
+const float power_up_size = 20;
 const int powerUpInterval = 3000;
+Image powerUpImage = Image("./images/bone.png",1,1);
 
 void danL(int x, int y, GLuint textid)
 {
@@ -56,6 +58,8 @@ PowerUp::PowerUp(float ShibaX, float ShibaY)
 
 void PowerUp::drawPowerUp()
 {
+
+    //glBindTexture();
          glColor3f(0.0f, 0.0f, 1.0f);
          glBegin(GL_POLYGON);
             glVertex2f(-power_up_size, power_up_size);
@@ -105,7 +109,7 @@ void powerUpCollision(float ShibaX,float ShibaY) {
     //for (auto & element : power_ups) {
     //for (vector<PowerUp>::iterator it=power_ups.begin(); it != power_ups.end()){
     for (auto it=power_ups.begin(); it != power_ups.end();){
-        printf("\n%f",it->position[0]);
+        //printf("\n%f",it->position[0]);
         // If it collides
         // -Apply powerup
         // -Destroy powerup

@@ -40,6 +40,23 @@ public:
 
 void enemyGetResolution(float, float);
 
+
+class ScatterShot{
+    public:
+        float position[2];
+        float sideLength;
+        float xDirection;
+        float yDirection;
+
+        void drawShot();
+
+    ScatterShot();
+};
+
+void renderScatterShot(float , float );
+void makeShots(float, float);
+
+
 class Enemy{
 public:
 
@@ -67,6 +84,7 @@ public:
     void updatePosition(float, float, int);
     void takeDamage(int);
     void setTexture();
+    void scatterShot();
     Enemy();
 };
 
@@ -109,6 +127,7 @@ class Score{
 extern Lives numLivesLeft;
 extern Score scoreObject;
 extern EnemyControl enemyController;
+extern vector<ScatterShot> scatterShotObject;
 //int Enemy::enemiesHitShiba = 0;
 extern Image enemyImages[3];
 //extern std::vector<Enemy> enemies;

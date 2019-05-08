@@ -105,7 +105,7 @@ void powerUpCollision(float ShibaX,float ShibaY) {
     //for (auto & element : power_ups) {
     //for (vector<PowerUp>::iterator it=power_ups.begin(); it != power_ups.end()){
     for (auto it=power_ups.begin(); it != power_ups.end();){
-        printf("\n%f",it->position[0]);
+        //printf("\n%f",it->position[0]);
         // If it collides
         // -Apply powerup
         // -Destroy powerup

@@ -367,7 +367,7 @@ void connectToWebsite(char user[], int score)
 	char hostname[256] = "cs.csubak.edu";
 	char pagename[256];
 	sprintf(pagename, 
-		"~azaragoza/3350/Shiba-Survival/save_scores.php?user=%s&score=%d",
+		"~azaragoza/Shiba-Survival/save_scores.php?user=%s&score=%d",
 		user, score);
 	int port = ag->port;
 	int ret;

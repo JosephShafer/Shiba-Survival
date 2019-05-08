@@ -57,6 +57,7 @@ public:
 
     
     SpriteTimer timer;
+    void splitterSpawn(float, float);
     void spawn(float, float);
     float getShibaXListener();
     float getShibaYListener();
@@ -80,6 +81,7 @@ class EnemyControl{
         void cleanupEnemies();
         bool bulletHitEnemy(float, float);
         void primeSpawner(int, float, float);
+        void createSplitEnemy(float, float);
         //EnemyControl();
 };
 

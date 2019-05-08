@@ -49,6 +49,9 @@ Enemy::Enemy()
 	velocity[0] = 0;
 	velocity[1] = 0;
 	sideLength = float(rand() % 60 + 15);
+	if(sideLength > 50){
+		splitter = true;
+	}
 	health = 100;
 	speed = .01;
 	imageIndex = rand() % numEnemyImages;
@@ -74,15 +77,24 @@ void Enemy::setShibaYListener(float shibaYposition){
 	shibaY = shibaYposition;
 }
 
+void Enemy::splitterSpawn(float Xposition, float Yposition){
+	position[0] = Xposition;
+	position[1] = Yposition;
+	int eccentricty = 10;
+	velocity[0] = int((rand() % eccentricty) - 5);
+	velocity[1] = int((rand() % eccentricty) - 5);
+
+	sideLength = float(rand() % 20 + 15);
+
+	splitter = false;
+}
+
 void Enemy::spawn(float Xposition, float Yposition)
 {
 	int spawnchoice = (rand() % 4);
 	int spaceAway = 100;
 	bool enemySpawned = false;
 
-	if(sideLength > 45){
-		splitter = true;
-	}
 
 	//spawn top right area of game area
 	while(!enemySpawned) {
@@ -314,6 +326,14 @@ EnemyControl enemyController;
 // 	vector<Enemy> enemies;
 // }
 
+void EnemyControl::createSplitEnemy(float xPosition, float yPosition){
+	for(int i = 0; i < 5; i++){
+		enemies.push_back(Enemy());
+		enemies.back().splitterSpawn(xPosition, yPosition);
+
+	}
+}
+
 void EnemyControl::createEnemy(int numToCreate, float shibaXPosition, float shibaYPosition)
 {
 	for(int i = 0; i < numToCreate; i++){
@@ -340,7 +360,10 @@ void EnemyControl::destroyEnemy(int index)
 {
 	if(enemies.size() > 0){
 		if(enemies[index].splitter == true){
-			//createEnemy(10, enemies[index].getShibaX(), enemies[index].getShibaY());
+			float positionX = enemies[index].position[0];
+			float positionY = enemies[index].position[1];
+			createSplitEnemy(positionX, positionY);
+			
 			numLivesLeft.changeLives(1);
 		}
 		enemies.erase(enemies.begin() + index);

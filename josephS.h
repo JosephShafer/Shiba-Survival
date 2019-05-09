@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include "amberZ.h"
 #include "Image.h"
-#define numEnemyImages 4
+#define numEnemyImages 5
 using namespace std;
 
 typedef float Vec[3];

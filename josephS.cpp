@@ -42,7 +42,8 @@ Image enemyImages[numEnemyImages] = {
 						Image("./images/cage.png", 1, 1),
 						Image("./images/Cat-Sprites.png", 4, 4),
 						Image("./images/heMan.png", 1, 1),
-						Image("./images/heManHey.png", 1, 1)
+						Image("./images/heManHey.png", 1, 1),
+						Image("./images/Doctor_Left.png", 1,4)
 						};
 
 
@@ -57,10 +58,12 @@ Enemy::Enemy()
 	health = 100;
 	speed = .01;
 
-	if(sideLength <= 40){
+	if(sideLength <= 30){
 		imageIndex = 0;
-	}else if(sideLength > 40 && sideLength <= 50){
+	}else if(sideLength > 30 && sideLength <= 40){
 			imageIndex = 1; 
+	}else if(sideLength > 40 && sideLength <= 50){
+			imageIndex = 4;
 	}else{
 			imageIndex = 2;
 	}
@@ -486,8 +489,6 @@ void EnemyControl::destroyEnemy(int index)
 			float positionY = enemies[index].position[1];
 			makeShots(positionX, positionY);
 			createSplitEnemy(positionX, positionY);
-			
-			numLivesLeft.changeLives(1);
 		}
 		enemies.erase(enemies.begin() + index);
 	}

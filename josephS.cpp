@@ -42,7 +42,8 @@ Image enemyImages[numEnemyImages] = {
 						Image("./images/cage.png", 1, 1),
 						Image("./images/Cat-Sprites.png", 4, 4),
 						Image("./images/heMan.png", 1, 1),
-						Image("./images/heManHey.png", 1, 1)
+						Image("./images/heManHey.png", 1, 1),
+						Image("./images/Doctor_Left.png", 1,4)
 						};
 
 
@@ -57,10 +58,12 @@ Enemy::Enemy()
 	health = 100;
 	speed = .01;
 
-	if(sideLength <= 40){
+	if(sideLength <= 30){
 		imageIndex = 0;
-	}else if(sideLength > 40 && sideLength <= 50){
+	}else if(sideLength > 30 && sideLength <= 40){
 			imageIndex = 1; 
+	}else if(sideLength > 40 && sideLength <= 50){
+			imageIndex = 4;
 	}else{
 			imageIndex = 2;
 	}
@@ -302,15 +305,14 @@ ScatterShot::ScatterShot(){
 	sideLength = 5;
 }
 
-void ScatterShot::drawShot(){
-
-	glColor3f(25.0f, 25.0f, 25.0f);
-         glBegin(GL_POLYGON);
-            glVertex2f(0, sideLength);
-            glVertex2f(sideLength, sideLength);
-            glVertex2f(sideLength, 0);
-            glVertex2f(0, 0);
-        glEnd();
+void ScatterShot::drawShot()
+{
+	glBegin(GL_POLYGON);
+		glVertex2f(0, sideLength);
+		glVertex2f(sideLength, sideLength);
+		glVertex2f(sideLength, 0);
+		glVertex2f(0, 0);
+	glEnd();
 }
 
 void makeShots(float x, float y){
@@ -337,19 +339,37 @@ void makeShots(float x, float y){
 }
 
 void renderScatterShot(){
+
+	float rainbowArray[7][3] = {{148,0,221},
+														 	{75,0,130}, 
+															 {0,0,225},
+															 {0,255,0},
+															 {255,255,0},
+															 {255,127,0},
+															 {255,0,0}};
 	
 	int slowDown = 5;
+	static int j = 0;
+	static int Timer = 0;
 
 	for(unsigned int i = 0; i < scatterShotObject.size(); i++) {
 		scatterShotObject[i].position[0] += (scatterShotObject[i].xDirection/slowDown);
 		scatterShotObject[i].position[1] += (scatterShotObject[i].yDirection/slowDown);
 
-		scatterShotObject[i].position[0] += 1/slowDown;
-
 	    glPushMatrix();
-			glTranslated(scatterShotObject[i].position[0], scatterShotObject[i].position[1], 0);
-			scatterShotObject[i].drawShot();
+			glColor3ub(rainbowArray[j][0], rainbowArray[j][1], rainbowArray[j][2]);
+				glTranslated(scatterShotObject[i].position[0], scatterShotObject[i].position[1], 0);
+				scatterShotObject[i].drawShot();
 	    glPopMatrix();
+
+			if(Timer == 400){
+				j++;
+				Timer = 0;
+			}
+			if(j == 7){
+				j = 0;
+			}
+			Timer++;
 	}
 
 }
@@ -469,8 +489,6 @@ void EnemyControl::destroyEnemy(int index)
 			float positionY = enemies[index].position[1];
 			makeShots(positionX, positionY);
 			createSplitEnemy(positionX, positionY);
-			
-			numLivesLeft.changeLives(1);
 		}
 		enemies.erase(enemies.begin() + index);
 	}

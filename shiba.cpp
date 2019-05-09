@@ -649,8 +649,10 @@ int check_keys(XEvent *e)
 						//printf("How to play was clicked\n");
 						break;
 					case 2:
-                        gl->gameMenu ^= 1;
-						gl->gameScores ^= 1;													
+						gl->gameScores ^= 1;
+						gl->ag->topScores = 1;
+                        //gl->gameMenu ^= 1;
+						//gl->gameScores ^= 1;													
                         //printf("High score was clicked\n");;
 						break;
 					case 3:

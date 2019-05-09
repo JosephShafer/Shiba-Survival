@@ -39,10 +39,11 @@ Score scoreObject;
 
 
 Image enemyImages[numEnemyImages] = {
-						Image("./images/Doctor_Left.png", 1, 4),
-						Image("./images/Shiba-Sprites.png", 9, 4),
-						Image("./images/Cat-Sprites.png", 4, 4)
+						Image("./images/cage.png", 1, 1),
+						Image("./images/Cat-Sprites.png", 4, 4),
+						Image("./images/heMan.png", 1, 1)
 						};
+
 
 Enemy::Enemy()
 {
@@ -55,9 +56,9 @@ Enemy::Enemy()
 	health = 100;
 	speed = .01;
 
-	if(sideLength <= 26){
+	if(sideLength <= 40){
 		imageIndex = 0;
-	}else if(sideLength > 26 && sideLength <= 50){
+	}else if(sideLength > 40 && sideLength <= 50){
 			imageIndex = 1; 
 	}else{
 			imageIndex = 2;
@@ -92,7 +93,7 @@ void Enemy::splitterSpawn(float Xposition, float Yposition){
 	int eccentricty = 10;
 	velocity[0] = int((rand() % eccentricty) - 5);
 	velocity[1] = int((rand() % eccentricty) - 5);
-	imageIndex = 0;
+	imageIndex = 2;
 	imageUsed = &enemyImages[imageIndex];
 	textureUsed =JSglobalVars->textureArray[imageIndex];
 
@@ -334,10 +335,10 @@ void renderScatterShot(){
 	int slowDown = 5;
 
 	for(unsigned int i = 0; i < scatterShotObject.size(); i++) {
-		scatterShotObject[i].position[0] += scatterShotObject[i].xDirection/slowDown;
-		scatterShotObject[i].position[1] += scatterShotObject[i].yDirection/slowDown;
+		scatterShotObject[i].position[0] += (scatterShotObject[i].xDirection/slowDown);
+		scatterShotObject[i].position[1] += (scatterShotObject[i].yDirection/slowDown);
 
-
+		scatterShotObject[i].position[0] += 1/slowDown;
 
 	    glPushMatrix();
 			glTranslated(scatterShotObject[i].position[0], scatterShotObject[i].position[1], 0);

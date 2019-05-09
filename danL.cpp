@@ -13,11 +13,12 @@ int xres = 1366;
 int yres = 768;
 const int shiba_size = 80;
 const float power_up_size = 20;
-const int powerUpInterval = 3000;
+const int powerUpInterval = 100;
 bool flyingShiba = false;
 int flyingShibaPos[2] = {0,500};
 //int flyingShibaPos[2];
 GLuint powerUpTextures[3];
+vector<PowerUp> power_ups;
 Image powerUpImage[4] = {
     Image("./images/bone.png",1,1),
     Image("./images/1up.png",1,1),
@@ -50,7 +51,6 @@ void danL(int x, int y, GLuint textid)
     ggprint16(&r, 16, 0x00ffff00, "Dan Leinker");
 }
 
-vector<PowerUp> power_ups;
 
 PowerUp::PowerUp(int powerUpType, float ShibaX, float ShibaY) 
 {
@@ -82,15 +82,21 @@ void PowerUp::drawPowerUp()
     //drawSprite(powerUpTextures[0],powerUpImage[0],10,10,)
 }
 
-bool PowerUp::collisionCheck(float ShibaX, float ShibaY) {
-    bool collisionX = ShibaX + shiba_size >= position[0] &&
+bool PowerUp::collisionCheck(float ShibaX, float ShibaY) 
+{
+    /* bool collisionX = ShibaX + shiba_size >= position[0] &&
         position[0] + power_up_size >= ShibaX; 
     bool collisionY = ShibaY + shiba_size >= position[1] &&
         position[1] + power_up_size >= ShibaY; 
-    return collisionX && collisionY; 
+    return collisionX && collisionY; */
+    return ((ShibaX - shiba_size <= position[0] && 
+        ShibaX >= position[0] - power_up_size) &&
+        (ShibaY - shiba_size <= position[1] && 
+        ShibaY + 10 >= position[1] - power_up_size - 5));
 }
 
-void PowerUp::activatePowerUp() {
+void PowerUp::activatePowerUp() 
+{
     if (type == 0) {
         scoreObject.changeScore(100); //Changed name in my file so changed here -Joey
     } else if (type == 1) {
@@ -100,14 +106,17 @@ void PowerUp::activatePowerUp() {
         flyingShibaPos[0] = 0;
         flyingShibaPos[1] = 400;
         enemyController.cleanupEnemies();
+        scoreObject.changeScore(1000);
     }
 }
 
-void destroyAllPowerups() {
+void destroyAllPowerups() 
+{
     power_ups.clear();
 }
 
-void powerUpPhysicsCheck(float ShibaX, float ShibaY) {
+void powerUpPhysicsCheck(float ShibaX, float ShibaY) 
+{
     powerUpTimer(ShibaX, ShibaY);
     powerUpCollision(ShibaX, ShibaY);
     if (flyingShiba) {
@@ -118,18 +127,18 @@ void powerUpPhysicsCheck(float ShibaX, float ShibaY) {
             flyingShibaPos[0] = 0;
         }
     }
-    
 }
 
-void powerUpTimer(float ShibaX, float ShibaY) {
+void powerUpTimer(float ShibaX, float ShibaY) 
+{
     //See if we should spawn some powerups
-    if ((rand() % 200) == 1) {
+    if ((rand() % (powerUpInterval * 2)) == 1) {
         spawnPowerUp(1,0,ShibaX,ShibaY);
     }
-    if ((rand() % 500) == 1) {
+    if ((rand() % (powerUpInterval * 5)) == 1) {
         spawnPowerUp(1,1,ShibaX,ShibaY);
     }
-    if ((rand() % 1000) == 1) {
+    if ((rand() % (powerUpInterval * 15)) == 1) {
         spawnPowerUp(1,2,ShibaX,ShibaY);
     }
     #ifdef DEBUG
@@ -137,7 +146,8 @@ void powerUpTimer(float ShibaX, float ShibaY) {
     #endif
 }
 
-void spawnPowerUp(int num, int powerUpType, float shibaX, float shibaY) {
+void spawnPowerUp(int num, int powerUpType, float shibaX, float shibaY) 
+{
     #ifdef DEBUG
     printf("\nspawnPowerup function");
     #endif
@@ -145,47 +155,54 @@ void spawnPowerUp(int num, int powerUpType, float shibaX, float shibaY) {
 		power_ups.push_back(PowerUp(powerUpType, shibaX, shibaY));
 }
 
-void powerUpCollision(float ShibaX,float ShibaY) {
+void powerUpCollision(float ShibaX,float ShibaY) 
+{
     //for (int i = 0; i < power_ups.size(); i++) {
     //for (auto & element : power_ups) {
     //for (vector<PowerUp>::iterator it=power_ups.begin(); it != power_ups.end()){
-    for (auto it=power_ups.begin(); it != power_ups.end();){
+    // If it collides
+    // -Apply powerup
+    // -Destroy powerup
+    for (auto it=power_ups.begin(); it != power_ups.end();) {
         //printf("\n%f",it->position[0]);
-        // If it collides
-        // -Apply powerup
-        // -Destroy powerup
         if (it->collisionCheck(ShibaX,ShibaY)) {
             it->activatePowerUp();
             it = power_ups.erase(it);
-        }
-        else
-        {
+        } else {
             ++it;
         }
     }
 }
 
-void renderPowerUps() {
+void renderPowerUps() 
+{
     Image* test = &powerUpImage[0];
 	for(unsigned int i = 0; i < power_ups.size(); i++) {
         //cout << "About to draw sprite" << endl;
         //cout << "Power up texture: " << powerUpTextures[0] << endl;
         //cout << "Power up image:   " << powerUpImage << endl;
+        float powerUpX = power_ups[i].position[0];
+        float powerUpY = power_ups[i].position[1];
         if (power_ups[i].type == 0) {
-            drawSprite(powerUpTextures[power_ups[i].type],*test,26,12,power_ups[i].position[0],power_ups[i].position[1]);
+            drawSprite(powerUpTextures[power_ups[i].type],
+                *test,26,12,powerUpX,powerUpY);
         } else if (power_ups[i].type == 1) {
-            drawSprite(powerUpTextures[power_ups[i].type],*test,25,25,power_ups[i].position[0],power_ups[i].position[1]);
+            drawSprite(powerUpTextures[power_ups[i].type],
+                *test,25,25,powerUpX,powerUpY);
         } else if (power_ups[i].type == 2) {
-            drawSprite(powerUpTextures[power_ups[i].type],*test,40,40,power_ups[i].position[0],power_ups[i].position[1]);
+            drawSprite(powerUpTextures[power_ups[i].type],
+                *test,40,40,powerUpX,powerUpY);
         }
 	    //glPushMatrix();
 		//glTranslated(power_ups[i].position[0], power_ups[i].position[1], 0);
 		//power_ups[i].drawPowerUp();
 	    //glPopMatrix();
 	}
-    //cout << "Render powerups Flying shiba is: " << flyingShiba << " x: " << flyingShibaPos[0] << " y: " << flyingShibaPos[1] << endl;
+    //cout << "Render powerups Flying shiba is: " << flyingShiba << " x: " 
+    //cout << flyingShibaPos[0] << " y: " << flyingShibaPos[1] << endl;
     if (flyingShiba) {
-        drawSprite(powerUpTextures[3],*test,400,400,flyingShibaPos[0],flyingShibaPos[1]);
+        drawSprite(powerUpTextures[3],*test,400,400,
+            flyingShibaPos[0],flyingShibaPos[1]);
     }
 }
 

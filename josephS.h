@@ -53,7 +53,7 @@ class ScatterShot{
     ScatterShot();
 };
 
-void renderScatterShot(float , float );
+void renderScatterShot();
 void makeShots(float, float);
 
 

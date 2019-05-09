@@ -39,9 +39,9 @@ Score scoreObject;
 
 
 Image enemyImages[numEnemyImages] = {
-						Image("./images/Cat-Sprites.png", 4, 4),
 						Image("./images/Doctor_Left.png", 1, 4),
-						Image("./images/Shiba-Sprites.png", 9, 4)
+						Image("./images/Shiba-Sprites.png", 9, 4),
+						Image("./images/Cat-Sprites.png", 4, 4)
 						};
 
 Enemy::Enemy()
@@ -54,7 +54,16 @@ Enemy::Enemy()
 	}
 	health = 100;
 	speed = .01;
-	imageIndex = rand() % numEnemyImages;
+
+	if(sideLength <= 26){
+		imageIndex = 0;
+	}else if(sideLength > 26 && sideLength <= 50){
+			imageIndex = 1; 
+	}else{
+			imageIndex = 2;
+	}
+
+	//imageIndex = rand() % numEnemyImages;
 	textureUsed = JSglobalVars->textureArray[imageIndex];
 	imageUsed = &enemyImages[imageIndex];
 	//shibaX = 0;
@@ -83,6 +92,9 @@ void Enemy::splitterSpawn(float Xposition, float Yposition){
 	int eccentricty = 10;
 	velocity[0] = int((rand() % eccentricty) - 5);
 	velocity[1] = int((rand() % eccentricty) - 5);
+	imageIndex = 0;
+	imageUsed = &enemyImages[imageIndex];
+	textureUsed =JSglobalVars->textureArray[imageIndex];
 
 	sideLength = float(rand() % 20 + 15);
 
@@ -235,7 +247,7 @@ void Enemy::updatePosition(float shibaXposition, float shibaYposition, int index
 				  numLivesLeft.changeLives(-1);
 		}
 		}
-		renderScatterShot(shibaXposition, shibaYposition);
+		renderScatterShot();
 
 		
 
@@ -317,7 +329,7 @@ void makeShots(float x, float y){
 	}
 }
 
-void renderScatterShot(float x, float y){
+void renderScatterShot(){
 	
 	int slowDown = 5;
 

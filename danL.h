@@ -19,14 +19,14 @@ class PowerUp{
         void shibaCollision(int);
         bool collisionCheck(float,float);
         void activatePowerUp();
-        PowerUp(float,float);
+        PowerUp(int, float,float);
 };
 
 extern std::vector<PowerUp> power_ups;
 
 void powerUpPhysicsCheck(float, float);
 void powerUpTimer(float, float);
-void spawnPowerUp(int, float, float);
+void spawnPowerUp(int, int, float, float);
 void destroyPowerUp(int);
 void renderPowerUps();
 void powerUpCollision(float, float);

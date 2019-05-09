@@ -17,10 +17,10 @@ const int powerUpInterval = 3000;
 GLuint powerUpTextures[3];
 Image powerUpImage[3] = {
     Image("./images/bone.png",1,1),
-    Image("./images/bone.png",1,1),
+    Image("./images/1up.png",1,1),
     Image("./images/bone.png",1,1)
 };
-Image* test = &powerUpImage[0];
+
 
 
 void danL(int x, int y, GLuint textid)
@@ -48,10 +48,10 @@ void danL(int x, int y, GLuint textid)
 
 vector<PowerUp> power_ups;
 
-PowerUp::PowerUp(float ShibaX, float ShibaY) 
+PowerUp::PowerUp(int powerUpType, float ShibaX, float ShibaY) 
 {
     // Type of powerup, Only one type for now
-    type = 0;
+    type = powerUpType;
 
     int away = 20;
     //TODO test to make sure these values are coming out right
@@ -59,7 +59,7 @@ PowerUp::PowerUp(float ShibaX, float ShibaY)
     position[1] = ((int)ShibaY + (rand() % (yres - away))) % yres;
 
     #ifdef DEBUG
-    printf("\nPowerUp Constructor %f %f",position[0],position[1]);
+    printf("\nPowerUp Constructor Type: %i %f %f",type,position[0],position[1]);
     #endif
 }
 
@@ -88,7 +88,15 @@ bool PowerUp::collisionCheck(float ShibaX, float ShibaY) {
 }
 
 void PowerUp::activatePowerUp() {
-    scoreObject.changeScore(100); //Changed name in my file so changed here -Joey
+    if (type == 0) {
+        scoreObject.changeScore(100); //Changed name in my file so changed here -Joey
+    } else if (type == 1) {
+        numLivesLeft.changeLives(1);
+    }
+}
+
+void destroyAllPowerups() {
+    power_ups.clear();
 }
 
 void powerUpPhysicsCheck(float ShibaX, float ShibaY) {
@@ -99,19 +107,22 @@ void powerUpPhysicsCheck(float ShibaX, float ShibaY) {
 void powerUpTimer(float ShibaX, float ShibaY) {
     //See if we should spawn some powerups
     if ((rand() % 200) == 1) {
-        spawnPowerUp(1,ShibaX,ShibaY);
+        spawnPowerUp(1,0,ShibaX,ShibaY);
+    }
+    if ((rand() % 500) == 1) {
+        spawnPowerUp(1,1,ShibaX,ShibaY);
     }
     #ifdef DEBUG
     //printf("\nPowerUpTimer function %i",mil);
     #endif
 }
 
-void spawnPowerUp(int num, float shibaX, float shibaY) {
+void spawnPowerUp(int num, int powerUpType, float shibaX, float shibaY) {
     #ifdef DEBUG
     printf("\nspawnPowerup function");
     #endif
 	for(int i = 0; i < num; i++)
-		power_ups.push_back(PowerUp(shibaX, shibaY));
+		power_ups.push_back(PowerUp(powerUpType, shibaX, shibaY));
 }
 
 void powerUpCollision(float ShibaX,float ShibaY) {
@@ -136,10 +147,15 @@ void powerUpCollision(float ShibaX,float ShibaY) {
 
 void renderPowerUps() {
 	for(unsigned int i = 0; i < power_ups.size(); i++) {
+        Image* test = &powerUpImage[0];
         //cout << "About to draw sprite" << endl;
         //cout << "Power up texture: " << powerUpTextures[0] << endl;
         //cout << "Power up image:   " << powerUpImage << endl;
-        drawSprite(powerUpTextures[0],*test,26,12,power_ups[i].position[0],power_ups[i].position[1]);
+        if (power_ups[i].type == 0) {
+            drawSprite(powerUpTextures[power_ups[i].type],*test,26,12,power_ups[i].position[0],power_ups[i].position[1]);
+        } else if (power_ups[i].type == 1) {
+            drawSprite(powerUpTextures[power_ups[i].type],*test,25,25,power_ups[i].position[0],power_ups[i].position[1]);
+        }
 	    //glPushMatrix();
 		//glTranslated(power_ups[i].position[0], power_ups[i].position[1], 0);
 		//power_ups[i].drawPowerUp();
@@ -159,32 +175,4 @@ void loadPowerUpImages() {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, powerUpImage[0].width, powerUpImage[0].height, 0, GL_RGBA,GL_UNSIGNED_BYTE, spriteData);
     //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, enemyImages[i].width, enemyImages[i].height, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
     */
-}
-
-unsigned char *buildAlpha(Image *img)
-{
-	int i;
-	unsigned char *newdata, *ptr;
-	unsigned char *data = (unsigned char *)img->data;
-	newdata = (unsigned char *)malloc(img->width * img->height * 4);
-	ptr = newdata;
-	unsigned char a, b, c;
-	unsigned char t0 = *(data + 0);
-	unsigned char t1 = *(data + 1);
-	unsigned char t2 = *(data + 2);
-	for (i = 0; i < img->width * img->height * 3; i += 3)
-	{
-			a = *(data + 0);
-			b = *(data + 1);
-			c = *(data + 2);
-			*(ptr + 0) = a;
-			*(ptr + 1) = b;
-			*(ptr + 2) = c;
-			*(ptr + 3) = 1;
-			if (a == t0 && b == t1 && c == t2)
-					*(ptr + 3) = 0;
-			ptr += 4;
-			data += 3;
-	}
-	return newdata;
 }

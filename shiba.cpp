@@ -470,16 +470,15 @@ void init_opengl(void)
 		
 		getTexturesFunction(gl->enemySprites[i]);
 	}
-	glGenTextures(1,&powerUpTextures[0]);
-	glBindTexture(GL_TEXTURE_2D, powerUpTextures[0]); 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	//Image* temp = &powerUpImage[0];
-	spriteData = buildAlphaData(&powerUpImage[0]);
-	//spriteData = buildAlpha(*test); 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, powerUpImage[0].width, powerUpImage[0].height, 0, GL_RGBA,GL_UNSIGNED_BYTE, spriteData);
 
-	loadPowerUpImages(); 
+	for (int i = 0; i < 3; i++) {
+		glGenTextures(1,&powerUpTextures[i]);
+		glBindTexture(GL_TEXTURE_2D, powerUpTextures[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		spriteData = buildAlphaData(&powerUpImage[i]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, powerUpImage[i].width, powerUpImage[i].height, 0, GL_RGBA,GL_UNSIGNED_BYTE, spriteData);
+	}
 }
 
 void normalize2d(Vec v)
@@ -692,7 +691,7 @@ int check_keys(XEvent *e)
 			enemyController.destroyEnemy(0);
 			break;
 		case XK_p:
-			spawnPowerUp(1, g.shiba.pos[0], g.shiba.pos[1]);
+			spawnPowerUp(1, 0, g.shiba.pos[0], g.shiba.pos[1]);
 			break;
 	}
 	return 0;

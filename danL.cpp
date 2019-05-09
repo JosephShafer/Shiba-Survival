@@ -14,7 +14,14 @@ int yres = 768;
 const int shiba_size = 80;
 const float power_up_size = 20;
 const int powerUpInterval = 3000;
-Image powerUpImage = Image("./images/bone.png",1,1);
+GLuint powerUpTextures[3];
+Image powerUpImage[3] = {
+    Image("./images/bone.png",1,1),
+    Image("./images/bone.png",1,1),
+    Image("./images/bone.png",1,1)
+};
+Image* test = &powerUpImage[0];
+
 
 void danL(int x, int y, GLuint textid)
 {
@@ -60,13 +67,16 @@ void PowerUp::drawPowerUp()
 {
 
     //glBindTexture();
-         glColor3f(0.0f, 0.0f, 1.0f);
+    //cout << powerUpTextures[0] << endl;
+    /*     glColor3f(0.0f, 0.0f, 1.0f);
+         glBindTexture(GL_TEXTURE_2D, powerUpTextures[0]);
          glBegin(GL_POLYGON);
             glVertex2f(-power_up_size, power_up_size);
             glVertex2f(power_up_size, power_up_size);
             glVertex2f(power_up_size, -power_up_size);
             glVertex2f(-power_up_size, -power_up_size);
-        glEnd();
+        glEnd(); */
+    //drawSprite(powerUpTextures[0],powerUpImage[0],10,10,)
 }
 
 bool PowerUp::collisionCheck(float ShibaX, float ShibaY) {
@@ -88,7 +98,7 @@ void powerUpPhysicsCheck(float ShibaX, float ShibaY) {
 
 void powerUpTimer(float ShibaX, float ShibaY) {
     //See if we should spawn some powerups
-    if ((rand() % 100) == 1) {
+    if ((rand() % 200) == 1) {
         spawnPowerUp(1,ShibaX,ShibaY);
     }
     #ifdef DEBUG
@@ -126,9 +136,55 @@ void powerUpCollision(float ShibaX,float ShibaY) {
 
 void renderPowerUps() {
 	for(unsigned int i = 0; i < power_ups.size(); i++) {
-	    glPushMatrix();
-		glTranslated(power_ups[i].position[0], power_ups[i].position[1], 0);
-		power_ups[i].drawPowerUp();
-	    glPopMatrix();
+        //cout << "About to draw sprite" << endl;
+        //cout << "Power up texture: " << powerUpTextures[0] << endl;
+        //cout << "Power up image:   " << powerUpImage << endl;
+        drawSprite(powerUpTextures[0],*test,26,12,power_ups[i].position[0],power_ups[i].position[1]);
+	    //glPushMatrix();
+		//glTranslated(power_ups[i].position[0], power_ups[i].position[1], 0);
+		//power_ups[i].drawPowerUp();
+	    //glPopMatrix();
 	}
+}
+
+void loadPowerUpImages() {
+    /*unsigned char *spriteData;
+    glGenTextures(1,&powerUpTextures[0]);
+    glBindTexture(GL_TEXTURE_2D, powerUpTextures[0]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //Image* temp = &powerUpImage[0];
+    spriteData = buildAlpha(&powerUpImage[0]);
+    //spriteData = buildAlpha(*test);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, powerUpImage[0].width, powerUpImage[0].height, 0, GL_RGBA,GL_UNSIGNED_BYTE, spriteData);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, enemyImages[i].width, enemyImages[i].height, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+    */
+}
+
+unsigned char *buildAlpha(Image *img)
+{
+	int i;
+	unsigned char *newdata, *ptr;
+	unsigned char *data = (unsigned char *)img->data;
+	newdata = (unsigned char *)malloc(img->width * img->height * 4);
+	ptr = newdata;
+	unsigned char a, b, c;
+	unsigned char t0 = *(data + 0);
+	unsigned char t1 = *(data + 1);
+	unsigned char t2 = *(data + 2);
+	for (i = 0; i < img->width * img->height * 3; i += 3)
+	{
+			a = *(data + 0);
+			b = *(data + 1);
+			c = *(data + 2);
+			*(ptr + 0) = a;
+			*(ptr + 1) = b;
+			*(ptr + 2) = c;
+			*(ptr + 3) = 1;
+			if (a == t0 && b == t1 && c == t2)
+					*(ptr + 3) = 0;
+			ptr += 4;
+			data += 3;
+	}
+	return newdata;
 }

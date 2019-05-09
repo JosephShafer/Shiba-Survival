@@ -3,6 +3,7 @@
 
 #include <GL/glx.h>
 #include "fonts.h"
+#include "Image.h"
 #include <stdlib.h>
 #include <vector>
 #include <stdio.h>
@@ -29,6 +30,10 @@ void spawnPowerUp(int, float, float);
 void destroyPowerUp(int);
 void renderPowerUps();
 void powerUpCollision(float, float);
+void loadPowerUpImages();
+unsigned char buildAlpha(Image);
 extern void danL(float, float, GLuint);
+extern GLuint powerUpTextures[3];
+extern Image powerUpImage[3];
 
 #endif

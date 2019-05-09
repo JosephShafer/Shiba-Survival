@@ -449,7 +449,16 @@ void init_opengl(void)
 		
 		getTexturesFunction(gl->enemySprites[i]);
 	}
+	glGenTextures(1,&powerUpTextures[0]);
+    glBindTexture(GL_TEXTURE_2D, powerUpTextures[0]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //Image* temp = &powerUpImage[0];
+    spriteData = buildAlphaData(&powerUpImage[0]);
+    //spriteData = buildAlpha(*test);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, powerUpImage[0].width, powerUpImage[0].height, 0, GL_RGBA,GL_UNSIGNED_BYTE, spriteData);
 
+	loadPowerUpImages();
 }
 
 void normalize2d(Vec v)

@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include "amberZ.h"
 #include "Image.h"
-#define numEnemyImages 3
+#define numEnemyImages 4
 using namespace std;
 
 typedef float Vec[3];
@@ -19,7 +19,7 @@ public:
 
 	float gameXresolution;
 	float gameYresolution;
-    GLuint textureArray[3];
+    GLuint textureArray[numEnemyImages];
 
     float * shibaXPtr;
     float * shibaYPtr;
@@ -129,7 +129,7 @@ extern Score scoreObject;
 extern EnemyControl enemyController;
 extern vector<ScatterShot> scatterShotObject;
 //int Enemy::enemiesHitShiba = 0;
-extern Image enemyImages[3];
+extern Image enemyImages[numEnemyImages];
 //extern std::vector<Enemy> enemies;
 
 

@@ -41,7 +41,8 @@ Score scoreObject;
 Image enemyImages[numEnemyImages] = {
 						Image("./images/cage.png", 1, 1),
 						Image("./images/Cat-Sprites.png", 4, 4),
-						Image("./images/heMan.png", 1, 1)
+						Image("./images/heMan.png", 1, 1),
+						Image("./images/heManHey.png", 1, 1)
 						};
 
 
@@ -93,7 +94,7 @@ void Enemy::splitterSpawn(float Xposition, float Yposition){
 	int eccentricty = 10;
 	velocity[0] = int((rand() % eccentricty) - 5);
 	velocity[1] = int((rand() % eccentricty) - 5);
-	imageIndex = 2;
+	imageIndex = 3;
 	imageUsed = &enemyImages[imageIndex];
 	textureUsed =JSglobalVars->textureArray[imageIndex];
 
@@ -189,8 +190,13 @@ void Enemy::spawn(float Xposition, float Yposition)
 
 
 void Enemy::drawEnemy()
-{
+{				
+				if(imageUsed == &enemyImages[3]){
+					//HeMan sprite
+					drawSprite(textureUsed, *imageUsed, sideLength * 1.541, sideLength, position[0], position[1]);
+				}else{
         drawSprite(textureUsed, *imageUsed, sideLength, sideLength, position[0], position[1]);
+				}
 }
 
 void Enemy::updatePosition(float shibaXposition, float shibaYposition, int indexOfEnemy)

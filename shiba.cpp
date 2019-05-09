@@ -926,6 +926,7 @@ void gameplayScreen()
 		storeScore(gl->user, scoreObject.getScore());
 		gl->finalScore = scoreObject.getScore();
 		enemyController.cleanupEnemies();
+		power_ups.clear();
 	}	 
 	//createEnemy(1);
 

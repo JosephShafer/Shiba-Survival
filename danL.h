@@ -30,10 +30,12 @@ void spawnPowerUp(int, int, float, float);
 void destroyPowerUp(int);
 void renderPowerUps();
 void powerUpCollision(float, float);
+bool isShibaFlying();
 void loadPowerUpImages();
 unsigned char buildAlpha(Image);
 extern void danL(float, float, GLuint);
 extern GLuint powerUpTextures[3];
-extern Image powerUpImage[3];
+extern Image powerUpImage[4];
+extern bool flyingShiba;
 
 #endif

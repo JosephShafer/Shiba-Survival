@@ -471,7 +471,7 @@ void init_opengl(void)
 		getTexturesFunction(gl->enemySprites[i]);
 	}
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 4; i++) {
 		glGenTextures(1,&powerUpTextures[i]);
 		glBindTexture(GL_TEXTURE_2D, powerUpTextures[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -693,7 +693,7 @@ int check_keys(XEvent *e)
 			enemyController.destroyEnemy(0);
 			break;
 		case XK_p:
-			spawnPowerUp(1, 0, g.shiba.pos[0], g.shiba.pos[1]);
+			spawnPowerUp(1, 2, g.shiba.pos[0], g.shiba.pos[1]);
 			break;
 	}
 	return 0;
@@ -930,9 +930,10 @@ void gameplayScreen()
 	//createEnemy(1);
 
 
-	enemyController.updateAllPosition(g.shiba.pos[0], g.shiba.pos[1]);
-
-	enemyController.primeSpawner(int(gl->ag->gameTimer.getElapsedMilliseconds()), g.shiba.pos[0], g.shiba.pos[1]);
+	if (!flyingShiba) {
+		enemyController.updateAllPosition(g.shiba.pos[0], g.shiba.pos[1]);
+		enemyController.primeSpawner(int(gl->ag->gameTimer.getElapsedMilliseconds()), g.shiba.pos[0], g.shiba.pos[1]);
+	}
 }
 
 void drawBullet()

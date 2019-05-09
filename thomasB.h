@@ -16,4 +16,9 @@ typedef struct t_button {
 	unsigned int text_color;
 } Button;
 
+void menu(GLenum target, GLuint texture, int xres, int yres);
+void gameOver(int xres, int yres, char* user, float score, GLenum target, GLuint texture);
+void howToPlay(int xres, int yres);
+extern int location;
+
 #endif

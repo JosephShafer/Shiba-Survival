@@ -67,16 +67,20 @@ class Global {
 public:
 	int xres, yres;
 	char keys[65536];
+	float finalScore;
 	bool showCredits;
-	bool gameMenu = true;
-	bool gameStart = false;
-	bool gameScores = false;
-	bool sentScore = false;
+	bool gameMenu;
+	bool gameOver;
+	bool gameNew;
+	bool gameStart;
+	bool gameScores;
+	bool howTo;
+	bool sentScore;
 	char *user;
 	AmbersGlobals *ag;
 	//float score;
 	
-	GLuint textures[7];
+	GLuint textures[9];
 	GLuint enemySprites[3];
 	static Global *instance;
 	static Global *getInstance() {
@@ -89,7 +93,14 @@ public:
 		xres = 1366;
 		yres = 768;
 		memset(keys, 0, 65536);
-		showCredits = false;
+		finalScore = 0.0;
+		gameMenu = true;
+		gameOver = false;
+		gameNew = true;
+		gameStart = false;
+		gameScores = false;
+		howTo = false;
+		//sentScore = false;
 		ag = ag->getInstance();
 		//score = 0;
 		//lives = 3;
@@ -159,14 +170,16 @@ public:
 	}
 } g;
 
-Image img[7] = {
+Image img[9] = {
 	Image("./images/amberZ.png"),
 	Image("./images/josephS.png"),
 	Image("./images/danL.png"),
 	Image("./images/mabelleC.png"),
 	Image("./images/thomasB.png"),
 	Image("./images/Shiba-Sprites.png", 9, 4),
-	Image("./images/grass13.png")
+	Image("./images/grass13.png"),
+	Image("./images/titleScreen.png"),
+	Image("./images/gameOver.png")
 };
 
 //X Windows variables
@@ -303,7 +316,7 @@ public:
 //function prototypes
 unsigned char *buildAlphaData(Image *img);
 void init_opengl(void);
-int check_mouse(XEvent *e);
+//int check_mouse(XEvent *e);
 int check_keys(XEvent *e);
 void physics();
 void physicsKeyEvents();
@@ -344,12 +357,20 @@ int main(int argc, char *argv[])
 		if(gl->gameStart != 1){
 			gl->ag->gameTimer.startTimer();	
 		}
+		//set the number of lives and score at start of new game
+		if (gl->gameNew){
+			numLivesLeft.currentLives = 3;
+			scoreObject.setScore(0);
+			g.shiba.pos[0] = (Flt)(gl->xres/2);
+			g.shiba.pos[1] = (Flt)(gl->yres/2);
+		
+		}
 		//update timer
 		updateTimer((int) gl->ag->gameTimer.getElapsedMinutes(), ((int) gl->ag->gameTimer.getElapsedSeconds() % 60));
 		while (x11.getXPending()) {
 			XEvent e = x11.getXNextEvent();
 			x11.check_resize(&e);
-			check_mouse(&e);
+			//check_mouse(&e);
 			done = check_keys(&e);
 		}
 		clock_gettime(CLOCK_REALTIME, &timeCurrent);
@@ -419,7 +440,7 @@ void init_opengl(void)
 
 	unsigned char *spriteData;
 	
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 9; i++) {
 		glGenTextures(1, &gl->textures[i]);
 		glBindTexture(GL_TEXTURE_2D, gl->textures[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -450,15 +471,15 @@ void init_opengl(void)
 		getTexturesFunction(gl->enemySprites[i]);
 	}
 	glGenTextures(1,&powerUpTextures[0]);
-    glBindTexture(GL_TEXTURE_2D, powerUpTextures[0]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, powerUpTextures[0]); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    //Image* temp = &powerUpImage[0];
-    spriteData = buildAlphaData(&powerUpImage[0]);
-    //spriteData = buildAlpha(*test);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, powerUpImage[0].width, powerUpImage[0].height, 0, GL_RGBA,GL_UNSIGNED_BYTE, spriteData);
+	//Image* temp = &powerUpImage[0];
+	spriteData = buildAlphaData(&powerUpImage[0]);
+	//spriteData = buildAlpha(*test); 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, powerUpImage[0].width, powerUpImage[0].height, 0, GL_RGBA,GL_UNSIGNED_BYTE, spriteData);
 
-	loadPowerUpImages();
+	loadPowerUpImages(); 
 }
 
 void normalize2d(Vec v)
@@ -474,72 +495,72 @@ void normalize2d(Vec v)
 	v[1] *= len;
 }
 
-int check_mouse(XEvent *e)
-{
-	static int savex = 0;
-	static int savey = 0;
-	int i,x,y;
-	int lbutton=0;
-	int rbutton=0;
-	//
-	if (e->type == ButtonRelease)
-		return 0;
-	if (e->type == ButtonPress) {
-		if (e->xbutton.button==1) {
+//int check_mouse(XEvent *e)
+//{
+//	static int savex = 0;
+//	static int savey = 0;
+//	int i,x,y;
+//	int lbutton=0;
+//	int rbutton=0;
+
+//	if (e->type == ButtonRelease)
+//		return 0;
+//	if (e->type == ButtonPress) {
+//		if (e->xbutton.button==1) {
 			//Left button is down
-			lbutton=1;
-		}
-		if (e->xbutton.button==3) {
+//			lbutton=1;
+//		}
+//		if (e->xbutton.button==3) {
 			//Right button is down
-			rbutton=1;
-			if (rbutton){}
-		}
-	}
-	x = e->xbutton.x;
-	y = e->xbutton.y;
-	y = gl->yres - y;
-	if (savex != e->xbutton.x || savey != e->xbutton.y) {
+//			rbutton=1;
+//			if (rbutton){}
+//		}
+//	}
+//	x = e->xbutton.x;
+//	y = e->xbutton.y;
+//	y = gl->yres - y;
+//	if (savex != e->xbutton.x || savey != e->xbutton.y) {
 		//Mouse moved
-		savex = e->xbutton.x;
-		savey = e->xbutton.y;
-	}
-	for (i=0; i < nbuttons; i++) {
-		button[i].over=0;
-		if (x >= button[i].r.left &&
-			x <= button[i].r.right &&
-			y >= button[i].r.bot &&
-			y <= button[i].r.top) {
-			button[i].over=1;
-			if (button[i].over) {
-				if (lbutton) {
-					switch(i) {
-						case 0:
-							gl->gameMenu ^= 1;
-							gl->gameStart ^= 1;
-							printf("Resume was clicked!\n");
-							break;
-						case 1:
-							printf("How to play was clicked\n");
-							break;
-						case 2:
-							gl->gameMenu ^= 1;
-							gl->gameScores ^= 1;
-							printf("High score was clicked\n");
-							break;
-						case 3:
-							printf("Credits was clicked\n");
-							gl->showCredits ^= 1;
-							break;
-						case 4:
-							printf("Quit was clicked\n");
-							exit(0);
-					}
-				}
-			}
-		}
-	}
-	return 0;
-}
+//		savex = e->xbutton.x;
+//		savey = e->xbutton.y;
+//	}
+//	for (i=0; i < nbuttons; i++) {
+//		button[i].over=0;
+//		if (x >= button[i].r.left &&
+//			x <= button[i].r.right &&
+//			y >= button[i].r.bot &&
+//			y <= button[i].r.top) {
+//			button[i].over=1;
+//			if (button[i].over) {
+//				if (lbutton) {
+//					switch(i) {
+//						case 0:
+//							gl->gameMenu ^= 1;
+//							gl->gameStart ^= 1;
+//							printf("Resume was clicked!\n");
+//							break;
+//						case 1:
+//							printf("How to play was clicked\n");
+//							break;
+//						case 2:
+//							gl->gameMenu ^= 1;
+//							gl->gameScores ^= 1;
+//							printf("High score was clicked\n");
+//							break;
+//						case 3:
+//							printf("Credits was clicked\n");
+//							gl->showCredits ^= 1;
+//							break;
+//						case 4:
+//							printf("Quit was clicked\n");
+//							exit(0);
+//					}
+//				}
+//			}
+//		}
+//	}
+//	return 0;
+//}
 
 int check_keys(XEvent *e)
 {
@@ -574,6 +595,7 @@ int check_keys(XEvent *e)
 			gl->showCredits ^= 1;
 			break;
 		case XK_Escape:
+			location = 0;
 			if (gl->showCredits) {
 				gl->showCredits ^= 1;
 
@@ -592,13 +614,21 @@ int check_keys(XEvent *e)
 				gl->gameMenu ^= 1;
 				gl->gameStart ^= 1;
 			}
-			if (!gl->sentScore) {
-				if (scoreObject.getScore() > 0) {
-					printf("%s\n", "Sending score");
-					storeScore(gl->user, scoreObject.getScore());
-					gl->sentScore ^= 1;
-					scoreObject.setScore(0);
-				}
+
+			//if (gl->sentScore) {
+			//	if (scoreObject.getScore() > 0) {
+			//		printf("%s\n", "Sending score");
+			//		storeScore(gl->user, scoreObject.getScore());
+			//		gl->sentScore ^= 1;
+			//		scoreObject.setScore(0);
+			//	}
+			//}
+			if (gl->gameOver){
+				gl->gameOver ^= 1;
+				gl->gameMenu ^= 1;
+			}
+			if (gl->howTo){
+				gl->howTo ^= 1;
 			}
 			break;
 		case XK_f:
@@ -606,7 +636,49 @@ int check_keys(XEvent *e)
 		case XK_s:
 			i++;
 			break;
+		case XK_Return:
+			if (gl-> gameMenu){
+				switch (location){
+					case 0:
+						gl->gameMenu ^= 1;
+						gl->gameStart ^= 1;
+						gl->gameNew = false;
+						//printf("Resume was clicked!\n");
+						break;
+					case 1:
+						gl->howTo ^= 1;
+						//printf("How to play was clicked\n");
+						break;
+					case 2:
+                        gl->gameMenu ^= 1;
+						gl->gameScores ^= 1;													
+                        //printf("High score was clicked\n");;
+						break;
+					case 3:
+						//printf("Credits was clicked\n");
+						gl->showCredits ^= 1;
+						break;
+					case 4:
+						//printf("Quit was clicked\n");
+						exit(0);
+				}
+			}
+			break;
+		case XK_Up:
+			if (location == 0){
+				location = 4;
+			}
+			else{
+				location--;
+			}
+			break;
 		case XK_Down:
+			if (location == 4){
+				location = 0;
+			}
+			else{
+				location++;
+			}
 			break;
 		case XK_equal:
 			enemyController.createEnemy(i, g.shiba.pos[0], g.shiba.pos[1]);
@@ -625,8 +697,6 @@ int check_keys(XEvent *e)
 	}
 	return 0;
 }
-
-
 
 void physics()
 {
@@ -796,21 +866,25 @@ void render()
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	if (gl->gameMenu){
-		x11.show_mouse_cursor(1);
 		glClear(GL_COLOR_BUFFER_BIT);
-		menu();
+		menu(GL_TEXTURE_2D, gl->textures[7], gl->xres, gl->yres);
 	}
 	if (gl->gameStart){
-		x11.show_mouse_cursor(0);
 		gameplayScreen();
 		enemyController.renderEnemies();
 		renderPowerUps();
+	}
+	if (gl->howTo){
+		howToPlay(gl->xres, gl->yres);
 	}
 	if (gl->showCredits) {
 		drawCredits();
 	}
 	if (gl->gameScores) {
 		showScores();
+	}
+	if (gl->gameOver){
+		gameOver(gl->xres, gl->yres, gl->user, gl->finalScore,GL_TEXTURE_2D, gl->textures[8]);
 	}
 }
 
@@ -830,7 +904,7 @@ void gameplayScreen()
 	r.bot = gl->yres - 20;
 	r.left = 10;
 	r.center = 0;
-	ggprint8b(&r, 16, 0x00ff0000, "3350 - Asteroids");
+	//ggprint8b(&r, 16, 0x00ff0000, "3350 - Asteroids");
 	ggprint8b(&r, 16, 0x00ffff00, "n bullets: %i", g.nbullets);
 	//ggprint8b(&r, 16, 0x00ffff00, "n asteroids: %i", g.nasteroids);
 	//-------------------------------------------------------------------------
@@ -842,7 +916,16 @@ void gameplayScreen()
 	drawBullet();
 	drawTimer(gl->xres);
 	scoreObject.textScoreDisplay();
-	numLivesLeft.livesTextDisplay(); 
+	numLivesLeft.livesTextDisplay();
+	if (numLivesLeft.getLives() == 0){
+		gl->gameStart ^= 1;
+		gl->gameOver ^= 1;
+		gl->gameNew = true;
+		printf("%s\n", "Sending score");
+		storeScore(gl->user, scoreObject.getScore());
+		gl->finalScore = scoreObject.getScore();
+		enemyController.cleanupEnemies();
+	}	 
 	//createEnemy(1);
 
 
@@ -876,8 +959,8 @@ void drawCredits()
 {
 		extern void amberZ(int, int, GLuint);
 		extern void josephS(float, float, GLuint);
-    extern void danL(int, int, GLuint);
-    extern void mabelleC(int, int, GLuint);
+    	extern void danL(int, int, GLuint);
+    	extern void mabelleC(int, int, GLuint);
 		extern void thomasB(int, int, GLuint);
 		glClear(GL_COLOR_BUFFER_BIT);
 		Rect rcred;

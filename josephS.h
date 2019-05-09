@@ -53,8 +53,6 @@ class ScatterShot{
     ScatterShot();
 };
 
-void renderScatterShot();
-void makeShots(float, float);
 
 
 class Enemy{
@@ -128,13 +126,11 @@ extern Lives numLivesLeft;
 extern Score scoreObject;
 extern EnemyControl enemyController;
 extern vector<ScatterShot> scatterShotObject;
-//int Enemy::enemiesHitShiba = 0;
 extern Image enemyImages[numEnemyImages];
-//extern std::vector<Enemy> enemies;
-
-
-//void scoreCalculator(float, float * score);
 void getTexturesFunction(GLuint);
+void renderScatterShot();
+void makeShots(float, float);
+void cleanUpShots();
 extern void josephS(float, float, GLuint);
 
 

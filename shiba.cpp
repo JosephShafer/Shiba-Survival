@@ -356,9 +356,15 @@ int main(int argc, char *argv[])
 	while (!done) {
 		if(gl->gameStart != 1){
 			gl->ag->gameTimer.startTimer();	
+			if (scatterShotObject.size() > 0) {
+				cleanUpShots();
+			}
 		}
 		//set the number of lives and score at start of new game
 		if (gl->gameNew){
+			if (enemyController.enemies.size() > 0){
+				enemyController.cleanupEnemies();
+			}
 			numLivesLeft.currentLives = 3;
 			scoreObject.setScore(0);
 			g.shiba.pos[0] = (Flt)(gl->xres/2);

@@ -610,7 +610,7 @@ int check_keys(XEvent *e)
 				//return 1;
 			}
 			if (gl->gameScores) {
-				gl->gameMenu ^= 1;
+				//gl->gameMenu ^= 1;
 				gl->gameScores ^= 1;
 				gl->ag->topScores = 1;
 			}
